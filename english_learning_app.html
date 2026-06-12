@@ -6,90 +6,67 @@
 <title>英語学習アプリ</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body { font-family: 'Segoe UI', 'Helvetica Neue', sans-serif; }
-  .fade-in { animation: fadeIn 0.2s ease; }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
-  .section-card { transition: transform 0.18s, box-shadow 0.18s; }
-  .section-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,99,235,0.12); }
-  /* ② Shadowing blur */
-  .blur-en { filter: blur(5px); transition: filter 0.3s; }
-  .unblur-en { filter: blur(0); transition: filter 0.3s; }
-  @keyframes brainPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.15)} }
-  .brain-pulse { animation: brainPulse 0.9s infinite; }
-  /* ③ mic pulse */
-  @keyframes micPulse { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)} 50%{box-shadow:0 0 0 12px rgba(239,68,68,0)} }
-  .mic-recording { animation: micPulse 1.2s infinite; }
-  /* Score bar */
-  .score-fill { transition: width 0.6s ease; }
+body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
+.fade-in{animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.blur-en{filter:blur(5px);transition:filter 0.3s;}
+.unblur-en{filter:blur(0);transition:filter 0.3s;}
+@keyframes brainPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.15)}}
+.brain-pulse{animation:brainPulse 0.9s infinite;}
+@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)}50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}}
+.mic-recording{animation:micPulse 1.2s infinite;}
+.score-fill{transition:width 0.6s ease;}
+.block-card{transition:transform 0.15s,box-shadow 0.15s;}
+.block-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(37,99,235,0.12);}
 </style>
 </head>
 <body class="bg-blue-50 min-h-screen">
 
-<!-- ========== TOP TAB NAV ========== -->
-<div id="top-nav" class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+<!-- TOP NAV -->
+<div class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
   <div class="max-w-lg mx-auto flex">
-    <button onclick="switchTab('vocab')" id="tab-vocab"
-      class="tab-btn flex-1 py-3 text-sm font-semibold border-b-2 transition-colors">
-      📘 単語
-    </button>
-    <button onclick="switchTab('shadow')" id="tab-shadow"
-      class="tab-btn flex-1 py-3 text-sm font-semibold border-b-2 transition-colors">
-      🎧 シャドーイング
-    </button>
-    <button onclick="switchTab('instant')" id="tab-instant"
-      class="tab-btn flex-1 py-3 text-sm font-semibold border-b-2 transition-colors">
-      ⚡ 瞬間英作文
-    </button>
-    <button onclick="switchTab('chat')" id="tab-chat"
-      class="tab-btn flex-1 py-3 text-sm font-semibold border-b-2 transition-colors">
-      💬 会話
-    </button>
+    <button onclick="switchTab('vocab')" id="tab-vocab" class="tab-btn flex-1 py-3 text-xs font-semibold border-b-2 transition-colors">📘 単語</button>
+    <button onclick="switchTab('shadow')" id="tab-shadow" class="tab-btn flex-1 py-3 text-xs font-semibold border-b-2 transition-colors">🎧 シャドーイング</button>
+    <button onclick="switchTab('instant')" id="tab-instant" class="tab-btn flex-1 py-3 text-xs font-semibold border-b-2 transition-colors">⚡ 瞬間英作文</button>
+    <button onclick="switchTab('chat')" id="tab-chat" class="tab-btn flex-1 py-3 text-xs font-semibold border-b-2 transition-colors">💬 会話</button>
   </div>
 </div>
 
-<!-- ================================================================
-     ① VOCAB QUIZ
-     ================================================================ -->
+<!-- ① VOCAB -->
 <div id="app-vocab" class="app-panel">
-
-  <!-- HOME -->
   <div id="screen-home" class="fade-in">
     <div class="max-w-lg mx-auto px-4 py-6">
-      <div class="text-center mb-6">
+      <div class="text-center mb-5">
         <div class="text-2xl font-bold text-blue-700 mb-1">📘 英単語クイズ</div>
-        <p class="text-blue-400 text-sm">自分の話で学ぶ英単語トレーニング</p>
+        <p class="text-blue-400 text-sm">190問 · 19ブロック</p>
       </div>
-      <div id="section-list" class="space-y-4"></div>
+      <div id="section-list" class="space-y-3"></div>
     </div>
   </div>
-
-  <!-- QUIZ -->
   <div id="screen-quiz" class="hidden fade-in">
-    <div class="max-w-lg mx-auto px-4 py-6">
+    <div class="max-w-lg mx-auto px-4 py-5">
       <div class="flex items-center justify-between mb-4">
-        <button onclick="confirmBack()" class="text-blue-500 text-sm font-medium bg-white border border-blue-200 rounded-full px-4 py-2 shadow-sm active:scale-95 transition">
-          ← 中断して戻る
-        </button>
-        <div class="text-sm text-blue-400" id="quiz-counter">1 / 10</div>
+        <button onclick="confirmBack()" class="text-blue-500 text-sm font-medium bg-white border border-blue-200 rounded-full px-4 py-2 shadow-sm active:scale-95 transition">← 中断</button>
+        <div class="text-sm text-slate-500 font-medium" id="quiz-counter"></div>
       </div>
       <div class="w-full bg-blue-100 rounded-full h-1.5 mb-5">
         <div id="progress-bar" class="bg-blue-500 h-1.5 rounded-full transition-all duration-300" style="width:0%"></div>
       </div>
-      <div class="bg-white rounded-2xl shadow-md border border-blue-100 p-6 fade-in" id="quiz-card">
+      <div class="bg-white rounded-2xl shadow-md border border-blue-100 p-5 fade-in" id="quiz-card">
         <div class="mb-4">
           <div class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">意味 / Hint</div>
           <div class="text-gray-700 text-base leading-relaxed" id="quiz-meaning"></div>
-          <div class="text-blue-500 text-sm mt-1 italic" id="quiz-phrase-ja"></div>
         </div>
-        <div class="border-t border-blue-50 my-4"></div>
+        <div class="border-t border-blue-50 my-3"></div>
+        <div class="mb-4">
+          <div class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">日本語訳</div>
+          <div class="text-slate-600 text-sm leading-relaxed italic" id="quiz-phrase-ja"></div>
+        </div>
         <div class="mb-5">
           <div class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-2">フレーズ</div>
           <div class="text-gray-800 text-lg font-medium leading-relaxed" id="quiz-phrase-blank"></div>
         </div>
-        <button id="btn-show-answer" onclick="showAnswer()"
-          class="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-base shadow-sm active:scale-95 transition hover:bg-blue-700">
-          答えを見る
-        </button>
+        <button id="btn-show-answer" onclick="showAnswer()" class="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-base shadow-sm active:scale-95 transition hover:bg-blue-700">答えを見る</button>
         <div id="answer-area" class="hidden mt-5">
           <div class="border-t border-blue-50 mb-4"></div>
           <div class="mb-3">
@@ -98,78 +75,55 @@
           </div>
           <div class="mb-4">
             <div class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">フレーズ（完成形）</div>
-            <div class="text-gray-800 text-base leading-relaxed font-medium" id="answer-phrase-full"></div>
+            <div class="text-gray-800 text-base font-medium leading-relaxed" id="answer-phrase-full"></div>
           </div>
-          <div class="flex gap-2 mb-5">
-            <button onclick="speakPhrase()" class="flex-1 py-2 rounded-lg border border-blue-200 text-blue-600 text-sm font-medium bg-blue-50 active:scale-95 transition hover:bg-blue-100">
-              🔊 フレーズ読み上げ
-            </button>
-            <button onclick="speakWord()" class="flex-1 py-2 rounded-lg border border-blue-200 text-blue-600 text-sm font-medium bg-blue-50 active:scale-95 transition hover:bg-blue-100">
-              🔉 単語のみ
-            </button>
+          <div class="flex gap-2 mb-4">
+            <button onclick="speakPhrase()" class="flex-1 py-2 rounded-lg border border-blue-200 text-blue-600 text-sm font-medium bg-blue-50 active:scale-95 transition hover:bg-blue-100">🔊 フレーズ</button>
+            <button onclick="speakWord()" class="flex-1 py-2 rounded-lg border border-blue-200 text-blue-600 text-sm font-medium bg-blue-50 active:scale-95 transition hover:bg-blue-100">🔉 単語のみ</button>
           </div>
           <div class="flex gap-3">
-            <button onclick="markAnswer(false)" class="flex-1 py-3 rounded-xl bg-red-500 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-red-600">
-              ✕ 違った
-            </button>
-            <button onclick="markAnswer(true)" class="flex-1 py-3 rounded-xl bg-emerald-500 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-emerald-600">
-              ◯ 合ってた
-            </button>
+            <button onclick="markAnswer(false)" class="flex-1 py-3 rounded-xl bg-red-500 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-red-600">✕ 違った</button>
+            <button onclick="markAnswer(true)" class="flex-1 py-3 rounded-xl bg-emerald-500 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-emerald-600">◯ 合ってた</button>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- RESULT -->
   <div id="screen-result" class="hidden fade-in">
     <div class="max-w-lg mx-auto px-4 py-12 text-center">
       <div class="text-5xl mb-4">🎉</div>
-      <div class="text-2xl font-bold text-blue-700 mb-2">セクション完了！</div>
-      <div class="text-gray-500 mb-8" id="result-summary"></div>
-      <button onclick="goHome()" class="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-base shadow-sm active:scale-95 transition hover:bg-blue-700">
-        ホームに戻る
-      </button>
+      <div class="text-2xl font-bold text-blue-700 mb-2">ブロック完了！</div>
+      <div class="text-gray-500 mb-6" id="result-summary"></div>
+      <button onclick="goHome()" class="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold active:scale-95 transition hover:bg-blue-700">ホームに戻る</button>
     </div>
   </div>
+</div>
 
-</div><!-- /app-vocab -->
-
-
-<!-- ================================================================
-     ② SHADOWING
-     ================================================================ -->
+<!-- ② SHADOWING -->
 <div id="app-shadow" class="app-panel hidden">
   <div class="max-w-lg mx-auto px-4 pt-4 pb-36">
-
-    <!-- Voice selectors -->
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-4">
+      <div class="text-sm font-bold text-slate-700 mb-3">ブロック選択</div>
+      <div class="grid grid-cols-5 gap-1.5 mb-3" id="sh-block-buttons"></div>
       <div class="flex gap-3">
-        <div class="flex-1 min-w-0">
+        <div class="flex-1">
           <label class="text-xs text-slate-500 mb-1 block">🇯🇵 日本語の声</label>
-          <select id="sh-ja-voice" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white text-slate-700 focus:outline-none focus:border-blue-400"></select>
+          <select id="sh-ja-voice" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-blue-400"></select>
         </div>
-        <div class="flex-1 min-w-0">
+        <div class="flex-1">
           <label class="text-xs text-slate-500 mb-1 block">🇺🇸 英語の声</label>
-          <select id="sh-en-voice" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white text-slate-700 focus:outline-none focus:border-blue-400"></select>
+          <select id="sh-en-voice" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-blue-400"></select>
         </div>
       </div>
     </div>
-
-    <!-- Phrase list -->
     <div id="shadow-list" class="space-y-3"></div>
   </div>
-
-  <!-- Fixed control bar -->
   <div class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 shadow-lg">
     <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-4">
-      <button id="sh-play-btn" onclick="shTogglePlay()"
-        class="w-14 h-14 rounded-full flex items-center justify-center shadow-md transition-all active:scale-95 bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0 text-2xl">
-        ▶
-      </button>
+      <button id="sh-play-btn" onclick="shTogglePlay()" class="w-14 h-14 rounded-full flex items-center justify-center shadow-md transition-all active:scale-95 bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0 text-2xl">▶</button>
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium text-slate-700 truncate" id="sh-status">停止中</p>
-        <p class="text-xs text-slate-400 truncate mt-0.5" id="sh-current-label">タップで任意の文から開始</p>
+        <p class="text-xs text-slate-400 truncate mt-0.5" id="sh-current-label">ブロックを選んで再生</p>
       </div>
       <div class="text-xs text-slate-400 text-right flex-shrink-0">
         <div>∞ ループ</div>
@@ -177,18 +131,17 @@
       </div>
     </div>
   </div>
-</div><!-- /app-shadow -->
+</div>
 
-
-<!-- ================================================================
-     ③ INSTANT TRANSLATION
-     ================================================================ -->
+<!-- ③ INSTANT -->
 <div id="app-instant" class="app-panel hidden">
   <div class="max-w-lg mx-auto px-4 pt-4 pb-10">
-
-    <!-- Progress -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-4">
+      <div class="text-sm font-bold text-slate-700 mb-2">ブロック選択</div>
+      <div class="grid grid-cols-5 gap-1.5" id="inst-block-buttons"></div>
+    </div>
     <div class="flex items-center justify-between mb-3">
-      <div class="text-sm text-slate-500" id="inst-counter">1 / 90</div>
+      <div class="text-sm text-slate-500" id="inst-counter">— / —</div>
       <div class="flex gap-2 text-xs">
         <span class="bg-emerald-100 text-emerald-600 rounded-full px-3 py-1 font-medium" id="inst-score-ok">✓ 0</span>
         <span class="bg-red-100 text-red-500 rounded-full px-3 py-1 font-medium" id="inst-score-ng">✗ 0</span>
@@ -197,368 +150,671 @@
     <div class="w-full bg-blue-100 rounded-full h-1.5 mb-5">
       <div id="inst-progress" class="bg-blue-500 h-1.5 rounded-full score-fill" style="width:0%"></div>
     </div>
-
-    <!-- Card -->
-    <div class="bg-white rounded-2xl shadow-md border border-blue-100 p-6 mb-4 fade-in" id="inst-card">
-
-      <!-- Japanese prompt -->
+    <div class="bg-white rounded-2xl shadow-md border border-blue-100 p-5 mb-4 fade-in" id="inst-card">
       <div class="mb-5">
         <div class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-2">日本語</div>
-        <div class="text-lg font-medium text-slate-800 leading-relaxed" id="inst-ja-text">—</div>
+        <div class="text-lg font-medium text-slate-800 leading-relaxed" id="inst-ja-text">ブロックを選んでください</div>
       </div>
-
-      <!-- Mic / state area -->
       <div id="inst-idle-area">
         <div class="flex gap-2">
-          <button onclick="instReadJa()" class="flex-1 py-3 rounded-xl border border-blue-200 text-blue-600 font-semibold bg-blue-50 active:scale-95 transition hover:bg-blue-100">
-            🔊 日本語を聞く
-          </button>
-          <button onclick="instStartMic()" id="inst-mic-btn"
-            class="flex-1 py-3 rounded-xl bg-red-500 text-white font-semibold active:scale-95 transition hover:bg-red-600">
-            🎤 英語で話す
-          </button>
+          <button onclick="instReadJa()" class="flex-1 py-3 rounded-xl border border-blue-200 text-blue-600 font-semibold bg-blue-50 active:scale-95 transition hover:bg-blue-100">🔊 日本語を聞く</button>
+          <button onclick="instStartMic()" id="inst-mic-btn" class="flex-1 py-3 rounded-xl bg-red-500 text-white font-semibold active:scale-95 transition hover:bg-red-600">🎤 英語で話す</button>
         </div>
         <p class="text-xs text-slate-400 text-center mt-2" id="inst-mic-hint">ボタンを押して英語で答えてください</p>
       </div>
-
-      <!-- Recording state -->
       <div id="inst-recording-area" class="hidden text-center py-2">
         <div class="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center mx-auto mb-3 mic-recording text-2xl">🎤</div>
         <p class="text-sm font-medium text-red-500 mb-1">録音中...</p>
         <p class="text-xs text-slate-400">話し終えたら自動で採点します</p>
-        <button onclick="instStopMic()" class="mt-3 px-6 py-2 rounded-full bg-slate-200 text-slate-600 text-sm font-medium active:scale-95 transition">
-          停止して採点
-        </button>
+        <button onclick="instStopMic()" class="mt-3 px-6 py-2 rounded-full bg-slate-200 text-slate-600 text-sm active:scale-95">停止して採点</button>
       </div>
-
-      <!-- Result area -->
       <div id="inst-result-area" class="hidden mt-1">
         <div class="border-t border-slate-100 mb-4"></div>
-
-        <!-- Score bar -->
         <div class="mb-4">
-          <div class="flex justify-between text-xs text-slate-500 mb-1">
-            <span>一致度</span>
-            <span id="inst-score-pct" class="font-bold text-blue-600">—</span>
-          </div>
-          <div class="w-full bg-slate-100 rounded-full h-2.5">
-            <div id="inst-score-bar" class="h-2.5 rounded-full score-fill bg-blue-500" style="width:0%"></div>
-          </div>
+          <div class="flex justify-between text-xs text-slate-500 mb-1"><span>一致度</span><span id="inst-score-pct" class="font-bold text-blue-600">—</span></div>
+          <div class="w-full bg-slate-100 rounded-full h-2.5"><div id="inst-score-bar" class="h-2.5 rounded-full score-fill bg-blue-500" style="width:0%"></div></div>
         </div>
-
-        <!-- Heard -->
         <div class="mb-3">
-          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">あなたの発話（認識結果）</div>
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">あなたの発話</div>
           <div class="text-slate-700 text-sm leading-relaxed bg-slate-50 rounded-xl px-3 py-2" id="inst-heard"></div>
         </div>
-
-        <!-- Model answer -->
         <div class="mb-5">
           <div class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">模範英文</div>
           <div class="text-slate-800 text-base font-medium leading-relaxed" id="inst-model-en"></div>
-          <button onclick="instSpeakModel()" class="mt-2 text-xs text-blue-500 flex items-center gap-1 hover:text-blue-700">
-            🔊 模範英文を聞く
-          </button>
+          <button onclick="instSpeakModel()" class="mt-1 text-xs text-blue-500 hover:text-blue-700">🔊 模範英文を聞く</button>
         </div>
-
-        <!-- Next -->
-        <button onclick="instNext()" class="w-full py-3 rounded-xl bg-blue-600 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-blue-700">
-          次の問題へ →
-        </button>
+        <button onclick="instNext()" class="w-full py-3 rounded-xl bg-blue-600 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-blue-700">次の問題へ →</button>
       </div>
-
-    </div><!-- /inst-card -->
-
-    <!-- Skip / jump -->
-    <div class="flex gap-2">
-      <button onclick="instSkip()" class="flex-1 py-2 rounded-lg border border-slate-200 text-slate-500 text-sm bg-white active:scale-95 transition hover:bg-slate-50">
-        スキップ
-      </button>
-      <button onclick="instRestart()" class="flex-1 py-2 rounded-lg border border-slate-200 text-slate-500 text-sm bg-white active:scale-95 transition hover:bg-slate-50">
-        最初から
-      </button>
     </div>
-
+    <div class="flex gap-2">
+      <button onclick="instSkip()" class="flex-1 py-2 rounded-lg border border-slate-200 text-slate-500 text-sm bg-white active:scale-95 transition hover:bg-slate-50">スキップ</button>
+      <button onclick="instResetBlock()" class="flex-1 py-2 rounded-lg border border-slate-200 text-slate-500 text-sm bg-white active:scale-95 transition hover:bg-slate-50">ブロック最初から</button>
+    </div>
   </div>
-</div><!-- /app-instant -->
+</div>
 
+<!-- ④ CHAT -->
+<div id="app-chat" class="app-panel hidden">
+  <div class="max-w-lg mx-auto px-4 pt-4 pb-10">
+    <div id="chat-home">
+      <div class="text-center mb-5">
+        <div class="text-2xl font-bold text-blue-700 mb-1">💬 ロールプレイ会話</div>
+        <p class="text-slate-400 text-sm">AIが質問 → 英語で答える練習</p>
+      </div>
+      <div class="space-y-3" id="chat-topic-list"></div>
+    </div>
+    <div id="chat-convo" class="hidden">
+      <div class="flex items-center gap-3 mb-4">
+        <button onclick="chatGoHome()" class="text-blue-500 text-sm font-medium bg-white border border-blue-200 rounded-full px-4 py-2 shadow-sm active:scale-95 transition">← トピック選択</button>
+        <div class="flex-1 text-sm font-semibold text-slate-700 truncate" id="chat-topic-title"></div>
+        <div class="text-xs text-slate-400" id="chat-q-counter"></div>
+      </div>
+      <div class="w-full bg-blue-100 rounded-full h-1.5 mb-5">
+        <div id="chat-progress" class="bg-blue-500 h-1.5 rounded-full transition-all duration-300" style="width:0%"></div>
+      </div>
+      <div class="bg-blue-600 rounded-2xl p-5 mb-4 shadow-md fade-in" id="chat-q-card">
+        <div class="text-xs font-semibold text-blue-200 mb-2">🤖 AIの質問</div>
+        <div class="text-white text-lg font-medium leading-relaxed" id="chat-q-en"></div>
+        <div class="text-blue-200 text-sm mt-2 leading-relaxed" id="chat-q-ja"></div>
+        <button onclick="chatSpeakQuestion()" class="mt-3 text-xs text-blue-200 hover:text-white">🔊 もう一度聞く</button>
+      </div>
+      <div id="chat-idle-area">
+        <div class="flex gap-2 mb-2">
+          <button onclick="chatStartMic()" id="chat-mic-btn" class="flex-1 py-4 rounded-2xl bg-red-500 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-red-600 flex items-center justify-center gap-2">🎤 英語で答える</button>
+        </div>
+        <p class="text-xs text-slate-400 text-center">詰まったら下のテキストボックスに日本語でもOK</p>
+        <div class="flex gap-2 mt-2">
+          <input type="text" id="chat-ja-input" placeholder="日本語で入力（送信後に模範回答を確認）..." class="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-400 bg-white" onkeydown="if(event.key==='Enter') chatSendJa()">
+          <button onclick="chatSendJa()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-600 text-sm font-medium active:scale-95 hover:bg-slate-300">送信</button>
+        </div>
+      </div>
+      <div id="chat-recording-area" class="hidden text-center py-3">
+        <div class="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center mx-auto mb-3 mic-recording text-2xl">🎤</div>
+        <p class="text-sm font-medium text-red-500 mb-1">録音中...</p>
+        <p class="text-xs text-slate-400 mb-3">話し終えると自動で次へ進みます</p>
+        <button onclick="chatStopMic()" class="px-6 py-2 rounded-full bg-slate-200 text-slate-600 text-sm active:scale-95">停止</button>
+      </div>
+      <div id="chat-result-area" class="hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-4 fade-in">
+          <div class="mb-3">
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">あなたの回答</div>
+            <div class="text-slate-700 text-sm leading-relaxed bg-slate-50 rounded-xl px-3 py-2" id="chat-heard"></div>
+          </div>
+          <div class="mb-2">
+            <div class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">模範回答（英語）</div>
+            <div class="text-slate-800 text-base font-medium leading-relaxed" id="chat-model-ans"></div>
+            <button onclick="chatSpeakModel()" class="mt-1 text-xs text-blue-500 hover:text-blue-700">🔊 模範回答を聞く</button>
+          </div>
+          <div class="mb-5 bg-blue-50 rounded-xl px-3 py-2">
+            <div class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">模範回答（日本語訳）</div>
+            <div class="text-slate-600 text-sm leading-relaxed italic" id="chat-model-ja"></div>
+          </div>
+          <button onclick="chatNext()" class="w-full py-3 rounded-xl bg-blue-600 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-blue-700">次の質問へ →</button>
+        </div>
+      </div>
+      <div id="chat-complete-area" class="hidden text-center py-8 fade-in">
+        <div class="text-5xl mb-4">🎉</div>
+        <div class="text-2xl font-bold text-blue-700 mb-2">完了！</div>
+        <p class="text-slate-500 mb-6" id="chat-complete-msg"></p>
+        <button onclick="chatGoHome()" class="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold active:scale-95 transition hover:bg-blue-700">別のトピックを選ぶ</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- ================================================================
-     JAVASCRIPT
-     ================================================================ -->
 <script>
-
 // ============================================================
-// SHARED DATA
+// DATA
 // ============================================================
-const ALL_QUESTIONS = [
-  { id:1,  word:"devoted",         meaning:"捧げた・費やした",            phraseJa:"私はすべてをサッカーに捧げました",                       phrase:"I ____ everything to soccer.",                              section:1 },
-  { id:2,  word:"overcame",        meaning:"乗り越えた",                   phraseJa:"そのたびに乗り越えてきました",                           phrase:"I suffered some serious injuries, but I ____ them every time.", section:1 },
-  { id:3,  word:"realistic",       meaning:"現実的な",                     phraseJa:"プロになるのは現実的でないと悟りました",                 phrase:"Becoming a professional soccer player wasn't ____ for me.", section:1 },
-  { id:4,  word:"gave up",         meaning:"諦めた",                       phraseJa:"その夢を諦めました",                                     phrase:"So I ____ that dream.",                                    section:1 },
-  { id:5,  word:"dated",           meaning:"交際した",                     phraseJa:"2年間交際しました",                                      phrase:"We ____ for two years.",                                   section:1 },
-  { id:6,  word:"decided",         meaning:"決意した",                     phraseJa:"プロのサッカー選手になろうと決意しました",               phrase:"I ____ to become a professional soccer player.",           section:1 },
-  { id:7,  word:"influence",       meaning:"影響",                         phraseJa:"兄の影響でサッカーを始めました",                         phrase:"I started playing soccer because of my older brother's ____.", section:1 },
-  { id:8,  word:"suffered",        meaning:"経験した・苦しんだ",           phraseJa:"大きな怪我も経験しました",                               phrase:"I ____ some serious injuries.",                            section:1 },
-  { id:9,  word:"accept",          meaning:"受け入れる・悟る",             phraseJa:"プロになれないと受け入れました",                         phrase:"I came to ____ that it wasn't realistic for me.",          section:1 },
-  { id:10, word:"got married",     meaning:"結婚した",                     phraseJa:"その後結婚しました",                                     phrase:"We dated for two years and then ____.",                    section:1 },
-  { id:11, word:"charge",          meaning:"担当・責任",                   phraseJa:"大手自動車メーカーを担当しています",                     phrase:"I'm currently in ____ of sales.",                          section:2 },
-  { id:12, word:"collaborate",     meaning:"協力する・連携する",           phraseJa:"協力会社と一緒に進めています",                           phrase:"We ____ with subcontractors.",                             section:2 },
-  { id:13, word:"primarily",       meaning:"主に",                         phraseJa:"売上は主に人月ベースで成り立っています",                 phrase:"Our revenue is ____ based on person-hours.",               section:2 },
-  { id:14, word:"declining",       meaning:"低下している",                 phraseJa:"基本的なシステム実装の価値は徐々に低下している",         phrase:"The value of basic system implementation is gradually ____.", section:2 },
-  { id:15, word:"unsustainable",   meaning:"持続不可能な",                 phraseJa:"ビジネスモデルはますます持続困難になっています",          phrase:"The business model is becoming increasingly ____.",        section:2 },
-  { id:16, word:"outcome",         meaning:"成果・結果",                   phraseJa:"アウトカム型へ移行する可能性が高い",                     phrase:"The industry is likely to shift to an ____-based model.",  section:2 },
-  { id:17, word:"customized",      meaning:"カスタマイズされた",           phraseJa:"高度にカスタマイズされたソリューション",                 phrase:"Highly ____ solutions tailored to each organization.",     section:2 },
-  { id:18, word:"viable",          meaning:"実現可能な",                   phraseJa:"ついに実現可能になるかもしれない",                       phrase:"These areas may finally become ____.",                     section:2 },
-  { id:19, word:"strategic",       meaning:"戦略的な",                     phraseJa:"戦略的アーキテクチャに注力しなければならない",           phrase:"We must focus on ____ architecture.",                      section:2 },
-  { id:20, word:"tangible",        meaning:"具体的な・有形の",             phraseJa:"データからより迅速に具体的成果を生み出せる",             phrase:"Companies will be able to generate ____ results.",         section:2 },
-  { id:21, word:"logical",         meaning:"合理的な・論理的な",           phraseJa:"IT業界に進むのが合理的だと感じました",                   phrase:"The IT industry seemed like a ____ choice.",               section:3 },
-  { id:22, word:"attracted",       meaning:"惹かれた・魅力を感じた",       phraseJa:"業界の将来性にも魅力を感じていました",                   phrase:"I was also ____ to the future potential.",                section:3 },
-  { id:23, word:"influenced",      meaning:"影響を与えた",                 phraseJa:"その会話も私の決断に影響を与えました",                   phrase:"That conversation also ____ my decision.",                 section:3 },
-  { id:24, word:"responsible",     meaning:"担当している",                 phraseJa:"大手製造業向けのハードウェア営業を担当しました",         phrase:"I was ____ for selling IT infrastructure hardware.",       section:3 },
-  { id:25, word:"proposed",        meaning:"提案した",                     phraseJa:"DXソリューションを提案していました",                     phrase:"I ____ digital transformation initiatives.",              section:3 },
-  { id:26, word:"essential",       meaning:"不可欠な",                     phraseJa:"テクノロジーは社会に不可欠です",                         phrase:"Technology is ____ to society.",                           section:3 },
-  { id:27, word:"opportunity",     meaning:"機会・チャンス",               phraseJa:"話す機会がありました",                                   phrase:"I had the ____ to speak with his father.",                section:3 },
-  { id:28, word:"vision",          meaning:"ビジョン・目標像",             phraseJa:"明確な夢や目標を持っていませんでした",                   phrase:"I didn't have a clear ____ for business.",                section:3 },
-  { id:29, word:"focused",         meaning:"集中した",                     phraseJa:"プロサッカー選手になることだけに集中していました",       phrase:"I ____ entirely on becoming a professional soccer player.", section:3 },
-  { id:30, word:"optimizing",      meaning:"最適化すること",               phraseJa:"業務改善に向けてDXを提案していました",                   phrase:"I proposed initiatives aimed at ____ operations.",         section:3 },
-  { id:31, word:"resilience",      meaning:"打たれ強さ・回復力",           phraseJa:"粘り強さと打たれ強さへの自信につながりました",           phrase:"I gained confidence in my toughness and ____.",           section:4 },
-  { id:32, word:"excessive",       meaning:"必要以上の・過度な",           phraseJa:"過去の選択を必要以上に後悔しないようにしています",       phrase:"I try not to regret my past choices ____ly.",              section:4 },
-  { id:33, word:"dwelling",        meaning:"とらわれること",               phraseJa:"「もしも」にとらわれるより前に進む",                     phrase:"Instead of ____ on what might have been.",                section:4 },
-  { id:34, word:"consistent",      meaning:"継続的な・一貫した",           phraseJa:"継続的な努力を積み重ねています",                         phrase:"People achieve results through ____ effort.",              section:4 },
-  { id:35, word:"consciously",     meaning:"意識的に",                     phraseJa:"自分が意識して思い描いた方向に",                         phrase:"Life moves in the direction we ____ envision.",            section:4 },
-  { id:36, word:"envision",        meaning:"思い描く",                     phraseJa:"自分が思い描いた方向に近づいていく",                     phrase:"The direction we consciously ____.",                       section:4 },
-  { id:37, word:"perspectives",    meaning:"視点・見方",                   phraseJa:"物事を多面的に捉える力",                                 phrase:"The ability to see things from multiple ____.",            section:4 },
-  { id:38, word:"unpredictable",   meaning:"予測できない",                 phraseJa:"人生は予測できない",                                     phrase:"Life is ____.",                                            section:4 },
-  { id:39, word:"discernment",     meaning:"分別・識別力",                 phraseJa:"分別を持って判断する力を大切にしています",               phrase:"I value the ability to make decisions with ____.",         section:4 },
-  { id:40, word:"bound",           meaning:"縛られる",                     phraseJa:"他人の基準に縛られる必要はない",                         phrase:"I do not need to be ____ by other people's standards.",   section:4 },
-  { id:41, word:"assert",          meaning:"主張する",                     phraseJa:"必要な場面ではしっかり自己主張したい",                   phrase:"I want to ____ myself when necessary.",                    section:5 },
-  { id:42, word:"blindly",         meaning:"盲目的に・無批判に",           phraseJa:"盲目的に受け入れるのではなく",                           phrase:"Rather than accepting things ____.",                       section:5 },
-  { id:43, word:"decisive",        meaning:"決断力のある",                 phraseJa:"決める場面では強く出ることも重要",                       phrase:"Calm and balanced, yet demanding and ____ in critical moments.", section:5 },
-  { id:44, word:"comprehensively", meaning:"網羅的に・包括的に",           phraseJa:"物事を網羅的に進めようとしすぎる傾向があります",         phrase:"I tend to approach tasks ____.",                           section:5 },
-  { id:45, word:"eliminate",       meaning:"排除する・捨てる",             phraseJa:"「捨てる勇気」を持って重要なことに集中したい",           phrase:"I want to cultivate the courage to ____ what is unnecessary.", section:5 },
-  { id:46, word:"adapting",        meaning:"合わせること・適応すること",   phraseJa:"他人の期待に合わせすぎると自分の時間を生きられなくなる", phrase:"____ too much to others' expectations can prevent me from living my own time.", section:5 },
-  { id:47, word:"intentions",      meaning:"意思・意図",                   phraseJa:"自分の意思をより明確にしたい",                           phrase:"I want to be clearer about my own ____.",                  section:5 },
-  { id:48, word:"anxiety",         meaning:"不安",                         phraseJa:"不安の多くは「次に何をすべきか分からないこと」から生まれます", phrase:"Much of our ____ comes from not knowing what to do next.", section:5 },
-  { id:49, word:"clarified",       meaning:"明確にされた",                 phraseJa:"淡々と整理して明確にすれば、道は開けることが多い",       phrase:"When things are calmly organized and ____, a path usually appears.", section:5 },
-  { id:50, word:"steady",          meaning:"着実な・地道な",               phraseJa:"着実な改善を大切にしています",                           phrase:"I value continuous learning and ____ improvement.",        section:5 },
-  { id:51, word:"identity",        meaning:"アイデンティティ・自己認識",   phraseJa:"SIerの営業としてのアイデンティティに悩んでいます",       phrase:"I am struggling with my ____ as a salesperson.",          section:6 },
-  { id:52, word:"specialty",       meaning:"専門・得意分野",               phraseJa:"「専門は？」と聞かれたとき、答えを持てていない",         phrase:"When someone asks me, \"What is your ____?\"",             section:6 },
-  { id:53, word:"intensified",     meaning:"強まった・増した",             phraseJa:"その存在がこの不安を強めています",                       phrase:"That has, in part, ____ this insecurity.",                 section:6 },
-  { id:54, word:"undermine",       meaning:"蝕む・弱める",                 phraseJa:"そうした感覚が自信のなさにつながります",                 phrase:"These feelings sometimes ____ my confidence.",            section:6 },
-  { id:55, word:"demonstrate",     meaning:"示す・発揮する",               phraseJa:"本来の力を出しきれない瞬間もあります",                   phrase:"I fail to fully ____ my true potential.",                 section:6 },
-  { id:56, word:"expertise",       meaning:"専門性・専門知識",             phraseJa:"製造業を支援できる専門性を身につけたい",                 phrase:"I want to develop strong ____ in supporting manufacturing companies.", section:6 },
-  { id:57, word:"approachability", meaning:"親しみやすさ",                 phraseJa:"成長には専門性と親しみやすさの両方が必要です",           phrase:"Growth requires both expertise and ____.",                 section:6 },
-  { id:58, word:"leverage",        meaning:"レバレッジ・優位性",           phraseJa:"よりレバレッジの効く環境に移りたいです",                 phrase:"I want to move into an environment where I can create greater ____.", section:6 },
-  { id:59, word:"recurring",       meaning:"継続的な・繰り返し発生する",   phraseJa:"継続課金のような価値に見合う契約を取りたい",             phrase:"Annual agreements or ____ revenue models.",               section:6 },
-  { id:60, word:"sincerity",       meaning:"誠実さ",                       phraseJa:"誠実さは強みで、そこを評価してくれる人もいます",         phrase:"____ is one of my strengths.",                            section:6 },
-  { id:61, word:"competitive",     meaning:"負けず嫌いな・競争心が強い",   phraseJa:"負けず嫌いなので、何かを始めるととことん没頭します",     phrase:"I'm very ____, so once I start something, I become fully absorbed.", section:7 },
-  { id:62, word:"absorbed",        meaning:"没頭した・夢中になった",       phraseJa:"何かを始めるととことん没頭します",                       phrase:"Once I start something, I become fully ____ in it.",      section:7 },
-  { id:63, word:"self-reflection", meaning:"自己内省",                     phraseJa:"自己内省も好きです",                                     phrase:"Another thing I like is ____.",                            section:7 },
-  { id:64, word:"immersed",        meaning:"没頭した",                     phraseJa:"その世界に没頭して時間を忘れます",                       phrase:"I get completely ____ in its world.",                     section:7 },
-  { id:65, word:"recharge",        meaning:"元気を回復する",               phraseJa:"気持ちをリセットし、元気を回復させています",             phrase:"It helps me reset and ____.",                              section:7 },
-  { id:66, word:"extraordinary",   meaning:"非日常的な・特別な",           phraseJa:"非日常を感じられる体験を探します",                       phrase:"I look for experiences that feel ____.",                   section:7 },
-  { id:67, word:"assumptions",     meaning:"思い込み・先入観",             phraseJa:"自分の思い込みが揺さぶられる体験",                       phrase:"Experiences that challenge my ____.",                      section:7 },
-  { id:68, word:"overwhelming",    meaning:"圧倒的な",                     phraseJa:"自然の圧倒的な力を感じる体験",                           phrase:"Experiences that allow me to feel the ____ power of nature.", section:7 },
-  { id:69, word:"meaningful",      meaning:"意味のある",                   phraseJa:"ゆっくりとした、意味のある時間を大切にしています",       phrase:"I value slow and ____ time.",                              section:7 },
-  { id:70, word:"motivation",      meaning:"モチベーション",               phraseJa:"その感情がモチベーションになります",                     phrase:"That feeling becomes ____ and a deep sense of satisfaction.", section:7 },
-  { id:71, word:"grateful",        meaning:"感謝している",                 phraseJa:"心から感謝しています",                                   phrase:"I'm deeply ____ to him.",                                  section:8 },
-  { id:72, word:"capable",         meaning:"有能な・能力がある",           phraseJa:"妻はとても有能で、いろいろなことが得意です",             phrase:"My wife is very ____ and good at many things.",            section:8 },
-  { id:73, word:"respect",         meaning:"尊敬する",                     phraseJa:"彼女の生き方を心から尊敬しています",                     phrase:"I deeply ____ the way she lives.",                         section:8 },
-  { id:74, word:"inspires",        meaning:"刺激を与える・鼓舞する",       phraseJa:"その姿勢にいつも刺激を受けています",                     phrase:"Their attitude always ____ me.",                           section:8 },
-  { id:75, word:"liveliness",      meaning:"活気・にぎやかさ",             phraseJa:"自然もありつつ、活気もあります",                         phrase:"There is nature, but also energy and ____.",               section:8 },
-  { id:76, word:"insights",        meaning:"示唆・洞察",                   phraseJa:"アニメは人生への示唆も与えてくれます",                   phrase:"Anime also gives us ____ about life.",                     section:8 },
-  { id:77, word:"conform",         meaning:"同調する",                     phraseJa:"同調圧力の強さが影響しているかもしれない",               phrase:"Strong social pressure to ____.",                          section:8 },
-  { id:78, word:"fluently",        meaning:"流暢に",                       phraseJa:"英語を流暢に話せる人に憧れています",                     phrase:"I admire people who speak English ____.",                  section:8 },
-  { id:79, word:"dramatically",    meaning:"大きく・劇的に",               phraseJa:"情報収集力が大きく向上すると信じています",               phrase:"My ability to gather information will improve ____.",      section:8 },
-  { id:80, word:"expand",          meaning:"広げる・拡大する",             phraseJa:"英語はキャリアの選択肢を広げてくれます",                 phrase:"English will ____ my options.",                            section:8 },
-];
-
-// ③ Instant translation uses the shadowing sentence list
 const PHRASES = [
-  { ja:"私は家族の次男として生まれました。", en:"I was born the second son in my family." },
-  { ja:"兄の影響でサッカーを始めました。", en:"I started playing soccer because of my older brother." },
-  { ja:"中学生のとき、プロのサッカー選手になりたいと明確に決意しました。", en:"When I was in junior high, I decided to become a professional soccer player." },
-  { ja:"そのときから、私はすべてをサッカーに捧げました。", en:"From that point on, I devoted everything to soccer." },
-  { ja:"大きな怪我も経験しましたが、そのたびに乗り越えてきました。", en:"I suffered some serious injuries, but I overcame them every time." },
-  { ja:"大学3年生のとき、自分の実力ではプロになれないと悟りました。", en:"During my junior year of college, I came to accept that becoming a professional soccer player wasn't realistic for me." },
-  { ja:"そこでその夢を諦め、会社員として働く道を選びました。", en:"So I gave up that dream and started my career in business." },
-  { ja:"社会人2年目に現在の妻と出会いました。", en:"In my second year at work, I met my wife." },
-  { ja:"2年間交際し、その後結婚しました。", en:"We dated for two years and then got married." },
-  { ja:"こうして今の自分に至っています。", en:"That's how I got to where I am today." },
-  { ja:"私は日本の大手システムインテグレーターで働いています。", en:"I work for a large system integrator in Japan." },
-  { ja:"現在は大手自動車メーカーを担当する営業をしています。", en:"I'm currently in charge of sales for a major automobile manufacturer." },
-  { ja:"システム開発、システム保守、DXの案件を支援しています。", en:"I support their system development, maintenance, and digital transformation projects." },
-  { ja:"私の会社はAIとサイバーセキュリティに強みがあります。", en:"My company has strong capabilities in AI and cybersecurity." },
-  { ja:"売上は主に人月ベースで成り立っています。", en:"Our revenue is primarily based on person-hours." },
-  { ja:"基本的なシステム実装の価値は徐々に低下しています。", en:"The value of basic system implementation is gradually declining." },
-  { ja:"従来の人月ベースのビジネスモデルはますます持続困難になっています。", en:"The traditional man-hour based business model is becoming increasingly unsustainable." },
-  { ja:"業界はアウトカム型へ移行する可能性が高いです。", en:"The industry is likely to shift to an outcome-based model." },
-  { ja:"私たちは実装を超え、戦略的アーキテクチャや全社レベルの課題解決に注力しなければなりません。", en:"We must move beyond implementation and focus on strategic architecture and enterprise-level problem solving." },
-  { ja:"今の会社に入社した理由は、特別ドラマチックなものではありません。", en:"There wasn't anything dramatic about my decision to join my current company." },
-  { ja:"テクノロジーは社会に不可欠で、社会に影響を与える仕事ができると思いました。", en:"Technology is essential to society, and I believed it would allow me to work on something with real impact." },
-  { ja:"業界の将来性にも魅力を感じていました。", en:"I was also attracted to the future potential of the industry." },
-  { ja:"業務改善や経営課題の解決に向けて、DXソリューションを提案していました。", en:"I proposed digital transformation initiatives aimed at optimizing operations and addressing key business challenges." },
-  { ja:"私の人生最大の転機はサッカーです。", en:"The biggest turning point in my life was playing soccer." },
-  { ja:"サッカーを通じて、私は地道な努力で成長するタイプだと気づきました。", en:"Through soccer, I realized that I am the type of person who grows through steady effort." },
-  { ja:"厳しい環境で最後までやり切った経験が、粘り強さと打たれ強さへの自信につながりました。", en:"Competing in a tough environment and giving my best until the very end gave me confidence in my toughness and resilience." },
-  { ja:"人生100年時代と言われる今、健康でいることはこれまで以上に重要だと感じています。", en:"In today's world where people are living longer, staying healthy is more important than ever." },
-  { ja:"私は、物事を多面的に捉え、分別を持って判断する力を大切にしています。", en:"I value the ability to see things from multiple perspectives and to make decisions with discernment." },
-  { ja:"この考えがあるので、過去の選択を必要以上に後悔しないようにしています。", en:"Because of this belief, I try not to regret my past choices excessively." },
-  { ja:"「もしも」にとらわれるより、前に進むことを選びます。", en:"Instead of dwelling on what might have been, I choose to move forward." },
-  { ja:"だから、他人の基準に縛られる必要はないと思っています。", en:"Therefore, I do not need to be bound by other people's standards." },
-  { ja:"人生には波があり、どんな状況も永遠には続きません。", en:"Life moves in waves and no situation remains the same forever." },
-  { ja:"淡々と整理して明確にすれば、道は開けることが多いと感じています。", en:"When things are calmly organized and clarified, a path usually appears." },
-  { ja:"私は、成果を出している人は例外なく継続的な努力を積み重ねていると信じています。", en:"I believe that people who achieve meaningful results do so through consistent effort." },
-  { ja:"だからこそ、学び続ける姿勢と着実な改善を大切にしています。", en:"That is why I value continuous learning and steady improvement." },
-  { ja:"人生は自分が意識して思い描いた方向に少しずつ近づいていくとも考えています。", en:"I believe that life gradually moves in the direction we consciously envision." },
-  { ja:"これからは、自分の意思をより明確にし、必要な場面ではしっかり自己主張していきたいです。", en:"Going forward, I want to be clearer about my own intentions and assert myself when necessary." },
-  { ja:"盲目的に受け入れるのではなく、自分の頭で考え抜く力をさらに高めたいです。", en:"I want to further strengthen my ability to think independently rather than accepting things blindly." },
-  { ja:"パーキンソンの法則を踏まえ、「捨てる勇気」を持って本当に重要なことに集中したいです。", en:"Aware of Parkinson's Law, I want to cultivate the courage to eliminate what is unnecessary and focus only on what truly matters." },
-  { ja:"本当に大切に思えるものだけに囲まれて生きたいです。", en:"I want to surround myself only with things I truly care about." },
-  { ja:"将来的には、家族と定期的に海外旅行にも行きたいです。", en:"In the future, I would also like to travel abroad regularly with my family." },
-  { ja:"今向き合っている悩みの一つは、SIerの営業としてのアイデンティティです。", en:"One of the things I am currently struggling with is my identity as a salesperson at a system integrator." },
-  { ja:"将来は、中堅・中小の製造業を支援できる専門性を身につけたいです。", en:"Looking ahead, I want to develop strong expertise in supporting small and mid-sized manufacturing companies." },
-  { ja:"誠実さは強みで、そこを評価してくれる人もいます。", en:"Sincerity is one of my strengths, and some people genuinely appreciate that." },
-  { ja:"成長には専門性と親しみやすさの両方が必要だと思っています。", en:"I believe growth requires both expertise and approachability." },
-  { ja:"20代は土台を築く時期だと考えています。", en:"In my twenties, I see this as the stage of building a foundation." },
-  { ja:"30代は、収入面でも意思決定権の面でも、よりレバレッジの効く環境に移りたいです。", en:"In my thirties, I want to move into an environment where I can create greater leverage in both income and decision-making authority." },
-  { ja:"40代は、専門性と人脈の両方で「名前で選ばれる」段階に到達したいです。", en:"In my forties, I want to reach a stage where I am chosen by name because of both my expertise and my network." },
-  { ja:"負けず嫌いなので、何かを始めるととことん没頭します。", en:"I'm very competitive, so once I start something, I become fully absorbed in it." },
-  { ja:"良い映画を見ると、その世界に没頭して時間を忘れます。", en:"When I watch a great film, I get completely immersed in its world and lose track of time." },
-  { ja:"それによって気持ちをリセットし、元気を回復させています。", en:"It helps me reset and recharge." },
-  { ja:"ゆっくりとした、意味のある時間を大切にしています。", en:"I value slow and meaningful time." },
-  { ja:"旅行では、非日常を感じられる体験を探します。", en:"When I travel, I look for experiences that feel extraordinary." },
-  { ja:"私は、思い出は人生の燃料だと思っています。", en:"I believe memories are fuel for life." },
-  { ja:"今は東京の西側エリアに住んでいます。", en:"Now I live in the western Tokyo area." },
-  { ja:"自然と、おしゃれな街並みと、美味しいレストランのバランスが良いからです。", en:"There's a good balance of nature, stylish neighborhoods, and great restaurants." },
-  { ja:"兄は芯が強く、他人に流されません。", en:"He has a strong core and doesn't get easily influenced by others." },
-  { ja:"父は長年、私のサッカー人生を支えてくれました。", en:"My father supported my soccer career for many years." },
-  { ja:"心から感謝しています。", en:"I'm deeply grateful to him." },
-  { ja:"妻はとても有能で、いろいろなことが得意です。", en:"My wife is very capable and good at many things." },
-  { ja:"彼女が肩書や社会的地位を気にせず、自分の欲望に従って生きているところを心から尊敬しています。", en:"I deeply respect the way she lives according to her own desires without being concerned about titles or social status." },
-  { ja:"その姿勢にいつも刺激を受けています。", en:"Their attitude always inspires me." },
-  { ja:"日本で最も素晴らしいと思うのは、豊かな文化です。", en:"What I appreciate most about Japan is its rich culture." },
-  { ja:"アニメは面白いだけでなく、人生への示唆も与えてくれます。", en:"Anime is not only entertaining, but it also gives us insights about life." },
-  { ja:"サウナでは、頭の中の思考から解放されます。", en:"In a sauna, I feel free from constant thinking." },
-  { ja:"英語を流暢に話せる人に憧れています。", en:"I admire people who speak English fluently." },
-  { ja:"英語が話せれば、海外旅行をもっと楽しめると思っています。", en:"I believe I can enjoy traveling abroad much more if I can speak English." },
-  { ja:"キャリアの面でも、英語は選択肢を広げてくれます。", en:"From a career perspective, English will expand my options." },
-  { ja:"多くの情報が英語で得られるので、情報収集力が大きく向上すると信じています。", en:"Since so much information is available in English, I believe my ability to gather information will improve dramatically." },
+  {id:1,block:1,en:"I was born the second son in my family.",ja:"私は家族の次男として生まれました。"},
+  {id:2,block:1,en:"I started playing soccer because of my older brother.",ja:"兄の影響でサッカーを始めました。"},
+  {id:3,block:1,en:"When I was in junior high, I decided to become a professional soccer player.",ja:"中学生のとき、プロのサッカー選手になりたいと明確に決意しました。"},
+  {id:4,block:1,en:"From that point on, I devoted everything to soccer.",ja:"そのときから、私はすべてをサッカーに捧げました。"},
+  {id:5,block:1,en:"I suffered some serious injuries, but I overcame them every time.",ja:"大きな怪我も経験しましたが、そのたびに乗り越えてきました。"},
+  {id:6,block:1,en:"During my junior year of college, I came to accept that becoming a professional soccer player wasn’t realistic for me.",ja:"大学3年生の就職活動の時期に、自分の実力ではプロになれないと悟りました。"},
+  {id:7,block:1,en:"So I gave up that dream and started my career in business.",ja:"そこでその夢を諦め、会社員として働く道を選びました。"},
+  {id:8,block:1,en:"In my second year at work, I met my wife.",ja:"社会人2年目に現在の妻と出会いました。"},
+  {id:9,block:1,en:"We dated for two years and then got married.",ja:"2年間交際し、その後結婚しました。"},
+  {id:10,block:1,en:"That’s how I got to where I am today.",ja:"こうして今の自分に至っています。"},
+  {id:11,block:2,en:"In high school and college, I mainly took the required courses.",ja:"高校と大学では主に必修科目を学びました。"},
+  {id:12,block:2,en:"I didn’t focus on any specific field.",ja:"特定の分野に強く集中したり、何かを専門にしたりはしていませんでした。"},
+  {id:13,block:2,en:"I work for a large system integrator in Japan.",ja:"私は日本の大手システムインテグレーターで働いています。"},
+  {id:14,block:2,en:"I’m currently in charge of sales for a major automobile manufacturer.",ja:"現在は大手自動車メーカーを担当する営業をしています。"},
+  {id:15,block:2,en:"I support their system development, maintenance, and digital transformation projects.",ja:"システム開発、システム保守、DX（デジタルトランスフォーメーション）案件を支援しています。"},
+  {id:16,block:2,en:"My company has strong capabilities in AI and cybersecurity.",ja:"私の会社はAIとサイバーセキュリティに強みがあります。"},
+  {id:17,block:2,en:"However, our main business model is what you might call an IT general contractor model.",ja:"ただし、主なビジネスモデルは、いわゆる「ITゼネコン型」です。"},
+  {id:18,block:2,en:"We take on large projects as a prime vendor for long-term clients and collaborate with subcontractors.",ja:"長年の取引先からプライムベンダーとして大型案件を受注し、協力会社（下請け）と一緒に進めています。"},
+  {id:19,block:2,en:"Our revenue is primarily based on person-hours.",ja:"売上は主に人月ベースで成り立っています。"},
+  {id:20,block:2,en:"As cloud technology spreads and IT systems become more standardized, while AI continues to advance rapidly, the value of basic system implementation is gradually declining.",ja:"クラウド技術の普及とITシステムの標準化が進み、AIが急速に進化する中で、基本的なシステム実装の価値は徐々に低下している。"},
+  {id:21,block:3,en:"As a result, the traditional man-hour–based business model is becoming increasingly unsustainable, and we need to fundamentally rethink our business model.",ja:"その結果、従来の人月ベースのビジネスモデルはますます持続困難になり、私たちはビジネスモデルそのものを根本から再考する必要がある。"},
+  {id:22,block:3,en:"Regardless of whether we change, the world will continue to evolve.",ja:"私たちが変わるかどうかに関わらず、世界は進化し続ける。"},
+  {id:23,block:3,en:"The industry is likely to shift from a time-and-materials model to an outcome-based one.",ja:"業界はT&Mモデルからアウトカム型へ移行する可能性が高い。"},
+  {id:24,block:3,en:"Instead of repeatedly revising and negotiating estimates, companies will be able to generate tangible results from data much more quickly.",ja:"見積もりの修正や交渉を繰り返すのではなく、企業はデータからより迅速に具体的成果を生み出せるようになる。"},
+  {id:25,block:3,en:"Standardized systems may become less relevant, giving way to highly customized solutions tailored to each organization.",ja:"標準化されたシステムは重要性を失い、各組織に最適化された高度にカスタマイズされたソリューションへと移行する可能性がある。"},
+  {id:26,block:3,en:"Moreover, areas that were previously too costly to justify system implementation may finally become viable as development costs decrease.",ja:"さらに、これまでコストが高すぎてシステム導入を正当化できなかった領域も、開発コストの低下により、ついに実現可能になるかもしれない。"},
+  {id:27,block:3,en:"In light of these changes, we must move beyond implementation and focus on strategic architecture and enterprise-level problem solving.",ja:"これらの変化を踏まえると、私たちは実装を超え、戦略的アーキテクチャや全社レベルの課題解決に注力しなければならない。"},
+  {id:28,block:3,en:"There wasn’t anything dramatic about my decision to join my current company.",ja:"今の会社に入社した理由は、特別ドラマチックなものではありません。"},
+  {id:29,block:3,en:"For many years, I focused entirely on becoming a professional soccer player.",ja:"長い間、私はプロサッカー選手になることだけに集中していました。"},
+  {id:30,block:3,en:"As a result, I didn’t have a clear vision or career goal when it came to business.",ja:"そのため、ビジネスに関しては明確な夢や目標を持っていませんでした。"},
+  {id:31,block:4,en:"At that time, the IT industry seemed like a logical choice for me.",ja:"当時は、IT業界に進むのが合理的だと感じました。"},
+  {id:32,block:4,en:"Technology is essential to society, and I believed it would allow me to work on something with real impact.",ja:"テクノロジーは社会に不可欠で、社会に影響を与える仕事ができると思ったからです。"},
+  {id:33,block:4,en:"I was also attracted to the future potential of the industry.",ja:"業界の将来性にも魅力を感じていました。"},
+  {id:34,block:4,en:"In addition, I had the opportunity to speak with my dormmate’s father, who was working at my current company at the time. That conversation also influenced my decision.",ja:"さらに、寮の友人の父親と話す機会がありました。その方は当時、現在の会社で働いており、その会話も私の決断に影響を与えました"},
+  {id:35,block:4,en:"In my first and second years at the company, I was responsible for selling IT infrastructure hardware to large manufacturing companies.",ja:"入社1〜2年目は、大手製造業向けのハードウェア営業を担当しました。"},
+  {id:36,block:4,en:"I mainly handled sales related to servers and IT infrastructure.",ja:"主にサーバーやITインフラ関連の案件を扱っていました。"},
+  {id:37,block:4,en:"In my third and fourth years, I was responsible for small and mid-sized manufacturing clients.",ja:"3〜4年目は、中堅・中小の製造業を担当しました。"},
+  {id:38,block:4,en:"I proposed digital transformation initiatives aimed at optimizing operations and addressing key business challenges.",ja:"業務改善や経営課題の解決に向けて、DXソリューションを提案していました。"},
+  {id:39,block:4,en:"The biggest turning point in my life was playing soccer.",ja:"私の人生最大の転機はサッカーです。"},
+  {id:40,block:4,en:"Through soccer, I realized that I am the type of person who grows through steady effort.",ja:"サッカーを通じて、私は地道な努力で成長するタイプだと気づきました。"},
+  {id:41,block:5,en:"Competing in a tough environment and giving my best until the very end gave me confidence in my toughness and resilience.",ja:"厳しい環境で最後までやり切った経験が、粘り強さと打たれ強さへの自信につながりました。"},
+  {id:42,block:5,en:"I also met many amazing people through soccer.",ja:"サッカーを通じて、素晴らしい人たちとも出会いました。"},
+  {id:43,block:5,en:"And building a habit of exercise has become one of my greatest assets.",ja:"運動習慣を身につけられたことも、私の大きな財産です。"},
+  {id:44,block:5,en:"In today’s world, where people are living longer, staying healthy is more important than ever.",ja:"人生100年時代と言われる今、健康でいることはこれまで以上に重要だと感じています。"},
+  {id:45,block:5,en:"I value the ability to see things from multiple perspectives and to make decisions with discernment.",ja:"私は、物事を多面的に捉え、分別を持って判断する力を大切にしています。"},
+  {id:46,block:5,en:"I believe that my sense of aesthetic judgment — the ability to notice when something feels slightly off and to question whether it is truly right — is one of my strengths.",ja:"「それは少し違うのではないか」と違和感に気づき、本当に正しいのかを問い直せる自分の美意識は、私の強みの一つだと思っています。"},
+  {id:47,block:5,en:"I also hold close the Japanese proverb “Jinsei wa Saiou ga Uma,” which means that life is unpredictable.",ja:"私は「人生は塞翁が馬」という日本のことわざを大切にしています（人生は予測できない、という意味です）。"},
+  {id:48,block:5,en:"Even events that seem negative at first can eventually lead to something positive.",ja:"一見よくない出来事でも、結果的に良い方向につながることがあると考えています。"},
+  {id:49,block:5,en:"Because of this belief, I try not to regret my past choices excessively.",ja:"この考えがあるので、過去の選択を必要以上に後悔しないようにしています。"},
+  {id:50,block:5,en:"The alternative path is something no one can truly know.",ja:"別の道を選んでいた未来は、誰にも本当のところは分からないからです。"},
+  {id:51,block:6,en:"Instead of dwelling on what might have been, I choose to move forward.",ja:"「もしも」にとらわれるより、前に進むことを選びます。"},
+  {id:52,block:6,en:"When I feel stuck, I return to a few guiding ideas.",ja:"行き詰まったときは、いくつかの考え方に立ち返ります。"},
+  {id:53,block:6,en:"First, people grow up in different environments and cultures, so they naturally see the world differently.",ja:"第一に、人は育ってきた環境や文化が違うため、世界の見え方も自然と異なります。"},
+  {id:54,block:6,en:"Therefore, I do not need to be bound by other people’s standards.",ja:"だから、他人の基準に縛られる必要はないと思っています。"},
+  {id:55,block:6,en:"Second, life moves in waves — no situation remains the same forever.",ja:"第二に、人生には波があり、どんな状況も永遠には続きません。"},
+  {id:56,block:6,en:"And third, much of our anxiety comes from not knowing what we should do next.",ja:"第三に、不安の多くは「次に何をすべきか分からないこと」から生まれます。"},
+  {id:57,block:6,en:"When things are calmly organized and clarified, a path usually appears.",ja:"淡々と整理して明確にすれば、道は開けることが多いと感じています。"},
+  {id:58,block:6,en:"I believe that people who achieve meaningful results do so through consistent effort.",ja:"私は、成果を出している人は例外なく継続的な努力を積み重ねていると信じています。"},
+  {id:59,block:6,en:"There are no true exceptions.",ja:"本当の例外はないと思っています。"},
+  {id:60,block:6,en:"That is why I value continuous learning and steady improvement.",ja:"だからこそ、学び続ける姿勢と着実な改善を大切にしています。"},
+  {id:61,block:7,en:"At the same time, I believe that life gradually moves in the direction we consciously envision.",ja:"同時に、人生は自分が意識して思い描いた方向に少しずつ近づいていくとも考えています。"},
+  {id:62,block:7,en:"Because of this, I try to be clear about who I want to become before anything else.",ja:"そのため、まず「自分はどうなりたいか」を明確にすることを意識しています。"},
+  {id:63,block:7,en:"Through my experiences abroad, I realized something important.",ja:"海外での経験を通じて、私は大切なことに気づきました。"},
+  {id:64,block:7,en:"People often live exactly the way they want to live.",ja:"人はそれぞれ、自分のやりたいように生きているということです。"},
+  {id:65,block:7,en:"They say what they think, and they fully enjoy their time off.",ja:"言いたいことは言い、休日も全力で楽しんでいました。"},
+  {id:66,block:7,en:"While my sense of balance is one of my strengths, I also realized that adapting too much to others’ expectations can prevent me from living my own time.",ja:"自分のバランス感覚は強みですが、他人の期待に合わせすぎると、自分の時間を生きられなくなるとも感じました。"},
+  {id:67,block:7,en:"Going forward, I want to be clearer about my own intentions and assert myself when necessary.",ja:"これからは、自分の意思をより明確にし、必要な場面ではしっかり自己主張していきたいです。"},
+  {id:68,block:7,en:"There are also areas where I know I need to grow.",ja:"一方で、伸ばしていきたい課題もあります。"},
+  {id:69,block:7,en:"First, I want to further strengthen my ability to think independently rather than accepting things blindly.",ja:"まず、盲目的に受け入れるのではなく、自分の頭で考え抜く力をさらに高めたいです。"},
+  {id:70,block:7,en:"I aim to develop stronger strategic and critical thinking skills so that I can make more essential, high-level judgments.",ja:"戦略的思考や批判的思考を磨き、より本質的で高度な判断ができるようになりたいと考えています。"},
+  {id:71,block:8,en:"Second, while kindness and consideration are strengths of mine, I recognize the importance of being firm when needed — like a defensive midfielder in soccer: calm and balanced, yet demanding and decisive in critical moments.",ja:"次に、優しさや配慮は強みですが、必要なときにはサッカーのボランチのように冷静かつ厳しく、決める場面では強く出ることも重要だと思っています。"},
+  {id:72,block:8,en:"Finally, I tend to approach tasks comprehensively, sometimes trying to cover everything.",ja:"最後に、私は物事を網羅的に進めようとしすぎる傾向があります。"},
+  {id:73,block:8,en:"Aware of Parkinson’s Law, I want to cultivate the courage to eliminate what is unnecessary and focus only on what truly matters.",ja:"パーキンソンの法則を踏まえ、「捨てる勇気」を持って本当に重要なことに集中したいです。"},
+  {id:74,block:8,en:"By doing so, I believe I can significantly improve my productivity and impact.",ja:"そうすることで、生産性と影響力を大きく高められると思っています。"},
+  {id:75,block:8,en:"Looking ahead, I have a personal vision for my future.",ja:"将来に向けて、私には個人的なビジョンがあります。"},
+  {id:76,block:8,en:"I want to surround myself only with things I truly care about.",ja:"本当に大切に思えるものだけに囲まれて生きたいです。"},
+  {id:77,block:8,en:"On a larger scale, I would like to build a home designed with great attention to detail.",ja:"大きな目標としては、細部までこだわって設計した家を建てたいです。"},
+  {id:78,block:8,en:"On a smaller scale, I want to choose everyday items that I genuinely love.",ja:"小さな目標としては、日用品も心から好きだと思えるものを選びたいです。"},
+  {id:79,block:8,en:"Right now, I don’t feel that I have full financial freedom yet.",ja:"今はまだ、完全な経済的自由があるとは感じていません。"},
+  {id:80,block:8,en:"Often I tell myself, “It still works, so it’s fine,” even if it’s not something I truly care about.",ja:"本当はこだわりたいのに、「まだ使えるからいいか」と自分に言い聞かせてしまうこともあります。"},
+  {id:81,block:9,en:"In the future, I would also like to travel abroad regularly with my family.",ja:"将来的には、家族と定期的に海外旅行にも行きたいです。"},
+  {id:82,block:9,en:"One of the things I am currently struggling with is my identity as a salesperson at a system integrator.",ja:"今向き合っている悩みの一つは、SIerの営業としてのアイデンティティです。"},
+  {id:83,block:9,en:"If my company’s brand were taken away, I sometimes wonder what I could truly offer on my own.",ja:"会社のブランドがなくなったら、自分は何を提供できるのだろう、と考えることがあります。"},
+  {id:84,block:9,en:"When someone asks me, “What can you do?” or “What is your specialty?” I realize I do not yet have a clear and confident answer.",ja:"「何ができるの？」「専門は？」と聞かれたとき、まだ明確で自信ある答えを持てていないと気づきます。"},
+  {id:85,block:9,en:"Another concern I have is anxiety about my own abilities.",ja:"もう一つの悩みは、自分の能力に対する不安です。"},
+  {id:86,block:9,en:"Although our departments and circumstances are different, some of my peers have been promoted, and that has, in part, intensified this insecurity.",ja:"部署や事情は違うとはいえ、同期の中には昇給している人もいて、その存在がこの不安を強めている部分もあります。"},
+  {id:87,block:9,en:"At times, I feel that I am not strong at quickly structuring ideas, thinking flexibly, or knowing when to step back and let things flow.",ja:"物事を素早く構造化する力や、柔軟に考える力、あるいはうまく力を抜いて流すことが十分ではないと感じることがあります。"},
+  {id:88,block:9,en:"These feelings sometimes undermine my confidence, and there are moments when I hesitate and fail to fully demonstrate my true potential.",ja:"そうした感覚が自信のなさにつながり、どこかでためらってしまい、本来の力を出しきれない瞬間もあります。"},
+  {id:89,block:9,en:"That is exactly why I keep thinking seriously about how I should build my career from this point forward.",ja:"だからこそ、これからどうキャリアを築くべきかを真剣に考え続けています。"},
+  {id:90,block:9,en:"Looking ahead, I want to develop strong expertise in supporting small and mid-sized manufacturing companies.",ja:"将来は、中堅・中小の製造業を支援できる専門性を身につけたいです。"},
+  {id:91,block:10,en:"They make up a large part of Japan’s economy, and I believe their importance will continue to grow.",ja:"彼らは日本経済の大きな部分を支えており、重要性は今後さらに高まると思っています。"},
+  {id:92,block:10,en:"To truly support them, I need deeper knowledge of IT architecture and business processes.",ja:"本当に支援するには、ITアーキテクチャと業務プロセスへの理解を深める必要があります。"},
+  {id:93,block:10,en:"I want to be able to speak on equal terms with engineers and clients— not only from a sales perspective, but from a professional and strategic standpoint.",ja:"営業目線だけでなく、専門的・戦略的な立場で、エンジニアや顧客と対等に話せるようになりたいです。"},
+  {id:94,block:10,en:"As a salesperson, one of my challenges is that I can come across as somewhat serious or rigid.",ja:"営業としての課題の一つは、少し真面目すぎたり硬い印象を与えてしまうところです。"},
+  {id:95,block:10,en:"Sincerity is one of my strengths, and some people genuinely appreciate that.",ja:"誠実さは強みで、そこを評価してくれる人もいます。"},
+  {id:96,block:10,en:"However, it can take time for me to build closer relationships.",ja:"ただ、距離を縮めるのに時間がかかることもあります。"},
+  {id:97,block:10,en:"I want to share more of myself, be more open, and connect with people in a more natural way.",ja:"もっと自分を開き、自然体で人とつながれるようになりたいです。"},
+  {id:98,block:10,en:"Even within my company, I feel that increasing communication and taking a more open attitude would help me grow.",ja:"社内でも、コミュニケーションを増やし、よりオープンな姿勢を持つことが成長につながると感じています。"},
+  {id:99,block:10,en:"Right now, I am still in the process of defining my path.",ja:"今はまだ、自分の道を定義している途中です。"},
+  {id:100,block:10,en:"But I believe growth requires both expertise and approachability.",ja:"ただ、成長には専門性と親しみやすさの両方が必要だと思っています。"},
+  {id:101,block:11,en:"I want to become someone who is strong in knowledge and trusted as a person.",ja:"知識に強く、人として信頼される存在になりたいです。"},
+  {id:102,block:11,en:"From a long-term perspective, I also have a rough strategy for each stage of my career.",ja:"長期的には、キャリア各段階の大まかな戦略も描いています。"},
+  {id:103,block:11,en:"In my twenties, I see this as the stage of building a foundation.",ja:"20代は土台を築く時期だと考えています。"},
+  {id:104,block:11,en:"I want to be able to organize the problems of manufacturing companies in the language of the workplace, not just in abstract business terms.",ja:"製造業の課題を、抽象的なビジネス用語ではなく現場の言葉で整理できるようになりたいです。"},
+  {id:105,block:11,en:"At the same time, I want to build a solid understanding of IT architecture so that I can speak with systems engineers as an equal.",ja:"同時に、ITアーキの理解を固め、SEと対等に話せる土台を作りたいです。"},
+  {id:106,block:11,en:"In my thirties, I want to move into an environment where I can create greater leverage— in both income and decision-making authority.",ja:"30代は、収入面でも意思決定権の面でも、よりレバレッジの効く環境に移りたいです。"},
+  {id:107,block:11,en:"Rather than staying only in a traditional business model based on billing by time and headcount, I want to challenge myself to work in value-based business, where the contract is built around outcomes and impact.",ja:"時間や人数で課金する従来型モデルだけでなく、成果や影響に基づく価値ベースのビジネスに挑戦したいです。"},
+  {id:108,block:11,en:"I want to work closely with excellent engineers, become deeply involved in the client’s IT function, identify the single most important problem they are facing, turn that into a real solution, and win contracts that reflect the value created— such as annual agreements or recurring revenue models.",ja:"優秀なエンジニアと密に連携し、顧客IT部門に深く入り込み、最重要課題を特定して解決策に落とし込み、年間契約や継続課金のような価値に見合う契約を取りたいです。"},
+  {id:109,block:11,en:"In my forties, I want to reach a stage where I am chosen by name because of both my expertise and my network.",ja:"40代は、専門性と人脈の両方で「名前で選ばれる」段階に到達したいです。"},
+  {id:110,block:11,en:"That, to me, is the stage where freedom becomes greatest.",ja:"それが、自分にとって最も自由度が高い状態だと思っています。"},
+  {id:111,block:12,en:"I want to be in a position where trust brings opportunities to me, and where I can balance work with family and personal interests.",ja:"信頼が機会を連れてくる立場になり、仕事と家族、個人の時間をバランスよく保ちたいです。"},
+  {id:112,block:12,en:"By then, I hope to increase the number of projects where I am specifically sought out because of my track record and specialization.",ja:"その頃には、実績と専門性によって指名される案件を増やしたいです。"},
+  {id:113,block:12,en:"Depending on the situation, I also want to keep open several possible paths— moving to the business side, working on the client side, becoming independent, or expanding side businesses.",ja:"状況次第で、事業側への転身、顧客側への移動、独立、副業拡大など、複数の道を開いておきたいです。"},
+  {id:114,block:12,en:"Right now, I am still searching for my answer.",ja:"今はまだ答えを探している途中です。"},
+  {id:115,block:12,en:"But step by step, I want to build a career that is based not only on the name of my company, but on the value I can create myself.",ja:"しかし一歩ずつ、会社の名前だけではなく、自分が生み出せる価値に基づいたキャリアを築きたいです。"},
+  {id:116,block:12,en:"One of my biggest passions is soccer.",ja:"私の大きな情熱の一つはサッカーです。"},
+  {id:117,block:12,en:"I’m very competitive, so once I start something, I become fully absorbed in it.",ja:"負けず嫌いなので、何かを始めるととことん没頭します。"},
+  {id:118,block:12,en:"I also enjoy planning trips and organizing my weekends.",ja:"旅行の計画を立てたり、週末の予定を組み立てたりするのも好きです。"},
+  {id:119,block:12,en:"I find joy in the process of planning itself.",ja:"計画している時間そのものに楽しさを感じます。"},
+  {id:120,block:12,en:"Another thing I like is self-reflection.",ja:"自己内省も好きです。"},
+  {id:121,block:13,en:"I often think about what kind of life I want to live and what values I want to prioritize.",ja:"どんな人生を送りたいか、何を大切にしたいかをよく考えます。"},
+  {id:122,block:13,en:"I also love movies.",ja:"映画も大好きです。"},
+  {id:123,block:13,en:"When I watch a great film, I get completely immersed in its world and lose track of time.",ja:"良い映画を見ると、その世界に没頭して時間を忘れます。"},
+  {id:124,block:13,en:"And when a movie truly moves me, that feeling becomes motivation and a deep sense of satisfaction.",ja:"心を動かされる映画に出会うと、その感情がモチベーションになり、深い満足感につながります。"},
+  {id:125,block:13,en:"On weekends, I spend about half of my time on myself.",ja:"週末は、だいたい半分の時間を自分のために使っています。"},
+  {id:126,block:13,en:"I read books and go to the gym.",ja:"本を読んだり、ジムに行ったりします。"},
+  {id:127,block:13,en:"It helps me reset and recharge.",ja:"それによって気持ちをリセットし、元気を回復させています。"},
+  {id:128,block:13,en:"I also clean the house and take my dogs for a walk.",ja:"家の掃除をしたり、犬の散歩に行ったりもします。"},
+  {id:129,block:13,en:"Sometimes, I enjoy shopping or eating out with my wife.",ja:"ときには妻と買い物をしたり、外食を楽しんだりします。"},
+  {id:130,block:13,en:"I value slow and meaningful time.",ja:"ゆっくりとした、意味のある時間を大切にしています。"},
+  {id:131,block:14,en:"When I travel, I look for experiences that feel extraordinary.",ja:"旅行では、非日常を感じられる体験を探します。"},
+  {id:132,block:14,en:"I enjoy trying local food and discovering flavors that I can’t find in everyday life.",ja:"現地の食べ物を試し、日常では出会えない味を発見するのが好きです。"},
+  {id:133,block:14,en:"I’m also drawn to experiences that challenge my assumptions or allow me to feel the overwhelming power of nature.",ja:"自分の思い込みが揺さぶられる体験や、自然の圧倒的な力を感じる体験にも惹かれます。"},
+  {id:134,block:14,en:"I believe memories are fuel for life.",ja:"私は、思い出は人生の燃料だと思っています。"},
+  {id:135,block:14,en:"So I want to have experiences that I normally can’t have.",ja:"だからこそ、普段はできない体験を大切にしたいです。"},
+  {id:136,block:14,en:"As for food, I’m not a picky eater at all.",ja:"食べ物の好き嫌いはほとんどありません。"},
+  {id:137,block:14,en:"I love all-you-can-eat barbecue and buffet-style meals.",ja:"焼肉の食べ放題やビュッフェ形式の食事が好きです。"},
+  {id:138,block:14,en:"And most of all, I love the meals my wife cooks.",ja:"そして何より、妻の料理が一番好きです。"},
+  {id:139,block:14,en:"Currently, I live in a rental apartment.",ja:"現在は賃貸マンションに住んでいます。"},
+  {id:140,block:14,en:"I have two large dogs, so finding a place was very challenging.",ja:"大型犬を2匹飼っているので、住まい探しはとても大変でした。"},
+  {id:141,block:15,en:"With large dogs, most apartments only allow first-floor units.",ja:"大型犬だと、多くの物件は1階の部屋しか許可されません。"},
+  {id:142,block:15,en:"And many places don’t allow large dogs or multiple pets.",ja:"そもそも大型犬や多頭飼いを認めていない物件も多いです。"},
+  {id:143,block:15,en:"So my options were quite limited.",ja:"そのため、選択肢はかなり限られていました。"},
+  {id:144,block:15,en:"I grew up in a rural area surrounded by nature.",ja:"私は自然に囲まれた地方で育ちました。"},
+  {id:145,block:15,en:"During university, I lived in a dormitory in a student neighborhood.",ja:"大学時代は学生街の寮に住んでいました。"},
+  {id:146,block:15,en:"After that, I lived in a share house in central Tokyo for a while.",ja:"その後、しばらく都心のシェアハウスに住んでいました。"},
+  {id:147,block:15,en:"Now I live in the western Tokyo area.",ja:"今は東京の西側エリアに住んでいます。"},
+  {id:148,block:15,en:"I really like it here.",ja:"ここがとても気に入っています。"},
+  {id:149,block:15,en:"There’s a good balance of nature, stylish neighborhoods, and great restaurants.",ja:"自然と、おしゃれな街並みと、美味しいレストランのバランスが良いからです。"},
+  {id:150,block:15,en:"There are still so many places I want to explore in Tokyo.",ja:"東京にはまだまだ行きたい場所がたくさんあります。"},
+  {id:151,block:16,en:"So for now, I don’t feel ready to leave.",ja:"なので今のところ、離れたいとは思っていません。"},
+  {id:152,block:16,en:"My older brother has had a big influence on me.",ja:"兄は私に大きな影響を与えてきました。"},
+  {id:153,block:16,en:"When I was young, I often copied his values and way of thinking.",ja:"子どもの頃は、兄の価値観や考え方をよく真似していました。"},
+  {id:154,block:16,en:"He has a strong core and doesn’t get easily influenced by others.",ja:"兄は芯が強く、他人に流されません。"},
+  {id:155,block:16,en:"And he is a very kind person.",ja:"そして、とても優しい人です。"},
+  {id:156,block:16,en:"My father supported my soccer career for many years.",ja:"父は長年、私のサッカー人生を支えてくれました。"},
+  {id:157,block:16,en:"I’m deeply grateful to him.",ja:"心から感謝しています。"},
+  {id:158,block:16,en:"Recently, I’ve started to notice that he is getting older, and that makes me a little worried.",ja:"最近、父が年を重ねていることを実感し、少し心配にもなります。"},
+  {id:159,block:16,en:"My mother is always positive.",ja:"母はいつも前向きです。"},
+  {id:160,block:16,en:"I have never seen her being lazy.",ja:"怠けている姿を見たことがありません。"},
+  {id:161,block:17,en:"She is full of energy.",ja:"とてもエネルギッシュです。"},
+  {id:162,block:17,en:"My wife is very capable and good at many things.",ja:"妻はとても有能で、いろいろなことが得意です。"},
+  {id:163,block:17,en:"She has deep knowledge about food and a great sense of humor.",ja:"食の知識が深く、ユーモアのセンスもあります。"},
+  {id:164,block:17,en:"I deeply respect the way she lives according to her own desires without being concerned about titles or social status.",ja:"彼女が肩書や社会的地位を気にせず、自分の欲望に従って生きているところを心から尊敬しています。"},
+  {id:165,block:17,en:"Many of my friends still give their best to both soccer and their careers, even after becoming working adults.",ja:"多くの友人は社会人になった今も、サッカーと仕事の両方に全力を尽くしています。"},
+  {id:166,block:17,en:"Their attitude always inspires me.",ja:"その姿勢にいつも刺激を受けています。"},
+  {id:167,block:17,en:"One of my favorite places is Kichijoji.",ja:"私の好きな場所の一つは吉祥寺です。"},
+  {id:168,block:17,en:"It has everything you need for daily life, and there are many stylish shops and cafes.",ja:"生活に必要なものが揃っていて、おしゃれなお店やカフェもたくさんあります。"},
+  {id:169,block:17,en:"There is nature, but also energy and liveliness.",ja:"自然もありつつ、活気もあります。"},
+  {id:170,block:17,en:"I love the balance.",ja:"そのバランスが好きです。"},
+  {id:171,block:18,en:"It’s definitely a place I would recommend to others.",ja:"ぜひ人にも勧めたい場所です。"},
+  {id:172,block:18,en:"What I appreciate most about Japan is its rich culture.",ja:"日本で最も素晴らしいと思うのは、豊かな文化です。"},
+  {id:173,block:18,en:"I especially like sumo, anime, and hot springs.",ja:"特に相撲、アニメ、温泉が好きです。"},
+  {id:174,block:18,en:"In sumo, I love the tension and intensity of a match that can end in just a few seconds.",ja:"相撲では、数秒で決まることもある試合の緊張感と迫力が好きです。"},
+  {id:175,block:18,en:"Anime is not only entertaining, but it also gives us insights about life.",ja:"アニメは面白いだけでなく、人生への示唆も与えてくれます。"},
+  {id:176,block:18,en:"I also enjoy hot springs, especially saunas.",ja:"温泉も好きで、特にサウナが好きです。"},
+  {id:177,block:18,en:"In a sauna, I feel free from constant thinking.",ja:"サウナでは、頭の中の思考から解放されます。"},
+  {id:178,block:18,en:"It becomes a world of pure sensation — just heat and cold.",ja:"熱さと冷たさだけの、純粋な感覚の世界になります。"},
+  {id:179,block:18,en:"That helps me clear my mind and truly relax.",ja:"それが頭をクリアにし、本当にリラックスさせてくれます。"},
+  {id:180,block:18,en:"Sometimes, new ideas come to me during those quiet moments.",ja:"静かな時間の中で、新しいアイデアが浮かぶこともあります。"},
+  {id:181,block:19,en:"On the other hand, I think Japan faces serious challenges.",ja:"一方で、日本には深刻な課題もあると思います。"},
+  {id:182,block:19,en:"One is the declining birthrate and aging population.",ja:"一つは少子高齢化です。"},
+  {id:183,block:19,en:"Another is low productivity.",ja:"もう一つは低い生産性です。"},
+  {id:184,block:19,en:"I believe cultural factors, such as strong social pressure to conform, may also play a role.",ja:"同調圧力の強さなど、文化的な要因も影響しているのではないかと感じています。"},
+  {id:185,block:19,en:"The reason I started studying English is actually simple.",ja:"英語を学び始めた理由は、実はシンプルです。"},
+  {id:186,block:19,en:"I admire people who speak English fluently.",ja:"英語を流暢に話せる人に憧れています。"},
+  {id:187,block:19,en:"I just think it’s cool.",ja:"単純に、かっこいいと思います。"},
+  {id:188,block:19,en:"Also, I believe I can enjoy traveling abroad much more if I can speak English.",ja:"英語が話せれば、海外旅行をもっと楽しめると思っています。"},
+  {id:189,block:19,en:"From a career perspective, English will expand my options.",ja:"キャリアの面でも、英語は選択肢を広げてくれます。"},
+  {id:190,block:19,en:"And since so much information is available in English, I believe my ability to gather information will improve dramatically.",ja:"そして、多くの情報が英語で得られるので、情報収集力が大きく向上すると信じています。"},
 ];
 
+const VOCAB = [
+  {id:1,block:1,word:"born",meaning:"生まれた",phrase:"I was ____ the second son in my family.",phraseJa:"私は家族の次男として生まれました。"},
+  {id:2,block:1,word:"influence",meaning:"影響",phrase:"I started playing soccer because of my older brother's ____.",phraseJa:"兄の影響でサッカーを始めました。"},
+  {id:3,block:1,word:"decided",meaning:"決意した",phrase:"I ____ to become a professional soccer player.",phraseJa:"プロのサッカー選手になることを決意しました。"},
+  {id:4,block:1,word:"devoted",meaning:"捧げた",phrase:"I ____ everything to soccer.",phraseJa:"すべてをサッカーに捧げました。"},
+  {id:5,block:1,word:"suffered",meaning:"経験した",phrase:"I ____ some serious injuries.",phraseJa:"大きな怪我を経験しました。"},
+  {id:6,block:1,word:"overcame",meaning:"乗り越えた",phrase:"I ____ them every time.",phraseJa:"そのたびに乗り越えてきました。"},
+  {id:7,block:1,word:"realistic",meaning:"現実的な",phrase:"Becoming a pro was not ____ for me.",phraseJa:"プロになることは現実的ではありませんでした。"},
+  {id:8,block:1,word:"gave up",meaning:"諦めた",phrase:"So I ____ that dream.",phraseJa:"その夢を諦めました。"},
+  {id:9,block:1,word:"dated",meaning:"交際した",phrase:"We ____ for two years.",phraseJa:"2年間交際しました。"},
+  {id:10,block:1,word:"got married",meaning:"結婚した",phrase:"We dated for two years and then ____.",phraseJa:"2年間交際し、その後結婚しました。"},
+  {id:11,block:2,word:"mainly",meaning:"主に",phrase:"I ____ took the required courses.",phraseJa:"主に必修科目を学びました。"},
+  {id:12,block:2,word:"specific",meaning:"特定の",phrase:"I did not focus on any ____ field.",phraseJa:"特定の分野に集中していませんでした。"},
+  {id:13,block:2,word:"currently",meaning:"現在は",phrase:"I am ____ in charge of sales.",phraseJa:"現在は営業を担当しています。"},
+  {id:14,block:2,word:"charge",meaning:"担当",phrase:"I am in ____ of sales for a major automobile manufacturer.",phraseJa:"大手自動車メーカーの営業を担当しています。"},
+  {id:15,block:2,word:"support",meaning:"支援する",phrase:"I ____ their system development and DX projects.",phraseJa:"システム開発やDXの案件を支援しています。"},
+  {id:16,block:2,word:"capabilities",meaning:"強み",phrase:"My company has strong ____ in AI and cybersecurity.",phraseJa:"会社はAIとサイバーセキュリティに強みがあります。"},
+  {id:17,block:2,word:"collaborate",meaning:"協力する",phrase:"We ____ with subcontractors.",phraseJa:"協力会社と連携して進めています。"},
+  {id:18,block:2,word:"primarily",meaning:"主に",phrase:"Our revenue is ____ based on person-hours.",phraseJa:"売上は主に人月ベースで成り立っています。"},
+  {id:19,block:2,word:"standardized",meaning:"標準化された",phrase:"As IT systems become more ____.",phraseJa:"ITシステムの標準化が進む中で。"},
+  {id:20,block:2,word:"declining",meaning:"低下している",phrase:"The value of basic system implementation is gradually ____.",phraseJa:"基本的なシステム実装の価値は徐々に低下しています。"},
+  {id:21,block:3,word:"unsustainable",meaning:"持続不可能な",phrase:"The traditional business model is becoming increasingly ____.",phraseJa:"従来のビジネスモデルはますます持続困難になっています。"},
+  {id:22,block:3,word:"evolve",meaning:"進化する",phrase:"The world will continue to ____.",phraseJa:"世界は進化し続けます。"},
+  {id:23,block:3,word:"outcome",meaning:"成果",phrase:"The industry is likely to shift to an ____-based model.",phraseJa:"業界はアウトカム型モデルへ移行する可能性が高いです。"},
+  {id:24,block:3,word:"tangible",meaning:"具体的な",phrase:"Companies will generate ____ results from data.",phraseJa:"データからより具体的な成果を生み出せるようになります。"},
+  {id:25,block:3,word:"customized",meaning:"カスタマイズされた",phrase:"Highly ____ solutions tailored to each organization.",phraseJa:"各組織に最適化された高度にカスタマイズされたソリューション。"},
+  {id:26,block:3,word:"viable",meaning:"実現可能な",phrase:"These areas may finally become ____.",phraseJa:"これらの領域がついに実現可能になるかもしれません。"},
+  {id:27,block:3,word:"strategic",meaning:"戦略的な",phrase:"We must focus on ____ architecture.",phraseJa:"戦略的アーキテクチャに注力しなければなりません。"},
+  {id:28,block:3,word:"dramatic",meaning:"劇的な",phrase:"There was not anything ____ about my decision.",phraseJa:"決断には特別ドラマチックなことは何もありませんでした。"},
+  {id:29,block:3,word:"focused",meaning:"集中した",phrase:"For many years, I ____ entirely on becoming a pro.",phraseJa:"長い間、プロになることだけに集中していました。"},
+  {id:30,block:3,word:"vision",meaning:"ビジョン",phrase:"I did not have a clear ____ or career goal.",phraseJa:"明確なビジョンやキャリア目標がありませんでした。"},
+  {id:31,block:4,word:"logical",meaning:"合理的な",phrase:"The IT industry seemed like a ____ choice.",phraseJa:"IT業界は合理的な選択肢のように思えました。"},
+  {id:32,block:4,word:"essential",meaning:"不可欠な",phrase:"Technology is ____ to society.",phraseJa:"テクノロジーは社会に不可欠です。"},
+  {id:33,block:4,word:"attracted",meaning:"惹かれた",phrase:"I was also ____ to the future potential of the industry.",phraseJa:"IT業界の将来性にも魅力を感じていました。"},
+  {id:34,block:4,word:"influenced",meaning:"影響を与えた",phrase:"That conversation also ____ my decision.",phraseJa:"その会話も決断に影響を与えました。"},
+  {id:35,block:4,word:"responsible",meaning:"担当した",phrase:"I was ____ for selling IT infrastructure hardware.",phraseJa:"大手製造業向けのハードウェア営業を担当しました。"},
+  {id:36,block:4,word:"handled",meaning:"扱った",phrase:"I mainly ____ sales related to servers and IT infrastructure.",phraseJa:"主にサーバーやITインフラ関連の案件を扱っていました。"},
+  {id:37,block:4,word:"proposed",meaning:"提案した",phrase:"I ____ digital transformation initiatives.",phraseJa:"デジタルトランスフォーメーションの取り組みを提案しました。"},
+  {id:38,block:4,word:"optimizing",meaning:"最適化する",phrase:"Aimed at ____ operations and addressing key business challenges.",phraseJa:"業務改善や経営課題の解決に向けた取り組みを提案していました。"},
+  {id:39,block:4,word:"turning point",meaning:"転機",phrase:"The biggest ____ in my life was playing soccer.",phraseJa:"人生最大の転機はサッカーでした。"},
+  {id:40,block:4,word:"steady",meaning:"着実な",phrase:"I am the type of person who grows through ____ effort.",phraseJa:"地道な努力で成長するタイプです。"},
+  {id:41,block:5,word:"resilience",meaning:"打たれ強さ",phrase:"Giving my best until the end gave me confidence in my toughness and ____.",phraseJa:"最後までやり切った経験が、粘り強さと打たれ強さへの自信につながりました。"},
+  {id:42,block:5,word:"assets",meaning:"財産",phrase:"Building a habit of exercise has become one of my greatest ____.",phraseJa:"運動習慣を身につけられたことも、私の大きな財産です。"},
+  {id:43,block:5,word:"perspectives",meaning:"視点",phrase:"I value the ability to see things from multiple ____.",phraseJa:"物事を多面的に捉える力を大切にしています。"},
+  {id:44,block:5,word:"discernment",meaning:"分別",phrase:"I value the ability to make decisions with ____.",phraseJa:"分別を持って判断する力を大切にしています。"},
+  {id:45,block:5,word:"aesthetic",meaning:"美意識",phrase:"My sense of ____ judgment is one of my strengths.",phraseJa:"自分の美意識は強みの一つだと思っています。"},
+  {id:46,block:5,word:"unpredictable",meaning:"予測できない",phrase:"Life is ____.",phraseJa:"人生は予測できません。"},
+  {id:47,block:5,word:"negative",meaning:"否定的な",phrase:"Events that seem ____ at first can lead to something positive.",phraseJa:"一見よくない出来事でも、結果的に良い方向につながることがあります。"},
+  {id:48,block:5,word:"excessively",meaning:"必要以上に",phrase:"I try not to regret my past choices ____.",phraseJa:"過去の選択を必要以上に後悔しないようにしています。"},
+  {id:49,block:5,word:"alternative",meaning:"別の",phrase:"The ____ path is something no one can truly know.",phraseJa:"別の道を選んでいた未来は、誰にも本当のところは分かりません。"},
+  {id:50,block:5,word:"dwelling",meaning:"とらわれること",phrase:"Instead of ____ on what might have been, I choose to move forward.",phraseJa:"「もしも」にとらわれるより、前に進むことを選びます。"},
+  {id:51,block:6,word:"guiding",meaning:"導く",phrase:"I return to a few ____ ideas.",phraseJa:"いくつかの考え方に立ち返ります。"},
+  {id:52,block:6,word:"bound",meaning:"縛られる",phrase:"I do not need to be ____ by other people s standards.",phraseJa:"他人の基準に縛られる必要はありません。"},
+  {id:53,block:6,word:"anxiety",meaning:"不安",phrase:"Much of our ____ comes from not knowing what to do next.",phraseJa:"不安の多くは次に何をすべきか分からないことから生まれます。"},
+  {id:54,block:6,word:"clarified",meaning:"明確にされた",phrase:"When things are calmly organized and ____, a path usually appears.",phraseJa:"淡々と整理して明確にすれば、道は開けることが多いです。"},
+  {id:55,block:6,word:"consistent",meaning:"継続的な",phrase:"People achieve results through ____ effort.",phraseJa:"継続的な努力を積み重ねることで成果を出します。"},
+  {id:56,block:6,word:"exceptions",meaning:"例外",phrase:"There are no true ____.",phraseJa:"本当の例外はないと思っています。"},
+  {id:57,block:6,word:"improvement",meaning:"改善",phrase:"I value continuous learning and steady ____.",phraseJa:"学び続ける姿勢と着実な改善を大切にしています。"},
+  {id:58,block:6,word:"consciously",meaning:"意識的に",phrase:"Life moves in the direction we ____ envision.",phraseJa:"人生は意識して思い描いた方向に少しずつ近づいていきます。"},
+  {id:59,block:6,word:"envision",meaning:"思い描く",phrase:"Life gradually moves in the direction we consciously ____.",phraseJa:"自分が意識して思い描いた方向に少しずつ近づいていきます。"},
+  {id:60,block:6,word:"clarity",meaning:"明確さ",phrase:"I seek ____ about who I want to become.",phraseJa:"まず自分がどうなりたいかを明確にすることを意識しています。"},
+  {id:61,block:7,word:"gradually",meaning:"少しずつ",phrase:"Life ____ moves in the direction we envision.",phraseJa:"人生は少しずつ思い描いた方向に近づいていきます。"},
+  {id:62,block:7,word:"intentions",meaning:"意思",phrase:"I want to be clearer about my own ____.",phraseJa:"自分の意思をより明確にしたいです。"},
+  {id:63,block:7,word:"assert",meaning:"主張する",phrase:"I want to ____ myself when necessary.",phraseJa:"必要な場面ではしっかり自己主張したいです。"},
+  {id:64,block:7,word:"adapting",meaning:"合わせること",phrase:"____ too much to others expectations can prevent me from living my own life.",phraseJa:"他人の期待に合わせすぎると、自分の時間を生きられなくなります。"},
+  {id:65,block:7,word:"blindly",meaning:"盲目的に",phrase:"Rather than accepting things ____.",phraseJa:"盲目的に受け入れるのではなく。"},
+  {id:66,block:7,word:"independently",meaning:"自分の頭で",phrase:"I want to strengthen my ability to think ____.",phraseJa:"自分の頭で考え抜く力をさらに高めたいです。"},
+  {id:67,block:7,word:"decisive",meaning:"決断力のある",phrase:"Calm and balanced, yet demanding and ____ in critical moments.",phraseJa:"冷静かつバランスが取れていて、決める場面では強く出ることも重要です。"},
+  {id:68,block:7,word:"comprehensively",meaning:"網羅的に",phrase:"I tend to approach tasks too ____.",phraseJa:"物事を網羅的に進めようとしすぎる傾向があります。"},
+  {id:69,block:7,word:"eliminate",meaning:"排除する",phrase:"I want the courage to ____ what is unnecessary.",phraseJa:"不要なものを捨てる勇気を持ちたいです。"},
+  {id:70,block:7,word:"productivity",meaning:"生産性",phrase:"I can significantly improve my ____ and impact.",phraseJa:"生産性と影響力を大きく高められると思っています。"},
+  {id:71,block:8,word:"surround",meaning:"囲む",phrase:"I want to ____ myself only with things I truly care about.",phraseJa:"本当に大切に思えるものだけに囲まれて生きたいです。"},
+  {id:72,block:8,word:"attention",meaning:"こだわり",phrase:"A home designed with great ____ to detail.",phraseJa:"細部までこだわって設計した家を建てたいです。"},
+  {id:73,block:8,word:"genuine",meaning:"心から好きな",phrase:"I want to choose everyday items that I ____ love.",phraseJa:"心から好きだと思えるものを選びたいです。"},
+  {id:74,block:8,word:"financial",meaning:"経済的な",phrase:"I do not feel I have full ____ freedom yet.",phraseJa:"完全な経済的自由があるとはまだ感じていません。"},
+  {id:75,block:8,word:"regularly",meaning:"定期的に",phrase:"I would like to travel abroad ____ with my family.",phraseJa:"家族と定期的に海外旅行にも行きたいです。"},
+  {id:76,block:8,word:"identity",meaning:"アイデンティティ",phrase:"I am struggling with my ____ as a salesperson.",phraseJa:"SIerの営業としてのアイデンティティに悩んでいます。"},
+  {id:77,block:8,word:"specialty",meaning:"専門",phrase:"When someone asks what is your ____.",phraseJa:"専門は何ですかと聞かれたとき。"},
+  {id:78,block:8,word:"confident",meaning:"自信のある",phrase:"I do not yet have a clear and ____ answer.",phraseJa:"まだ明確で自信のある答えを持てていません。"},
+  {id:79,block:8,word:"insecurity",meaning:"不安・自信のなさ",phrase:"That has in part intensified this ____.",phraseJa:"この不安を強めている部分もあります。"},
+  {id:80,block:8,word:"structuring",meaning:"構造化する",phrase:"I am not strong at quickly ____ ideas.",phraseJa:"物事を素早く構造化する力が十分ではないと感じます。"},
+  {id:81,block:9,word:"flexibly",meaning:"柔軟に",phrase:"I am not strong at thinking ____.",phraseJa:"柔軟に考える力が十分ではないと感じます。"},
+  {id:82,block:9,word:"undermine",meaning:"蝕む",phrase:"These feelings sometimes ____ my confidence.",phraseJa:"そうした感覚が自信のなさにつながることがあります。"},
+  {id:83,block:9,word:"demonstrate",meaning:"示す",phrase:"There are moments when I fail to fully ____ my true potential.",phraseJa:"本来の力を出しきれない瞬間もあります。"},
+  {id:84,block:9,word:"expertise",meaning:"専門性",phrase:"I want to develop strong ____ in supporting manufacturing companies.",phraseJa:"製造業を支援できる専門性を身につけたいです。"},
+  {id:85,block:9,word:"architecture",meaning:"アーキテクチャ",phrase:"I need deeper knowledge of IT ____ and business processes.",phraseJa:"ITアーキテクチャと業務プロセスへの理解を深める必要があります。"},
+  {id:86,block:9,word:"equal",meaning:"対等な",phrase:"I want to speak on ____ terms with engineers and clients.",phraseJa:"エンジニアや顧客と対等に話せるようになりたいです。"},
+  {id:87,block:9,word:"rigid",meaning:"硬い",phrase:"I can come across as somewhat serious or ____.",phraseJa:"少し真面目すぎたり硬い印象を与えてしまうことがあります。"},
+  {id:88,block:9,word:"sincerity",meaning:"誠実さ",phrase:"____ is one of my strengths.",phraseJa:"誠実さは私の強みの一つです。"},
+  {id:89,block:9,word:"approachability",meaning:"親しみやすさ",phrase:"Growth requires both expertise and ____.",phraseJa:"成長には専門性と親しみやすさの両方が必要です。"},
+  {id:90,block:9,word:"connect",meaning:"つながる",phrase:"I want to ____ with people in a more natural way.",phraseJa:"自然体で人とつながれるようになりたいです。"},
+  {id:91,block:10,word:"trusted",meaning:"信頼される",phrase:"I want to become someone who is ____ as a person.",phraseJa:"人として信頼される存在になりたいです。"},
+  {id:92,block:10,word:"foundation",meaning:"土台",phrase:"In my twenties I see this as the stage of building a ____.",phraseJa:"20代は土台を築く時期だと考えています。"},
+  {id:93,block:10,word:"abstract",meaning:"抽象的な",phrase:"Not just in ____ business terms.",phraseJa:"抽象的なビジネス用語ではなく。"},
+  {id:94,block:10,word:"leverage",meaning:"レバレッジ",phrase:"I want to create greater ____ in income and decision-making.",phraseJa:"よりレバレッジの効く環境に移りたいです。"},
+  {id:95,block:10,word:"outcomes",meaning:"成果",phrase:"Contracts built around ____ and impact.",phraseJa:"成果や影響に基づく契約。"},
+  {id:96,block:10,word:"specialization",meaning:"専門化",phrase:"I am sought out because of my track record and ____.",phraseJa:"実績と専門性によって指名される案件を増やしたいです。"},
+  {id:97,block:10,word:"independent",meaning:"独立した",phrase:"Becoming ____.",phraseJa:"独立する。"},
+  {id:98,block:10,word:"step by step",meaning:"一歩ずつ",phrase:"____ I want to build a career based on the value I can create.",phraseJa:"一歩ずつ、自分が生み出せる価値に基づいたキャリアを築きたいです。"},
+  {id:99,block:10,word:"passion",meaning:"情熱",phrase:"One of my biggest ____s is soccer.",phraseJa:"大きな情熱の一つはサッカーです。"},
+  {id:100,block:10,word:"competitive",meaning:"負けず嫌いな",phrase:"I am very ____ so once I start I become fully absorbed.",phraseJa:"負けず嫌いなので、何かを始めるととことん没頭します。"},
+  {id:101,block:11,word:"absorbed",meaning:"没頭した",phrase:"I become fully ____ in it.",phraseJa:"とことん没頭します。"},
+  {id:102,block:11,word:"organizing",meaning:"組み立てる",phrase:"I enjoy planning trips and ____ my weekends.",phraseJa:"旅行の計画や週末の予定を組み立てるのが好きです。"},
+  {id:103,block:11,word:"self-reflection",meaning:"自己内省",phrase:"Another thing I like is ____.",phraseJa:"自己内省も好きです。"},
+  {id:104,block:11,word:"prioritize",meaning:"優先する",phrase:"I think about what kind of life I want to live and what values I want to ____.",phraseJa:"どんな人生を送りたいか、何を大切にしたいかをよく考えます。"},
+  {id:105,block:11,word:"immersed",meaning:"没頭した",phrase:"When I watch a great film I get completely ____ in its world.",phraseJa:"良い映画を見ると、その世界に没頭して時間を忘れます。"},
+  {id:106,block:11,word:"motivation",meaning:"モチベーション",phrase:"That feeling becomes ____ and a deep sense of satisfaction.",phraseJa:"その感情がモチベーションになり、深い満足感につながります。"},
+  {id:107,block:11,word:"satisfaction",meaning:"満足感",phrase:"A deep sense of ____.",phraseJa:"深い満足感につながります。"},
+  {id:108,block:11,word:"recharge",meaning:"元気を回復する",phrase:"It helps me reset and ____.",phraseJa:"気持ちをリセットし、元気を回復させています。"},
+  {id:109,block:11,word:"meaningful",meaning:"意味のある",phrase:"I value slow and ____ time.",phraseJa:"ゆっくりとした、意味のある時間を大切にしています。"},
+  {id:110,block:11,word:"extraordinary",meaning:"非日常的な",phrase:"I look for experiences that feel ____.",phraseJa:"旅行では、非日常を感じられる体験を探します。"},
+  {id:111,block:12,word:"flavors",meaning:"風味・味",phrase:"I enjoy discovering ____ I cannot find in everyday life.",phraseJa:"日常では出会えない味を発見するのが好きです。"},
+  {id:112,block:12,word:"assumptions",meaning:"思い込み",phrase:"Experiences that challenge my ____.",phraseJa:"自分の思い込みが揺さぶられる体験にも惹かれます。"},
+  {id:113,block:12,word:"overwhelming",meaning:"圧倒的な",phrase:"The ____ power of nature.",phraseJa:"自然の圧倒的な力を感じる体験にも惹かれます。"},
+  {id:114,block:12,word:"fuel",meaning:"燃料",phrase:"I believe memories are ____ for life.",phraseJa:"思い出は人生の燃料だと思っています。"},
+  {id:115,block:12,word:"picky",meaning:"好き嫌いが多い",phrase:"I am not a ____ eater at all.",phraseJa:"食べ物の好き嫌いはほとんどありません。"},
+  {id:116,block:12,word:"rental",meaning:"賃貸の",phrase:"Currently I live in a ____ apartment.",phraseJa:"現在は賃貸マンションに住んでいます。"},
+  {id:117,block:12,word:"challenging",meaning:"大変な",phrase:"Finding a place was very ____.",phraseJa:"住まい探しはとても大変でした。"},
+  {id:118,block:12,word:"limited",meaning:"限られた",phrase:"So my options were quite ____.",phraseJa:"そのため選択肢はかなり限られていました。"},
+  {id:119,block:12,word:"rural",meaning:"地方の",phrase:"I grew up in a ____ area surrounded by nature.",phraseJa:"自然に囲まれた地方で育ちました。"},
+  {id:120,block:12,word:"dormitory",meaning:"寮",phrase:"During university I lived in a ____.",phraseJa:"大学時代は寮に住んでいました。"},
+  {id:121,block:13,word:"neighborhood",meaning:"街・地域",phrase:"A student ____ in Tokyo.",phraseJa:"東京の学生街。"},
+  {id:122,block:13,word:"balance",meaning:"バランス",phrase:"There is a good ____ of nature stylish neighborhoods and great restaurants.",phraseJa:"自然と、おしゃれな街並みと、美味しいレストランのバランスが良いです。"},
+  {id:123,block:13,word:"explore",meaning:"探索する",phrase:"There are still so many places I want to ____ in Tokyo.",phraseJa:"東京にはまだまだ行きたい場所がたくさんあります。"},
+  {id:124,block:13,word:"core",meaning:"芯",phrase:"My brother has a strong ____ and does not get easily influenced.",phraseJa:"兄は芯が強く、他人に流されません。"},
+  {id:125,block:13,word:"grateful",meaning:"感謝している",phrase:"I am deeply ____ to my father.",phraseJa:"父には心から感謝しています。"},
+  {id:126,block:13,word:"positive",meaning:"前向きな",phrase:"My mother is always ____.",phraseJa:"母はいつも前向きです。"},
+  {id:127,block:13,word:"capable",meaning:"有能な",phrase:"My wife is very ____ and good at many things.",phraseJa:"妻はとても有能で、いろいろなことが得意です。"},
+  {id:128,block:13,word:"humor",meaning:"ユーモア",phrase:"She has a great sense of ____.",phraseJa:"ユーモアのセンスがあります。"},
+  {id:129,block:13,word:"respect",meaning:"尊敬する",phrase:"I deeply ____ the way she lives.",phraseJa:"彼女の生き方を心から尊敬しています。"},
+  {id:130,block:13,word:"inspires",meaning:"刺激を与える",phrase:"Their attitude always ____ me.",phraseJa:"その姿勢にいつも刺激を受けています。"},
+  {id:131,block:14,word:"recommend",meaning:"勧める",phrase:"It is a place I would ____ to others.",phraseJa:"ぜひ人にも勧めたい場所です。"},
+  {id:132,block:14,word:"liveliness",meaning:"活気",phrase:"There is nature but also energy and ____.",phraseJa:"自然もありつつ、活気もあります。"},
+  {id:133,block:14,word:"culture",meaning:"文化",phrase:"What I appreciate most about Japan is its rich ____.",phraseJa:"日本で最も素晴らしいと思うのは、豊かな文化です。"},
+  {id:134,block:14,word:"tension",meaning:"緊張感",phrase:"I love the ____ and intensity of a sumo match.",phraseJa:"相撲の試合の緊張感と迫力が好きです。"},
+  {id:135,block:14,word:"insights",meaning:"示唆",phrase:"Anime also gives us ____ about life.",phraseJa:"アニメは人生への示唆も与えてくれます。"},
+  {id:136,block:14,word:"sensation",meaning:"感覚",phrase:"It becomes a world of pure ____.",phraseJa:"純粋な感覚の世界になります。"},
+  {id:137,block:14,word:"relax",meaning:"リラックスする",phrase:"That helps me clear my mind and truly ____.",phraseJa:"それが頭をクリアにし、本当にリラックスさせてくれます。"},
+  {id:138,block:14,word:"challenges",meaning:"課題",phrase:"I think Japan faces serious ____.",phraseJa:"日本には深刻な課題もあると思います。"},
+  {id:139,block:14,word:"birthrate",meaning:"出生率",phrase:"One is the declining ____ and aging population.",phraseJa:"一つは少子高齢化です。"},
+  {id:140,block:14,word:"conform",meaning:"同調する",phrase:"Strong social pressure to ____.",phraseJa:"同調圧力の強さが影響しているかもしれません。"},
+  {id:141,block:15,word:"fluently",meaning:"流暢に",phrase:"I admire people who speak English ____.",phraseJa:"英語を流暢に話せる人に憧れています。"},
+  {id:142,block:15,word:"cool",meaning:"かっこいい",phrase:"I just think it is ____.",phraseJa:"単純に、かっこいいと思います。"},
+  {id:143,block:15,word:"dramatically",meaning:"大きく",phrase:"My ability to gather information will improve ____.",phraseJa:"情報収集力が大きく向上すると信じています。"},
+  {id:144,block:15,word:"perspective",meaning:"視点",phrase:"From a career ____ English will expand my options.",phraseJa:"キャリアの面でも、英語は選択肢を広げてくれます。"},
+  {id:145,block:15,word:"expand",meaning:"広げる",phrase:"English will ____ my career options.",phraseJa:"英語はキャリアの選択肢を広げてくれます。"},
+  {id:146,block:15,word:"devoted",meaning:"捧げた（復習）",phrase:"From that point on I ____ everything to soccer.",phraseJa:"そのときから、私はすべてをサッカーに捧げました。"},
+  {id:147,block:15,word:"resilience",meaning:"打たれ強さ（復習）",phrase:"I gained confidence in my toughness and ____.",phraseJa:"粘り強さと打たれ強さへの自信につながりました。"},
+  {id:148,block:15,word:"consistent",meaning:"継続的な（復習）",phrase:"People achieve results through ____ effort.",phraseJa:"継続的な努力を積み重ねることで成果を出します。"},
+  {id:149,block:15,word:"envision",meaning:"思い描く（復習）",phrase:"Life moves in the direction we consciously ____.",phraseJa:"自分が意識して思い描いた方向に近づいていきます。"},
+  {id:150,block:15,word:"expertise",meaning:"専門性（復習）",phrase:"I want to develop strong ____ in manufacturing.",phraseJa:"製造業支援の専門性を身につけたいです。"},
+  {id:151,block:16,word:"leverage",meaning:"レバレッジ（復習）",phrase:"Move into an environment with greater ____.",phraseJa:"よりレバレッジの効く環境に移りたいです。"},
+  {id:152,block:16,word:"foundation",meaning:"土台（復習）",phrase:"My twenties are the stage of building a ____.",phraseJa:"20代は土台を築く時期です。"},
+  {id:153,block:16,word:"identity",meaning:"アイデンティティ（復習）",phrase:"Struggling with my ____ as a salesperson.",phraseJa:"営業としてのアイデンティティに悩んでいます。"},
+  {id:154,block:16,word:"sincerity",meaning:"誠実さ（復習）",phrase:"____ is one of my greatest strengths.",phraseJa:"誠実さは私の最大の強みの一つです。"},
+  {id:155,block:16,word:"assert",meaning:"主張する（復習）",phrase:"I want to ____ myself when necessary.",phraseJa:"必要な場面では自己主張したいです。"},
+  {id:156,block:16,word:"tangible",meaning:"具体的な（復習）",phrase:"Generate ____ results from data.",phraseJa:"データから具体的な成果を生み出す。"},
+  {id:157,block:16,word:"viable",meaning:"実現可能な（復習）",phrase:"These areas may finally become ____.",phraseJa:"これらの領域がついに実現可能になる。"},
+  {id:158,block:16,word:"discernment",meaning:"分別（復習）",phrase:"Make decisions with ____.",phraseJa:"分別を持って判断する力。"},
+  {id:159,block:16,word:"gradually",meaning:"少しずつ（復習）",phrase:"Life ____ moves in that direction.",phraseJa:"人生は少しずつその方向に近づいていく。"},
+  {id:160,block:16,word:"absorbed",meaning:"没頭した（復習）",phrase:"Once I start something I become fully ____ in it.",phraseJa:"何かを始めるととことん没頭します。"},
+  {id:161,block:17,word:"motivation",meaning:"モチベーション（復習）",phrase:"That feeling becomes real ____.",phraseJa:"その感情が本当のモチベーションになります。"},
+  {id:162,block:17,word:"clarify",meaning:"明確にする",phrase:"Calmly organize and ____ the situation.",phraseJa:"淡々と整理して状況を明確にする。"},
+  {id:163,block:17,word:"inspire",meaning:"刺激する",phrase:"Great people always ____ me.",phraseJa:"素晴らしい人たちはいつも私を刺激してくれます。"},
+  {id:164,block:17,word:"meaningful",meaning:"意味のある（復習）",phrase:"I value slow and ____ weekends.",phraseJa:"ゆっくりとした意味のある週末を大切にしています。"},
+  {id:165,block:17,word:"extraordinary",meaning:"非日常的な（復習）",phrase:"Travel experiences that feel ____.",phraseJa:"非日常を感じられる旅の体験。"},
+  {id:166,block:17,word:"overwhelm",meaning:"圧倒する",phrase:"The ____ing power of nature amazes me.",phraseJa:"自然の圧倒的な力に感動します。"},
+  {id:167,block:17,word:"grateful",meaning:"感謝している（復習）",phrase:"I am deeply ____ to everyone who supported me.",phraseJa:"支えてくれたすべての人に心から感謝しています。"},
+  {id:168,block:17,word:"recommend",meaning:"勧める（復習）",phrase:"I would strongly ____ this experience.",phraseJa:"この体験をぜひ強くお勧めします。"},
+  {id:169,block:17,word:"conform",meaning:"同調する（復習）",phrase:"Social pressure to ____ is strong in Japan.",phraseJa:"日本では同調圧力が強いです。"},
+  {id:170,block:17,word:"fluently",meaning:"流暢に（復習）",phrase:"I want to speak English ____ someday.",phraseJa:"いつか英語を流暢に話したいです。"},
+  {id:171,block:18,word:"expand",meaning:"広げる（復習）",phrase:"English will ____ my horizons.",phraseJa:"英語は私の視野を広げてくれます。"},
+  {id:172,block:18,word:"logical",meaning:"合理的な（復習）",phrase:"It seemed like the most ____ path.",phraseJa:"それが最も合理的な道に思えました。"},
+  {id:173,block:18,word:"outcome",meaning:"成果（復習）",phrase:"Focus on the ____ not the process.",phraseJa:"プロセスではなく成果に注目する。"},
+  {id:174,block:18,word:"eliminate",meaning:"排除する（復習）",phrase:"Have the courage to ____ distractions.",phraseJa:"気を散らすものを排除する勇気を持つ。"},
+  {id:175,block:18,word:"adapt",meaning:"適応する",phrase:"We must ____ to changing circumstances.",phraseJa:"変化する状況に適応しなければなりません。"},
+  {id:176,block:18,word:"dwelling",meaning:"とらわれること（復習）",phrase:"Stop ____ on the past and move forward.",phraseJa:"過去にとらわれることをやめて前に進む。"},
+  {id:177,block:18,word:"insecurity",meaning:"不安（復習）",phrase:"Overcoming ____ takes time and effort.",phraseJa:"不安を乗り越えるには時間と努力が必要です。"},
+  {id:178,block:18,word:"undermine",meaning:"蝕む（復習）",phrase:"Self-doubt can ____ your confidence.",phraseJa:"自己不信は自信を蝕むことがあります。"},
+  {id:179,block:18,word:"approachability",meaning:"親しみやすさ（復習）",phrase:"Build ____ alongside your expertise.",phraseJa:"専門性と合わせて親しみやすさも築く。"},
+  {id:180,block:18,word:"tension",meaning:"緊張感（復習）",phrase:"The ____ before a big match is exciting.",phraseJa:"大きな試合前の緊張感はわくわくします。"},
+  {id:181,block:19,word:"insights",meaning:"示唆（復習）",phrase:"Books give us valuable ____ about life.",phraseJa:"本は人生について価値ある示唆を与えてくれます。"},
+  {id:182,block:19,word:"consciously",meaning:"意識的に（復習）",phrase:"I try to ____ think about my future.",phraseJa:"自分の未来について意識的に考えるようにしています。"},
+  {id:183,block:19,word:"steady",meaning:"着実な（復習）",phrase:"____ progress beats occasional bursts.",phraseJa:"着実な進歩は時々の爆発的努力に勝ります。"},
+  {id:184,block:19,word:"unpredictable",meaning:"予測できない（復習）",phrase:"Life is ____ but that makes it exciting.",phraseJa:"人生は予測できませんが、だからこそ面白いです。"},
+  {id:185,block:19,word:"blindly",meaning:"盲目的に（復習）",phrase:"Never follow others ____.",phraseJa:"他人に盲目的に従ってはいけません。"},
+  {id:186,block:19,word:"strategic",meaning:"戦略的な（復習）",phrase:"Develop ____ thinking skills.",phraseJa:"戦略的な思考力を磨く。"},
+  {id:187,block:19,word:"alternative",meaning:"別の（復習）",phrase:"Always consider ____ approaches.",phraseJa:"常に別のアプローチを考える。"},
+  {id:188,block:19,word:"competitive",meaning:"負けず嫌いな（復習）",phrase:"My ____ nature drives me to improve.",phraseJa:"負けず嫌いな性格が私を向上させます。"},
+  {id:189,block:19,word:"sensation",meaning:"感覚（復習）",phrase:"A wonderful ____ of being alive.",phraseJa:"生きているという素晴らしい感覚。"},
+  {id:190,block:19,word:"productivity",meaning:"生産性（復習）",phrase:"Focus on ____ not just busyness.",phraseJa:"忙しさではなく生産性に集中する。"},
+];
+
+const CHAT_TOPICS = [
+  {block:1,emoji:"⚽",label:"人生の流れ①",qs:[
+    {q:"Tell me about yourself. Where are you from?",qja:"自己紹介をしてください。どこで育ちましたか？",model:"I was born the second son in my family and grew up in a rural area surrounded by nature. My older brother had a big influence on me — I started playing soccer because of him.",modelJa:"私は家族の次男として生まれ、自然に囲まれた地方で育ちました。兄は私に大きな影響を与えてくれ、兄の影響でサッカーを始めました。"},
+    {q:"When did you decide to become a professional soccer player?",qja:"いつプロサッカー選手になろうと決意しましたか？",model:"I decided in junior high school. From that point on, I devoted everything to soccer. I trained hard every day and truly believed I could make it happen.",modelJa:"中学生のときに決意しました。そのときから、私はすべてをサッカーに捧げました。毎日一生懸命練習し、本当になれると信じていました。"},
+    {q:"How did you deal with injuries during your soccer career?",qja:"サッカー中の怪我にどう向き合いましたか？",model:"I suffered some serious injuries, but I overcame them every time. Those experiences made me more resilient and taught me a lot about perseverance.",modelJa:"大きな怪我も経験しましたが、そのたびに乗り越えてきました。その経験が私をより打たれ強くし、粘り強さについて多くを教えてくれました。"},
+    {q:"How did you feel when you gave up your dream of going pro?",qja:"プロになる夢を諦めたとき、どんな気持ちでしたか？",model:"During my junior year of college, I came to accept that it wasn't realistic for me. It was hard, but I chose to move forward rather than dwell on what might have been.",modelJa:"大学3年生のときに、プロになることは自分には現実的でないと受け入れました。辛かったですが、「もしも」にとらわれるより前に進むことを選びました。"},
+  ]},
+  {block:2,emoji:"📚",label:"学校・仕事の内容",qs:[
+    {q:"What did you study in school?",qja:"学校では何を学びましたか？",model:"In high school and college, I mainly took the required courses. I didn't focus on any specific field — I was entirely focused on soccer during those years.",modelJa:"高校と大学では、主に必修科目を学びました。特定の分野に集中していませんでした。その頃はサッカー一筋でした。"},
+    {q:"What kind of company do you work for?",qja:"どんな会社で働いていますか？",model:"I work for a large system integrator in Japan. I'm currently in charge of sales for a major automobile manufacturer, and I support their system development and DX projects.",modelJa:"私は日本の大手システムインテグレーターで働いています。現在は大手自動車メーカーの営業を担当し、システム開発やDXの案件を支援しています。"},
+    {q:"What is your company's main business model?",qja:"会社の主なビジネスモデルは何ですか？",model:"Our main model is what you might call an IT general contractor model. We take on large projects as a prime vendor and collaborate with subcontractors. Revenue is primarily based on person-hours.",modelJa:"主なビジネスモデルは、いわゆる「ITゼネコン型」です。プライムベンダーとして大型案件を受注し、協力会社と連携して進めています。売上は主に人月ベースで成り立っています。"},
+    {q:"How do you think the IT industry will change?",qja:"IT業界はどう変わっていくと思いますか？",model:"The value of basic system implementation is gradually declining. The industry will likely shift to an outcome-based model, and companies will need to focus on strategic architecture rather than just implementation.",modelJa:"基本的なシステム実装の価値は徐々に低下しています。業界はアウトカム型モデルへ移行する可能性が高く、単なる実装を超えた戦略的アーキテクチャへの注力が求められると思います。"},
+  ]},
+  {block:3,emoji:"🚀",label:"業界の変化・キャリアパス",qs:[
+    {q:"Why did you choose the IT industry?",qja:"IT業界を選んだのはなぜですか？",model:"Technology is essential to society, and I believed it would let me work on something with real impact. I was also attracted to the future potential of the industry.",modelJa:"テクノロジーは社会に不可欠で、社会に影響を与える仕事ができると思いました。業界の将来性にも魅力を感じていました。"},
+    {q:"Tell me about your career so far.",qja:"これまでのキャリアを教えてください。",model:"In my first two years, I handled IT hardware sales for large manufacturers. In my third and fourth years, I moved to small and mid-sized manufacturers, proposing DX solutions aimed at optimizing operations.",modelJa:"入社1〜2年目は大手製造業向けのハードウェア営業を担当しました。3〜4年目は中堅・中小の製造業を担当し、業務改善に向けたDXソリューションを提案していました。"},
+    {q:"What was the biggest turning point in your life?",qja:"人生最大の転機は何ですか？",model:"The biggest turning point was soccer. Through it, I realized I grow through steady effort. Competing in a tough environment until the very end gave me confidence in my resilience.",modelJa:"人生最大の転機はサッカーです。サッカーを通じて、地道な努力で成長するタイプだと気づきました。厳しい環境で最後までやり切った経験が、粘り強さへの自信につながりました。"},
+    {q:"How has soccer shaped who you are?",qja:"サッカーはどうあなたを形成しましたか？",model:"Soccer taught me perseverance and the value of consistent effort. Building a habit of exercise became one of my greatest assets. Staying healthy is more important than ever in today's world.",modelJa:"サッカーは粘り強さと継続的な努力の価値を教えてくれました。運動習慣を身につけられたことも大きな財産です。人生100年時代の今、健康でいることはこれまで以上に重要です。"},
+  ]},
+  {block:4,emoji:"🌱",label:"価値観①",qs:[
+    {q:"What personal values are most important to you?",qja:"あなたにとって最も大切な価値観は何ですか？",model:"I value seeing things from multiple perspectives and making decisions with discernment. I also hold close the Japanese proverb 'Jinsei wa Saiou ga Uma' — even negative events can lead somewhere positive.",modelJa:"物事を多面的に捉え、分別を持って判断する力を大切にしています。「人生は塞翁が馬」という日本のことわざも大切にしています。一見よくない出来事でも、結果的に良い方向につながることがあります。"},
+    {q:"How do you deal with regrets about past decisions?",qja:"過去の決断への後悔にどう向き合いますか？",model:"I believe the alternative path is something no one can truly know. So I try not to regret past choices excessively. Instead of dwelling on what might have been, I choose to move forward.",modelJa:"別の道を選んでいた未来は、誰にも本当のところは分かりません。だから、過去の選択を必要以上に後悔しないようにしています。「もしも」にとらわれるより、前に進むことを選びます。"},
+    {q:"What do you do when you feel stuck?",qja:"行き詰まったとき、どうしますか？",model:"I return to a few guiding ideas: I don't need to be bound by others' standards; no situation lasts forever; and when things are clarified, a path usually appears.",modelJa:"いくつかの考え方に立ち返ります。他人の基準に縛られる必要はない。どんな状況も永遠には続かない。淡々と整理して明確にすれば、道は開けることが多いと感じています。"},
+    {q:"What do you believe about hard work and results?",qja:"努力と結果についてどう考えていますか？",model:"I believe people who achieve meaningful results do so through consistent effort — there are no true exceptions. That is why I value continuous learning and steady improvement every day.",modelJa:"成果を出している人は例外なく継続的な努力を積み重ねていると信じています。本当の例外はないと思います。だからこそ、学び続ける姿勢と着実な改善を大切にしています。"},
+  ]},
+  {block:5,emoji:"💡",label:"価値観②・成長課題",qs:[
+    {q:"How do you envision your future self?",qja:"将来の自分をどのように思い描いていますか？",model:"I believe life gradually moves in the direction we consciously envision. Through my experiences abroad, I realized people live exactly the way they want to live. I want to be clearer about my own intentions.",modelJa:"人生は自分が意識して思い描いた方向に少しずつ近づいていくと思います。海外経験を通じて、人はそれぞれ自分のやりたいように生きているということを実感しました。自分の意思をより明確にしたいです。"},
+    {q:"What areas do you want to grow in?",qja:"どんな分野で成長したいですか？",model:"I want to think more independently rather than accepting things blindly. I also want to be more decisive when needed — calm and balanced, yet firm in critical moments, like a defensive midfielder.",modelJa:"盲目的に受け入れるのではなく、自分の頭で考え抜く力をさらに高めたいです。また、必要なときにはサッカーのボランチのように冷静かつ厳しく、決める場面では強く出ることも重要だと思っています。"},
+    {q:"What does your vision for the future look like?",qja:"将来のビジョンはどんなものですか？",model:"I want to surround myself only with things I truly care about. On a larger scale, I'd like to build a home with great attention to detail. I also want to travel abroad regularly with my family.",modelJa:"本当に大切に思えるものだけに囲まれて生きたいです。大きな目標としては、細部までこだわって設計した家を建てたいです。将来的には、家族と定期的に海外旅行にも行きたいです。"},
+    {q:"What are you currently struggling with?",qja:"今、何に悩んでいますか？",model:"I'm struggling with my identity as a salesperson at a system integrator. When someone asks what my specialty is, I don't yet have a confident answer. I also feel anxiety about my own abilities sometimes.",modelJa:"SIerの営業としてのアイデンティティに悩んでいます。「専門は何ですか？」と聞かれたとき、まだ明確で自信ある答えを持てていません。また、自分の能力に対する不安を感じることもあります。"},
+  ]},
+  {block:6,emoji:"📈",label:"キャリア戦略",qs:[
+    {q:"What expertise do you want to develop?",qja:"どんな専門性を身につけたいですか？",model:"I want strong expertise in supporting small and mid-sized manufacturing companies. I need deeper knowledge of IT architecture and business processes to truly help them — and to speak on equal terms with engineers.",modelJa:"中堅・中小の製造業を支援できる専門性を身につけたいです。本当に支援するには、ITアーキテクチャと業務プロセスへの理解を深め、エンジニアや顧客と対等に話せるようになる必要があります。"},
+    {q:"What is your career strategy by decade?",qja:"各年代のキャリア戦略を教えてください。",model:"In my twenties, I'm building a foundation. In my thirties, I want an environment with greater leverage. In my forties, I want to be chosen by name because of both my expertise and my network.",modelJa:"20代は土台を築く時期だと考えています。30代は、収入面でも意思決定権の面でも、よりレバレッジの効く環境に移りたいです。40代は、専門性と人脈の両方で「名前で選ばれる」段階に到達したいです。"},
+    {q:"What kind of salesperson do you want to become?",qja:"どんな営業になりたいですか？",model:"I want to speak from a professional and strategic standpoint — not just sales. Sincerity is a strength, but I also want to be more open and connect with people naturally. Growth requires both expertise and approachability.",modelJa:"営業目線だけでなく、専門的・戦略的な立場でエンジニアや顧客と対等に話せるようになりたいです。誠実さは強みですが、もっと自分を開き、自然体で人とつながれるようになりたいです。成長には専門性と親しみやすさの両方が必要です。"},
+    {q:"What is your long-term career vision?",qja:"長期的なキャリアビジョンを教えてください。",model:"Step by step, I want to build a career based on the value I can create myself — not just my company's name. I want to keep open several paths: moving to the business side, becoming independent, or expanding side businesses.",modelJa:"一歩ずつ、会社の名前だけではなく、自分が生み出せる価値に基づいたキャリアを築きたいです。事業側への転身、独立、副業拡大など、複数の道を開いておきたいです。"},
+  ]},
+  {block:7,emoji:"🎮",label:"趣味・休日",qs:[
+    {q:"What are your hobbies?",qja:"趣味は何ですか？",model:"One of my biggest passions is soccer. I'm very competitive, so once I start something I become fully absorbed in it. I also enjoy planning trips, self-reflection, and movies. A great film gives me real motivation.",modelJa:"大きな情熱の一つはサッカーです。負けず嫌いなので、何かを始めるととことん没頭します。旅行の計画を立てたり、自己内省したり、映画を観たりするのも好きです。心を動かされる映画はモチベーションになります。"},
+    {q:"How do you spend your weekends?",qja:"週末はどのように過ごしていますか？",model:"I spend about half my weekend time on myself — reading, going to the gym, cleaning, and walking my dogs. Sometimes I enjoy shopping or eating out with my wife. I value slow and meaningful time.",modelJa:"週末は、だいたい半分の時間を自分のために使っています。本を読んだり、ジムに行ったり、掃除や犬の散歩をしたりします。ときには妻と買い物をしたり、外食を楽しんだりします。ゆっくりとした、意味のある時間を大切にしています。"},
+    {q:"What do you look for when you travel?",qja:"旅行ではどんなことを求めますか？",model:"I look for extraordinary experiences — trying local food, discovering new flavors, and being challenged by nature or different cultures. I believe memories are fuel for life.",modelJa:"旅行では、非日常を感じられる体験を探します。現地の食べ物を試したり、新しい味を発見したりするのが好きです。自分の思い込みが揺さぶられる体験や、自然の圧倒的な力を感じる体験にも惹かれます。思い出は人生の燃料だと思っています。"},
+    {q:"What do you like about where you live?",qja:"今住んでいる場所の好きなところは？",model:"I live in western Tokyo and love the balance of nature, stylish neighborhoods, and great restaurants. Finding a place with two large dogs was very challenging, but I'm happy where we ended up.",modelJa:"今は東京の西側エリアに住んでいて、自然と、おしゃれな街並みと、美味しいレストランのバランスが良くてとても気に入っています。大型犬を2匹飼っているので住まい探しはとても大変でしたが、今の場所に満足しています。"},
+  ]},
+  {block:8,emoji:"🇯🇵",label:"日本・文化・家族",qs:[
+    {q:"What do you love most about Japan?",qja:"日本で一番好きなことは何ですか？",model:"I love Japan's rich culture — especially sumo, anime, and hot springs. Sumo has incredible tension. Anime gives life insights. And saunas help me clear my mind, truly relax, and sometimes new ideas come to me.",modelJa:"日本の豊かな文化が好きです。特に相撲、アニメ、温泉。相撲の試合の緊張感と迫力が好きです。アニメは人生への示唆も与えてくれます。サウナでは思考から解放され、本当にリラックスでき、新しいアイデアが浮かぶこともあります。"},
+    {q:"What challenges does Japan face?",qja:"日本が抱える課題は何だと思いますか？",model:"Japan faces serious challenges: the declining birthrate, aging population, and low productivity. Cultural factors like strong social pressure to conform may also play a role.",modelJa:"日本には深刻な課題があります。少子高齢化、低い生産性。同調圧力の強さなど、文化的な要因も影響しているのではないかと感じています。"},
+    {q:"Tell me about your family.",qja:"家族について教えてください。",model:"My older brother influenced me greatly — he has a strong core. My father supported my soccer career for years and I'm deeply grateful. My mother is always positive and full of energy.",modelJa:"兄は私に大きな影響を与えてきました。芯が強く、他人に流されません。父は長年、私のサッカー人生を支えてくれました。心から感謝しています。母はいつも前向きでエネルギッシュです。"},
+    {q:"What is your wife like?",qja:"奥さんはどんな方ですか？",model:"My wife is very capable and good at many things. She has deep knowledge about food and a great sense of humor. I deeply respect the way she lives according to her own desires without caring about titles or social status.",modelJa:"妻はとても有能で、いろいろなことが得意です。食の知識が深く、ユーモアのセンスもあります。肩書や社会的地位を気にせず、自分の欲望に従って生きているところを心から尊敬しています。"},
+  ]},
+  {block:9,emoji:"🇬🇧",label:"英語学習の理由・目標",qs:[
+    {q:"Why did you start studying English?",qja:"なぜ英語を学び始めましたか？",model:"The reason is simple — I admire people who speak English fluently. I just think it's cool. Also, I believe I can enjoy traveling abroad much more if I can speak English, and it will expand my career options.",modelJa:"理由はシンプルです。英語を流暢に話せる人に憧れています。単純にかっこいいと思います。また、英語が話せれば海外旅行をもっと楽しめると思いますし、キャリアの選択肢も広がります。"},
+    {q:"How will English help your career?",qja:"英語はキャリアにどう役立ちますか？",model:"English will expand my options significantly. So much valuable information is only in English. I believe my ability to gather information will improve dramatically once I become fluent.",modelJa:"英語はキャリアの選択肢を大きく広げてくれます。多くの価値ある情報が英語でしか手に入りません。流暢になれば、情報収集力が大きく向上すると信じています。"},
+    {q:"What level of English do you want to reach?",qja:"どのレベルの英語を目指していますか？",model:"I want to speak naturally and confidently in business and travel situations. Fluency — expressing myself without hesitation — is the goal. I want English to open doors, not feel like a barrier.",modelJa:"ビジネスや旅行の場面で自然に自信を持って話せるレベルを目指しています。ためらいなく自分を表現できる流暢さが目標です。英語を壁ではなく、扉を開くものにしたいです。"},
+    {q:"What advice would you give an English learner?",qja:"英語学習者へのアドバイスは？",model:"Connect the language to your own life and experiences. Learning words and phrases directly relevant to who you are makes them much easier to remember and actually use in real conversations.",modelJa:"言語を自分の人生や経験と結びつけることが大切です。自分自身に直接関係する言葉やフレーズを学ぶことで、はるかに覚えやすく、実際の会話で使いやすくなります。"},
+  ]},
+];
+
+const BLOCK_THEMES = ["人生の流れ①", "学校・仕事の内容", "仕事の内容②・業界の変化①", "業界の変化②・キャリアパス①", "キャリアパス②・転機", "価値観①", "価値観②", "価値観③・成長課題", "将来ビジョン・悩み①", "悩み②・キャリア戦略①", "キャリア戦略②", "キャリア戦略③・趣味", "趣味・休日", "旅行・食・住まい①", "住まい②", "住まい③・家族①", "家族②・友人・好きな場所", "日本について", "英語学習の理由"];
+
+
 // ============================================================
-// SHARED UTILS
+// VOICE
 // ============================================================
-const VOICE_BLACKLIST = ["bad news","good news","whisper","zarvox","hysterical","jester","bubbles","bells","boing","cellos","deranged","wobble","trinoids","pipe organ","organ","superstar","junior","kathy","princess","ralph","bahh","sanctus"];
-const isBlacklisted = n => VOICE_BLACKLIST.some(b => n.toLowerCase().includes(b));
-const JA_PRIO = ["premium","enhanced","google","kyoko","otoya","haruka"];
-const EN_PRIO = ["premium","enhanced","google us english","samantha","alex","karen","daniel"];
+const VOICE_BLACKLIST=["bad news","good news","whisper","zarvox","hysterical","jester","bubbles","bells","boing","cellos","deranged","wobble","trinoids","pipe organ","organ","superstar","junior","kathy","princess","ralph","bahh","sanctus"];
+const isBlacklisted=n=>VOICE_BLACKLIST.some(b=>n.toLowerCase().includes(b));
+const JA_PRIO=["premium","enhanced","google","kyoko","otoya","haruka"];
+const EN_PRIO=["premium","enhanced","google us english","samantha","alex","karen","daniel"];
+let _jaVoice=null,_enVoice=null,_jaVoiceList=[],_enVoiceList=[];
 
-let _jaVoice = null, _enVoice = null;
-let _jaVoiceList = [], _enVoiceList = [];
-
-function loadVoices() {
-  if (!window.speechSynthesis) return;
-  const all = window.speechSynthesis.getVoices();
-  if (!all.length) return;
-  _jaVoiceList = all.filter(v => v.lang.startsWith('ja') && !isBlacklisted(v.name));
-  _enVoiceList = all.filter(v => v.lang.startsWith('en') && !isBlacklisted(v.name));
-  const pickBest = (list, prio) => {
-    for (const kw of prio) { const f = list.find(v => v.name.toLowerCase().includes(kw)); if (f) return f; }
-    return list[0] || null;
-  };
-  if (!_jaVoice) _jaVoice = pickBest(all.filter(v=>v.lang.startsWith('ja')&&!isBlacklisted(v.name)), JA_PRIO);
-  if (!_enVoice) _enVoice = pickBest(all.filter(v=>v.lang.startsWith('en')&&!isBlacklisted(v.name)), EN_PRIO);
-  populateShadowVoiceSelects();
+function loadVoices(){
+  if(!window.speechSynthesis)return;
+  const all=window.speechSynthesis.getVoices();
+  if(!all.length)return;
+  _jaVoiceList=all.filter(v=>v.lang.startsWith('ja')&&!isBlacklisted(v.name));
+  _enVoiceList=all.filter(v=>v.lang.startsWith('en')&&!isBlacklisted(v.name));
+  const pick=(list,prio)=>{for(const kw of prio){const f=list.find(v=>v.name.toLowerCase().includes(kw));if(f)return f;}return list[0]||null;};
+  if(!_jaVoice)_jaVoice=pick(_jaVoiceList,JA_PRIO);
+  if(!_enVoice)_enVoice=pick(_enVoiceList,EN_PRIO);
+  populateShadowVoices();
 }
-if (window.speechSynthesis) {
-  window.speechSynthesis.onvoiceschanged = loadVoices;
-  loadVoices();
-}
+if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=loadVoices;loadVoices();}
 
-function speakTTS(text, lang, voice, onend) {
-  if (!window.speechSynthesis) { if (onend) onend(); return; }
+function speakTTS(text,lang,voice,onend){
+  if(!window.speechSynthesis){if(onend)onend();return;}
   window.speechSynthesis.cancel();
-  const utt = new SpeechSynthesisUtterance(text);
-  utt.lang = lang; utt.rate = 1.0;
-  if (voice) utt.voice = voice;
-  if (onend) utt.onend = onend;
-  window.speechSynthesis.speak(utt);
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=lang;u.rate=(lang.startsWith('en')?0.85:1.0);
+  if(voice)u.voice=voice;
+  if(onend)u.onend=onend;
+  window.speechSynthesis.speak(u);
 }
-
-function cleanSlash(text, isJa) {
-  return isJa ? text.replace(/\s*\/\s*/g,'、') : text.replace(/\s*\/\s*/g,', ');
-}
+function cleanSlash(t,isJa){return isJa?t.replace(/\s*\/\s*/g,'、'):t.replace(/\s*\/\s*/g,', ');}
 
 // ============================================================
-// TAB SWITCHER
+// TAB
 // ============================================================
-const TABS = ['vocab','shadow','instant','chat'];
-function switchTab(name) {
-  TABS.forEach(t => {
-    document.getElementById('app-'+t).classList.toggle('hidden', t !== name);
-    const btn = document.getElementById('tab-'+t);
-    if (t === name) {
-      btn.classList.add('border-blue-600','text-blue-600');
-      btn.classList.remove('border-transparent','text-slate-400');
-    } else {
-      btn.classList.remove('border-blue-600','text-blue-600');
-      btn.classList.add('border-transparent','text-slate-400');
-    }
+const TABS=['vocab','shadow','instant','chat'];
+function switchTab(name){
+  TABS.forEach(t=>{
+    document.getElementById('app-'+t).classList.toggle('hidden',t!==name);
+    const b=document.getElementById('tab-'+t);
+    if(t===name){b.classList.add('border-blue-600','text-blue-600');b.classList.remove('border-transparent','text-slate-400');}
+    else{b.classList.remove('border-blue-600','text-blue-600');b.classList.add('border-transparent','text-slate-400');}
   });
-  if (name !== 'shadow') { if(typeof shStop==='function') shStop(); }
+  if(name!=='shadow'&&typeof shStop==='function')shStop();
 }
 
 // ============================================================
-// ① VOCAB QUIZ
+// LOCALSTORAGE HELPERS
 // ============================================================
-const SECTION_SIZE = 10;
-const TOTAL_SECTIONS = 8;
-const SECTION_TITLES = {
-  1:'人生の流れ', 2:'仕事の内容・業界の変化', 3:'キャリアパス',
-  4:'価値観①（転機・人生観）', 5:'価値観②（成長・行動指針）',
-  6:'悩みとキャリア戦略', 7:'趣味・休日・旅行', 8:'家族・友人・日本・英語',
+const LS={
+  get:(k)=>{try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},
+  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),
 };
-const LS_WEAK = 'vocab_weak';
-const getWeak = () => { try { return JSON.parse(localStorage.getItem(LS_WEAK)||'[]'); } catch { return []; } };
-const saveWeak = a => localStorage.setItem(LS_WEAK, JSON.stringify(a));
-const addWeak = id => { const w=getWeak(); if(!w.includes(id)){w.push(id);saveWeak(w);} };
-const removeWeak = id => saveWeak(getWeak().filter(x=>x!==id));
+// Progress keys
+// vocab: 'v_prog_{block}' = {done:[], weak:[]}
+// shadow: 'sh_cleared' = [ids...]
+// shadow block: 'sh_block' = blockNum
+// instant: 'inst_prog_{block}' = {idx, ok, ng}
+// instant block: 'inst_block' = blockNum
+// chat: 'chat_prog_{block}' = qIdx
 
-let currentSection=null, currentMode=null, currentQueue=[], currentIndex=0, sessionWrong=[], sessionCorrect=[];
+// ============================================================
+// ① VOCAB
+// ============================================================
+let vSection=null,vMode=null,vQueue=[],vIdx=0,vWrong=[],vCorrect=[];
 
-function renderHome() {
+function getVocabWeak(block){return(LS.get('v_weak_'+block)||[]);}
+function saveVocabWeak(block,arr){LS.set('v_weak_'+block,arr);}
+function addWeak(block,id){const w=getVocabWeak(block);if(!w.includes(id)){w.push(id);saveVocabWeak(block,w);}}
+function removeWeak(block,id){saveVocabWeak(block,getVocabWeak(block).filter(x=>x!==id));}
+
+function renderHome(){
   showScreen('home');
-  const weak = getWeak();
-  const container = document.getElementById('section-list');
-  container.innerHTML = '';
-  for (let s=1; s<=TOTAL_SECTIONS; s++) {
-    const qs = ALL_QUESTIONS.filter(q=>q.section===s);
-    const weakIn = qs.filter(q=>weak.includes(q.id));
-    const allOk = qs.every(q=>!weak.includes(q.id));
-    const visited = localStorage.getItem('section_visited_'+s);
-    let statusHtml;
-    if (allOk && visited) statusHtml = `<span class="text-emerald-500 font-semibold text-sm">マスター済み ✨</span>`;
-    else if (!visited) statusHtml = `<span class="text-gray-400 text-sm">未着手</span>`;
-    else statusHtml = `<span class="text-orange-500 text-sm font-medium">残り苦手: ${weakIn.length}問</span>`;
-    const weakDis = weakIn.length===0 ? 'opacity-40 cursor-not-allowed' : '';
-    const card = document.createElement('div');
-    card.className = 'section-card bg-white rounded-2xl border border-blue-100 shadow-sm p-5';
-    card.innerHTML = `
+  const container=document.getElementById('section-list');
+  container.innerHTML='';
+  for(let b=1;b<=19;b++){
+    const qs=VOCAB.filter(q=>q.block===b);
+    const weak=getVocabWeak(b);
+    const weakIn=qs.filter(q=>weak.includes(q.id));
+    const visited=LS.get('v_visited_'+b);
+    const allOk=visited&&qs.every(q=>!weak.includes(q.id));
+    let badge;
+    if(allOk)badge='<span class="text-emerald-500 font-semibold text-xs">マスター済み ✨</span>';
+    else if(!visited)badge='<span class="text-gray-400 text-xs">未着手</span>';
+    else badge=`<span class="text-orange-500 text-xs font-medium">苦手: ${weakIn.length}問</span>`;
+    const wDis=weakIn.length===0?'opacity-40 cursor-not-allowed':'';
+    const card=document.createElement('div');
+    card.className='block-card bg-white rounded-2xl border border-blue-100 shadow-sm p-4';
+    card.innerHTML=`
       <div class="flex items-start justify-between mb-1">
         <div>
-          <div class="font-bold text-blue-700 text-lg">Section ${s}</div>
-          <div class="text-gray-500 text-sm mt-0.5">${SECTION_TITLES[s]}</div>
-          <div class="text-gray-400 text-xs mt-0.5">問題 ${(s-1)*SECTION_SIZE+1}〜${s*SECTION_SIZE}</div>
+          <div class="font-bold text-blue-700 text-base">Block ${b}</div>
+          <div class="text-gray-500 text-xs mt-0.5">${BLOCK_THEMES[b-1]}</div>
+          <div class="text-gray-400 text-xs mt-0.5">問題 ${(b-1)*10+1}〜${b*10}</div>
         </div>
-        <div class="mt-1">${statusHtml}</div>
+        <div class="mt-1">${badge}</div>
       </div>
-      <div class="flex gap-2 flex-wrap mt-3">
-        <button onclick="startQuiz(${s},'all')" class="flex-1 min-w-[80px] py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold active:scale-95 transition hover:bg-blue-700 text-center">
-          ${visited ? 'もう一度解く' : '解いてみる'}
+      <div class="flex gap-2 mt-3">
+        <button onclick="startQuiz(${b},'all')" class="flex-1 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold active:scale-95 transition hover:bg-blue-700 text-center">
+          ${visited?'もう一度解く':'解いてみる'}
         </button>
-        <button onclick="startQuiz(${s},'weak')" ${weakIn.length===0?'disabled':''} class="flex-1 min-w-[80px] py-2 rounded-lg border border-orange-300 text-orange-600 text-sm font-medium active:scale-95 transition hover:bg-orange-50 text-center ${weakDis}">
+        <button onclick="startQuiz(${b},'weak')" ${weakIn.length===0?'disabled':''} class="flex-1 py-2 rounded-lg border border-orange-300 text-orange-600 text-sm font-medium active:scale-95 transition hover:bg-orange-50 text-center ${wDis}">
           苦手のみ (${weakIn.length})
         </button>
       </div>`;
@@ -566,681 +822,486 @@ function renderHome() {
   }
 }
 
-function startQuiz(section, mode) {
-  currentSection=section; currentMode=mode;
-  const weak=getWeak();
-  const qs=ALL_QUESTIONS.filter(q=>q.section===section);
-  currentQueue = mode==='weak' ? qs.filter(q=>weak.includes(q.id)) : [...qs];
-  if (!currentQueue.length) return;
-  currentIndex=0; sessionWrong=[]; sessionCorrect=[];
-  localStorage.setItem('section_visited_'+section,'1');
-  showScreen('quiz'); renderQuestion();
+function startQuiz(block,mode){
+  vSection=block;vMode=mode;
+  const weak=getVocabWeak(block);
+  const qs=VOCAB.filter(q=>q.block===block);
+  vQueue=mode==='weak'?qs.filter(q=>weak.includes(q.id)):[...qs];
+  if(!vQueue.length)return;
+  vIdx=0;vWrong=[];vCorrect=[];
+  LS.set('v_visited_'+block,1);
+  showScreen('quiz');renderQuestion();
 }
 
-function renderQuestion() {
-  const q=currentQueue[currentIndex], total=currentQueue.length;
-  document.getElementById('quiz-counter').textContent=`${currentIndex+1} / ${total}`;
-  document.getElementById('progress-bar').style.width=`${(currentIndex/total)*100}%`;
+function renderQuestion(){
+  const q=vQueue[vIdx],total=vQueue.length;
+  document.getElementById('quiz-counter').textContent=`Block ${vSection} · ${vIdx+1} / ${total}`;
+  document.getElementById('progress-bar').style.width=`${(vIdx/total)*100}%`;
   document.getElementById('quiz-meaning').textContent=q.meaning;
   document.getElementById('quiz-phrase-ja').textContent=q.phraseJa;
   document.getElementById('quiz-phrase-blank').textContent=q.phrase.replace('____','(      )');
   document.getElementById('answer-area').classList.add('hidden');
   document.getElementById('btn-show-answer').classList.remove('hidden');
   const card=document.getElementById('quiz-card');
-  card.classList.remove('fade-in'); void card.offsetWidth; card.classList.add('fade-in');
+  card.classList.remove('fade-in');void card.offsetWidth;card.classList.add('fade-in');
 }
 
-function showAnswer() {
-  const q=currentQueue[currentIndex];
+function showAnswer(){
+  const q=vQueue[vIdx];
   const startsWithBlank=q.phrase.trimStart().startsWith('____');
   let dw=q.word.toLowerCase();
-  if (startsWithBlank) dw=dw.charAt(0).toUpperCase()+dw.slice(1);
+  if(startsWithBlank)dw=dw.charAt(0).toUpperCase()+dw.slice(1);
   document.getElementById('answer-word').textContent=dw;
   document.getElementById('answer-phrase-full').textContent=q.phrase.replace('____',dw);
   document.getElementById('btn-show-answer').classList.add('hidden');
   document.getElementById('answer-area').classList.remove('hidden');
 }
 
-function speakPhrase() {
-  const q=currentQueue[currentIndex];
+function speakPhrase(){
+  const q=vQueue[vIdx];
   const startsWithBlank=q.phrase.trimStart().startsWith('____');
   let dw=q.word.toLowerCase();
-  if (startsWithBlank) dw=dw.charAt(0).toUpperCase()+dw.slice(1);
+  if(startsWithBlank)dw=dw.charAt(0).toUpperCase()+dw.slice(1);
   speakTTS(q.phrase.replace('____',dw),'en-US',_enVoice,null);
 }
-function speakWord() {
-  speakTTS(currentQueue[currentIndex].word.toLowerCase(),'en-US',_enVoice,null);
+function speakWord(){speakTTS(vQueue[vIdx].word.toLowerCase(),'en-US',_enVoice,null);}
+
+function markAnswer(correct){
+  const q=vQueue[vIdx];
+  if(correct){removeWeak(vSection,q.id);vCorrect.push(q.id);}
+  else{addWeak(vSection,q.id);vWrong.push(q.id);}
+  vIdx++;
+  if(vIdx>=vQueue.length)showVResult();else renderQuestion();
 }
 
-function markAnswer(correct) {
-  const q=currentQueue[currentIndex];
-  correct ? removeWeak(q.id) : addWeak(q.id);
-  correct ? sessionCorrect.push(q.id) : sessionWrong.push(q.id);
-  currentIndex++;
-  if (currentIndex>=currentQueue.length) showResult(); else renderQuestion();
-}
-
-function showResult() {
+function showVResult(){
   showScreen('result');
   document.getElementById('result-summary').innerHTML=
-    `正解: <span class="text-emerald-600 font-bold">${sessionCorrect.length}</span> 問 ／ 不正解: <span class="text-red-500 font-bold">${sessionWrong.length}</span> 問 ／ 全${currentQueue.length}問`;
+    `正解: <span class="text-emerald-600 font-bold">${vCorrect.length}</span> 問 ／ 不正解: <span class="text-red-500 font-bold">${vWrong.length}</span> 問 ／ 全${vQueue.length}問`;
 }
-function confirmBack() {
-  if (confirm('クイズを中断してホーム画面に戻りますか？\n現在の進捗は保存されません。')) goHome();
-}
-function goHome() {
-  currentQueue=[]; currentIndex=0; currentSection=null; currentMode=null; sessionWrong=[]; sessionCorrect=[];
-  renderHome();
-}
-function showScreen(name) {
+function confirmBack(){if(confirm('中断してホームに戻りますか？'))goHome();}
+function goHome(){vQueue=[];vIdx=0;vSection=null;renderHome();}
+function showScreen(name){
   ['home','quiz','result'].forEach(s=>{
     const el=document.getElementById('screen-'+s);
-    el.classList.toggle('hidden', s!==name);
-    if (s===name) { el.classList.remove('fade-in'); void el.offsetWidth; el.classList.add('fade-in'); }
+    el.classList.toggle('hidden',s!==name);
+    if(s===name){el.classList.remove('fade-in');void el.offsetWidth;el.classList.add('fade-in');}
   });
 }
 
 // ============================================================
 // ② SHADOWING
 // ============================================================
-const LS_SH_CLEARED = 'shadowing_cleared';
-const shGetCleared = () => { try { return JSON.parse(localStorage.getItem(LS_SH_CLEARED)||'[]'); } catch { return []; } };
-const shSaveCleared = a => localStorage.setItem(LS_SH_CLEARED, JSON.stringify(a));
+const LS_SH_CLEARED='sh_cleared';
+const LS_SH_BLOCK='sh_block';
+const shGetCleared=()=>(LS.get(LS_SH_CLEARED)||[]);
+const shSaveCleared=a=>LS.set(LS_SH_CLEARED,a);
 
-let shPlaying=false, shCurrentIdx=null, shPhase='idle', shTimer=null;
+let shPlaying=false,shCurrentIdx=null,shPhase='idle',shTimer=null;
+let shActiveBlock=1;
 
-function populateShadowVoiceSelects() {
-  const jaEl=document.getElementById('sh-ja-voice');
-  const enEl=document.getElementById('sh-en-voice');
-  if (!jaEl||!enEl) return;
-  jaEl.innerHTML=_jaVoiceList.map(v=>`<option value="${v.name}" ${_jaVoice&&v.name===_jaVoice.name?'selected':''}>${v.name}</option>`).join('');
-  enEl.innerHTML=_enVoiceList.map(v=>`<option value="${v.name}" ${_enVoice&&v.name===_enVoice.name?'selected':''}>${v.name}</option>`).join('');
-  jaEl.onchange = () => { _jaVoice = _jaVoiceList.find(v=>v.name===jaEl.value)||null; };
-  enEl.onchange = () => { _enVoice = _enVoiceList.find(v=>v.name===enEl.value)||null; };
+function buildShBlockButtons(){
+  const container=document.getElementById('sh-block-buttons');
+  container.innerHTML='';
+  for(let b=1;b<=19;b++){
+    const btn=document.createElement('button');
+    btn.id=`sh-blk-${b}`;
+    btn.className=`py-1.5 rounded-lg text-xs font-semibold transition active:scale-95 ${b===shActiveBlock?'bg-blue-600 text-white':'bg-slate-100 text-slate-600 hover:bg-blue-100'}`;
+    btn.textContent=`B${b}`;
+    btn.onclick=()=>shSelectBlock(b);
+    container.appendChild(btn);
+  }
 }
 
-function shBuildList() {
+function shSelectBlock(b){
+  shStop();
+  shActiveBlock=b;
+  LS.set(LS_SH_BLOCK,b);
+  buildShBlockButtons();
+  shBuildList();
+}
+
+function populateShadowVoices(){
+  const jaEl=document.getElementById('sh-ja-voice');
+  const enEl=document.getElementById('sh-en-voice');
+  if(!jaEl||!enEl)return;
+  jaEl.innerHTML=_jaVoiceList.map(v=>`<option value="${v.name}" ${_jaVoice&&v.name===_jaVoice.name?'selected':''}>${v.name}</option>`).join('');
+  enEl.innerHTML=_enVoiceList.map(v=>`<option value="${v.name}" ${_enVoice&&v.name===_enVoice.name?'selected':''}>${v.name}</option>`).join('');
+  jaEl.onchange=()=>{_jaVoice=_jaVoiceList.find(v=>v.name===jaEl.value)||null;};
+  enEl.onchange=()=>{_enVoice=_enVoiceList.find(v=>v.name===enEl.value)||null;};
+}
+
+function shBuildList(){
   const cleared=shGetCleared();
+  const phrases=PHRASES.filter(p=>p.block===shActiveBlock);
   const container=document.getElementById('shadow-list');
   container.innerHTML='';
-  PHRASES.forEach((p,i)=>{
-    const isCleared=cleared.includes(i);
+  phrases.forEach(p=>{
+    const isCleared=cleared.includes(p.id);
     const div=document.createElement('div');
-    div.id=`sh-item-${i}`;
+    div.id=`sh-item-${p.id}`;
     div.className=`relative rounded-2xl border p-4 transition-all duration-200 cursor-pointer select-none ${isCleared?'opacity-40 bg-white border-slate-100':'bg-white border-slate-200 hover:border-blue-300'}`;
-    div.onclick=()=>{ if(!isCleared) shStartFrom(i); };
+    div.onclick=()=>{if(!isCleared)shStartFrom(p.id);};
     div.innerHTML=`
-      <button onclick="shToggleCleared(${i},event)" class="absolute top-3 right-3 text-2xl leading-none">${isCleared?'✅':'⭕'}</button>
-      <span class="text-xs font-mono text-slate-300 mb-1 block">#${i+1}</span>
+      <button onclick="shToggleCleared(${p.id},event)" class="absolute top-3 right-3 text-xl">${isCleared?'✅':'⭕'}</button>
+      <span class="text-xs font-mono text-slate-300 mb-1 block">#${p.id}</span>
       <p class="text-sm text-slate-500 mb-2 leading-relaxed pr-8 ${isCleared?'line-through':''}">${p.ja}</p>
       <div class="flex items-center gap-2">
-        <p id="sh-en-${i}" class="text-base font-medium text-slate-800 leading-relaxed flex-1 ${isCleared?'line-through text-slate-300':''}">${p.en}</p>
-        <span id="sh-brain-${i}" class="hidden text-xl brain-pulse">🧠</span>
+        <p id="sh-en-${p.id}" class="text-base font-medium text-slate-800 leading-relaxed flex-1 ${isCleared?'line-through text-slate-300':''}">${p.en}</p>
+        <span id="sh-brain-${p.id}" class="hidden text-xl brain-pulse">🧠</span>
       </div>
-      <div id="sh-phase-${i}" class="hidden mt-2 flex items-center gap-1.5">
+      <div id="sh-phase-${p.id}" class="hidden mt-2 flex items-center gap-1.5">
         <div class="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse"></div>
         <span class="text-xs text-slate-400"></span>
       </div>`;
     container.appendChild(div);
   });
-  document.getElementById('sh-active-count').textContent = `${PHRASES.length - cleared.length}文`;
+  const active=phrases.filter(p=>!cleared.includes(p.id)).length;
+  document.getElementById('sh-active-count').textContent=`${active}文`;
+  document.getElementById('sh-current-label').textContent=`Block ${shActiveBlock}: ${BLOCK_THEMES[shActiveBlock-1]}`;
 }
 
-function shToggleCleared(idx, e) {
+function shToggleCleared(id,e){
   e.stopPropagation();
-  const cleared=shGetCleared();
-  const next=cleared.includes(idx)?cleared.filter(x=>x!==idx):[...cleared,idx];
-  shSaveCleared(next);
+  const c=shGetCleared();
+  shSaveCleared(c.includes(id)?c.filter(x=>x!==id):[...c,id]);
   shBuildList();
-  document.getElementById('sh-active-count').textContent=`${PHRASES.length-next.length}文`;
 }
 
-function shGetNext(from, cleared) {
-  const active=PHRASES.map((_,i)=>i).filter(i=>!cleared.includes(i));
-  if (!active.length) return null;
-  const after=active.filter(i=>i>from);
-  return after.length ? after[0] : active[0];
+function shGetNext(from,cleared){
+  const phrases=PHRASES.filter(p=>p.block===shActiveBlock);
+  const active=phrases.filter(p=>!cleared.includes(p.id));
+  if(!active.length)return null;
+  const after=active.filter(p=>p.id>from);
+  return after.length?after[0].id:active[0].id;
 }
 
-function shPlayPhrase(idx) {
-  if (!shPlaying) return;
-  shCurrentIdx=idx;
-  shHighlight(idx);
-  shSetPhaseUI(idx,'ja');
+function shPlayPhrase(id){
+  if(!shPlaying)return;
+  const p=PHRASES.find(x=>x.id===id);
+  shCurrentIdx=id;
+  shHighlight(id);
+  shSetPhaseUI(id,'ja');
   document.getElementById('sh-status').textContent='🇯🇵 日本語を読み上げ中...';
-  document.getElementById('sh-current-label').textContent=`#${idx+1} — ${PHRASES[idx].ja.slice(0,20)}…`;
-
-  const p=PHRASES[idx];
+  document.getElementById('sh-current-label').textContent=`#${id} — ${p.ja.slice(0,20)}…`;
   speakTTS(cleanSlash(p.ja,true),'ja-JP',_jaVoice,()=>{
-    if (!shPlaying) return;
-    shSetPhaseUI(idx,'thinking');
+    if(!shPlaying)return;
+    shSetPhaseUI(id,'thinking');
     document.getElementById('sh-status').textContent='🧠 英語を頭で考えてみましょう...';
-    // blur english
-    const enEl=document.getElementById(`sh-en-${idx}`);
-    const brainEl=document.getElementById(`sh-brain-${idx}`);
-    if(enEl) enEl.classList.add('blur-en');
-    if(brainEl) brainEl.classList.remove('hidden');
+    const enEl=document.getElementById(`sh-en-${id}`);
+    const brainEl=document.getElementById(`sh-brain-${id}`);
+    if(enEl)enEl.classList.add('blur-en');
+    if(brainEl)brainEl.classList.remove('hidden');
     const delay=p.en.length*70+600;
     shTimer=setTimeout(()=>{
-      if (!shPlaying) return;
-      if(enEl) enEl.classList.remove('blur-en');
-      if(brainEl) brainEl.classList.add('hidden');
-      shSetPhaseUI(idx,'en');
+      if(!shPlaying)return;
+      if(enEl)enEl.classList.remove('blur-en');
+      if(brainEl)brainEl.classList.add('hidden');
+      shSetPhaseUI(id,'en');
       document.getElementById('sh-status').textContent='🇺🇸 英語を読み上げ中...';
       speakTTS(cleanSlash(p.en,false),'en-US',_enVoice,()=>{
-        if (!shPlaying) return;
-        shSetPhaseUI(idx,'idle');
-        const cleared=shGetCleared();
-        const next=shGetNext(idx,cleared);
-        if (next===null) { shStop(); return; }
-        setTimeout(()=>shPlayPhrase(next), 400);
+        if(!shPlaying)return;
+        shSetPhaseUI(id,'idle');
+        const next=shGetNext(id,shGetCleared());
+        if(next===null){shStop();return;}
+        setTimeout(()=>shPlayPhrase(next),400);
       });
-    }, delay);
+    },delay);
   });
 }
 
-function shSetPhaseUI(idx, phase) {
+function shSetPhaseUI(id,phase){
   shPhase=phase;
-  const el=document.getElementById(`sh-phase-${idx}`);
-  if (!el) return;
-  if (phase==='idle') { el.classList.add('hidden'); return; }
+  const el=document.getElementById(`sh-phase-${id}`);
+  if(!el)return;
+  if(phase==='idle'){el.classList.add('hidden');return;}
   el.classList.remove('hidden');
-  const labels={'ja':'日本語','thinking':'考え中','en':'英語'};
-  el.querySelector('span').textContent=labels[phase]||'';
+  const labels={ja:'日本語',thinking:'考え中',en:'英語'};
+  const span=el.querySelector('span');
+  if(span)span.textContent=labels[phase]||'';
 }
 
-function shHighlight(idx) {
-  document.querySelectorAll('[id^="sh-item-"]').forEach(el=>{
-    const i=parseInt(el.id.replace('sh-item-',''));
-    if (i===idx) el.classList.add('bg-blue-50','border-blue-400','shadow-md');
+function shHighlight(id){
+  const phrases=PHRASES.filter(p=>p.block===shActiveBlock);
+  phrases.forEach(p=>{
+    const el=document.getElementById(`sh-item-${p.id}`);
+    if(!el)return;
+    if(p.id===id)el.classList.add('bg-blue-50','border-blue-400','shadow-md');
     else el.classList.remove('bg-blue-50','border-blue-400','shadow-md');
   });
-  const target=document.getElementById(`sh-item-${idx}`);
-  if (target) target.scrollIntoView({behavior:'smooth',block:'center'});
+  const target=document.getElementById(`sh-item-${id}`);
+  if(target)target.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
-function shTogglePlay() {
-  if (shPlaying) { shStop(); return; }
+function shTogglePlay(){
+  if(shPlaying){shStop();return;}
   shPlaying=true;
   document.getElementById('sh-play-btn').textContent='⏸';
-  document.getElementById('sh-play-btn').classList.replace('bg-blue-600','bg-red-500');
-  document.getElementById('sh-play-btn').classList.replace('hover:bg-blue-700','hover:bg-red-600');
+  document.getElementById('sh-play-btn').className=document.getElementById('sh-play-btn').className.replace('bg-blue-600 hover:bg-blue-700','bg-red-500 hover:bg-red-600');
   const cleared=shGetCleared();
   const start=shCurrentIdx!==null?shCurrentIdx:-1;
   const next=shGetNext(start,cleared);
-  if (next===null) { shStop(); return; }
+  if(next===null){shStop();return;}
   shPlayPhrase(next);
 }
 
-function shStop() {
+function shStop(){
   shPlaying=false;
-  window.speechSynthesis.cancel();
-  if (shTimer) clearTimeout(shTimer);
-  document.getElementById('sh-play-btn').textContent='▶';
-  document.getElementById('sh-play-btn').classList.replace('bg-red-500','bg-blue-600');
-  document.getElementById('sh-play-btn').classList.replace('hover:bg-red-600','hover:bg-blue-700');
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  if(shTimer)clearTimeout(shTimer);
+  const btn=document.getElementById('sh-play-btn');
+  btn.textContent='▶';
+  btn.className=btn.className.replace('bg-red-500 hover:bg-red-600','bg-blue-600 hover:bg-blue-700');
   document.getElementById('sh-status').textContent='停止中';
-  // remove all blur/brain
-  PHRASES.forEach((_,i)=>{
-    const e=document.getElementById(`sh-en-${i}`); if(e) e.classList.remove('blur-en');
-    const b=document.getElementById(`sh-brain-${i}`); if(b) b.classList.add('hidden');
-    shSetPhaseUI(i,'idle');
+  const phrases=PHRASES.filter(p=>p.block===shActiveBlock);
+  phrases.forEach(p=>{
+    const e=document.getElementById(`sh-en-${p.id}`);if(e)e.classList.remove('blur-en');
+    const b=document.getElementById(`sh-brain-${p.id}`);if(b)b.classList.add('hidden');
+    shSetPhaseUI(p.id,'idle');
   });
   shHighlight(-1);
 }
 
-function shStartFrom(idx) {
-  window.speechSynthesis.cancel();
-  if (shTimer) clearTimeout(shTimer);
+function shStartFrom(id){
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  if(shTimer)clearTimeout(shTimer);
   shPlaying=true;
-  document.getElementById('sh-play-btn').textContent='⏸';
-  document.getElementById('sh-play-btn').classList.replace('bg-blue-600','bg-red-500');
-  document.getElementById('sh-play-btn').classList.replace('hover:bg-blue-700','hover:bg-red-600');
-  shPlayPhrase(idx);
+  const btn=document.getElementById('sh-play-btn');
+  btn.textContent='⏸';
+  btn.className=btn.className.replace('bg-blue-600 hover:bg-blue-700','bg-red-500 hover:bg-red-600');
+  shPlayPhrase(id);
 }
 
 // ============================================================
-// ③ INSTANT TRANSLATION
+// ③ INSTANT
 // ============================================================
-let instIdx=0, instOk=0, instNg=0, instRecog=null, instRecording=false;
+let instBlock=1,instIdx=0,instOk=0,instNg=0,instRecog=null,instRecording=false;
 
-function instRender() {
-  const p=PHRASES[instIdx];
-  document.getElementById('inst-counter').textContent=`${instIdx+1} / ${PHRASES.length}`;
-  document.getElementById('inst-progress').style.width=`${(instIdx/PHRASES.length)*100}%`;
+function buildInstBlockButtons(){
+  const container=document.getElementById('inst-block-buttons');
+  container.innerHTML='';
+  for(let b=1;b<=19;b++){
+    const btn=document.createElement('button');
+    btn.id=`inst-blk-${b}`;
+    const prog=LS.get('inst_prog_'+b)||{idx:0,ok:0,ng:0};
+    const total=PHRASES.filter(p=>p.block===b).length;
+    const done=prog.idx>=total&&total>0;
+    btn.className=`py-1.5 rounded-lg text-xs font-semibold transition active:scale-95 ${b===instBlock?'bg-blue-600 text-white':done?'bg-emerald-100 text-emerald-600':'bg-slate-100 text-slate-600 hover:bg-blue-100'}`;
+    btn.textContent=`B${b}`;
+    btn.onclick=()=>instSelectBlock(b);
+    container.appendChild(btn);
+  }
+}
+
+function instSelectBlock(b){
+  instBlock=b;
+  const prog=LS.get('inst_prog_'+b)||{idx:0,ok:0,ng:0};
+  instIdx=prog.idx;
+  instOk=prog.ok;
+  instNg=prog.ng;
+  buildInstBlockButtons();
+  document.getElementById('inst-score-ok').textContent=`✓ ${instOk}`;
+  document.getElementById('inst-score-ng').textContent=`✗ ${instNg}`;
+  instRender();
+}
+
+function instRender(){
+  const phrases=PHRASES.filter(p=>p.block===instBlock);
+  if(!phrases.length)return;
+  const total=phrases.length;
+  if(instIdx>=total){
+    document.getElementById('inst-ja-text').textContent='このブロック完了！「ブロック最初から」で再挑戦できます。';
+    document.getElementById('inst-counter').textContent=`完了 ${total}/${total}`;
+    document.getElementById('inst-progress').style.width='100%';
+    return;
+  }
+  const p=phrases[instIdx];
+  document.getElementById('inst-counter').textContent=`Block ${instBlock} · ${instIdx+1} / ${total}`;
+  document.getElementById('inst-progress').style.width=`${(instIdx/total)*100}%`;
   document.getElementById('inst-ja-text').textContent=p.ja;
   document.getElementById('inst-idle-area').classList.remove('hidden');
   document.getElementById('inst-recording-area').classList.add('hidden');
   document.getElementById('inst-result-area').classList.add('hidden');
   document.getElementById('inst-mic-hint').textContent='ボタンを押して英語で答えてください';
-  // animate card
   const card=document.getElementById('inst-card');
-  card.classList.remove('fade-in'); void card.offsetWidth; card.classList.add('fade-in');
+  card.classList.remove('fade-in');void card.offsetWidth;card.classList.add('fade-in');
 }
 
-function instReadJa() {
-  speakTTS(cleanSlash(PHRASES[instIdx].ja,true),'ja-JP',_jaVoice,null);
+function instSaveProgress(){LS.set('inst_prog_'+instBlock,{idx:instIdx,ok:instOk,ng:instNg});}
+
+function instReadJa(){
+  const phrases=PHRASES.filter(p=>p.block===instBlock);
+  if(instIdx<phrases.length)speakTTS(cleanSlash(phrases[instIdx].ja,true),'ja-JP',_jaVoice,null);
 }
 
-function instStartMic() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    alert('このブラウザは音声認識に対応していません。Chromeをお使いください。');
-    return;
-  }
-  instRecog = new SR();
-  instRecog.lang='en-US';
-  instRecog.interimResults=false;
-  instRecog.maxAlternatives=3;
+function instStartMic(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('音声認識はChromeでのみ動作します。');return;}
+  instRecog=new SR();instRecog.lang='en-US';instRecog.interimResults=false;instRecog.maxAlternatives=3;
   instRecording=true;
   document.getElementById('inst-idle-area').classList.add('hidden');
   document.getElementById('inst-recording-area').classList.remove('hidden');
-
-  instRecog.onresult = e => {
-    const heard=e.results[0][0].transcript;
-    instRecording=false;
-    instShowResult(heard);
-  };
-  instRecog.onerror = () => {
-    instRecording=false;
-    instShowResult('（認識できませんでした）');
-  };
-  instRecog.onend = () => {
-    if (instRecording) instShowResult('（認識できませんでした）');
-  };
+  instRecog.onresult=e=>{const h=e.results[0][0].transcript;instRecording=false;instShowResult(h);};
+  instRecog.onerror=()=>{instRecording=false;instShowResult('（認識できませんでした）');};
+  instRecog.onend=()=>{if(instRecording)instShowResult('（認識できませんでした）');};
   instRecog.start();
 }
+function instStopMic(){if(instRecog){try{instRecog.stop();}catch(e){}}}
 
-function instStopMic() {
-  if (instRecog) { try { instRecog.stop(); } catch(e){} }
-}
-
-function instShowResult(heard) {
+function instShowResult(heard){
   document.getElementById('inst-recording-area').classList.add('hidden');
   document.getElementById('inst-idle-area').classList.remove('hidden');
   document.getElementById('inst-result-area').classList.remove('hidden');
-
-  const model=PHRASES[instIdx].en;
-  const score=calcScore(heard, model);
+  const phrases=PHRASES.filter(p=>p.block===instBlock);
+  const model=phrases[instIdx].en;
+  const score=calcScore(heard,model);
   const pct=Math.round(score*100);
-
   document.getElementById('inst-heard').textContent=heard;
   document.getElementById('inst-model-en').textContent=model;
   document.getElementById('inst-score-pct').textContent=`${pct}%`;
   const bar=document.getElementById('inst-score-bar');
   bar.style.width='0%';
   bar.className=`h-2.5 rounded-full score-fill ${pct>=80?'bg-emerald-500':pct>=50?'bg-yellow-400':'bg-red-400'}`;
-  setTimeout(()=>{ bar.style.width=`${pct}%`; },50);
-
-  if (pct>=50) { instOk++; } else { instNg++; }
+  setTimeout(()=>{bar.style.width=`${pct}%`;},50);
+  if(pct>=50)instOk++;else instNg++;
   document.getElementById('inst-score-ok').textContent=`✓ ${instOk}`;
   document.getElementById('inst-score-ng').textContent=`✗ ${instNg}`;
+  instSaveProgress();
 }
 
-function calcScore(heard, model) {
-  const normalize = s => s.toLowerCase().replace(/[^\w\s]/g,'').trim().split(/\s+/).filter(Boolean);
-  const h=normalize(heard), m=normalize(model);
-  if (!m.length) return 0;
-  let matches=0;
-  const used=new Array(m.length).fill(false);
-  h.forEach(hw=>{
-    const idx=m.findIndex((mw,i)=>!used[i]&&(mw===hw||mw.startsWith(hw)||hw.startsWith(mw)));
-    if (idx>=0) { matches++; used[idx]=true; }
-  });
+function calcScore(heard,model){
+  const norm=s=>s.toLowerCase().replace(/[^\w\s]/g,'').trim().split(/\s+/).filter(Boolean);
+  const h=norm(heard),m=norm(model);
+  if(!m.length)return 0;
+  let matches=0;const used=new Array(m.length).fill(false);
+  h.forEach(hw=>{const idx=m.findIndex((mw,i)=>!used[i]&&(mw===hw||mw.startsWith(hw)||hw.startsWith(mw)));if(idx>=0){matches++;used[idx]=true;}});
   return matches/m.length;
 }
 
-function instSpeakModel() {
-  speakTTS(PHRASES[instIdx].en,'en-US',_enVoice,null);
+function instSpeakModel(){
+  const phrases=PHRASES.filter(p=>p.block===instBlock);
+  if(instIdx<phrases.length)speakTTS(phrases[instIdx].en,'en-US',_enVoice,null);
 }
 
-function instNext() {
-  instIdx=(instIdx+1)%PHRASES.length;
+function instNext(){
+  const phrases=PHRASES.filter(p=>p.block===instBlock);
+  if(instIdx<phrases.length)instIdx++;
+  instSaveProgress();
+  buildInstBlockButtons();
   instRender();
 }
-
-function instSkip() {
-  instIdx=(instIdx+1)%PHRASES.length;
-  instRender();
-}
-
-function instRestart() {
-  instIdx=0; instOk=0; instNg=0;
+function instSkip(){instNext();}
+function instResetBlock(){
+  instIdx=0;instOk=0;instNg=0;
+  instSaveProgress();
   document.getElementById('inst-score-ok').textContent='✓ 0';
   document.getElementById('inst-score-ng').textContent='✗ 0';
+  buildInstBlockButtons();
   instRender();
 }
 
-</script>
-
-<!-- ================================================================
-     ④ ROLE-PLAY CONVERSATION
-     ================================================================ -->
-<div id="app-chat" class="app-panel hidden">
-  <div class="max-w-lg mx-auto px-4 pt-4 pb-10">
-
-    <!-- Topic selector (home) -->
-    <div id="chat-home">
-      <div class="text-center mb-5">
-        <div class="text-2xl font-bold text-blue-700 mb-1">💬 ロールプレイ会話</div>
-        <p class="text-slate-400 text-sm">AIが質問→あなたが英語で答える練習</p>
-      </div>
-      <div class="space-y-3" id="chat-topic-list"></div>
-    </div>
-
-    <!-- Conversation screen -->
-    <div id="chat-convo" class="hidden">
-
-      <!-- Header -->
-      <div class="flex items-center gap-3 mb-4">
-        <button onclick="chatGoHome()" class="text-blue-500 text-sm font-medium bg-white border border-blue-200 rounded-full px-4 py-2 shadow-sm active:scale-95 transition">
-          ← トピック選択
-        </button>
-        <div class="flex-1 text-sm font-semibold text-slate-700 truncate" id="chat-topic-title"></div>
-        <div class="text-xs text-slate-400" id="chat-q-counter"></div>
-      </div>
-
-      <!-- Progress bar -->
-      <div class="w-full bg-blue-100 rounded-full h-1.5 mb-5">
-        <div id="chat-progress" class="bg-blue-500 h-1.5 rounded-full transition-all duration-300" style="width:0%"></div>
-      </div>
-
-      <!-- AI question card -->
-      <div class="bg-blue-600 rounded-2xl p-5 mb-4 shadow-md fade-in" id="chat-q-card">
-        <div class="text-xs font-semibold text-blue-200 mb-2">🤖 AIの質問</div>
-        <div class="text-white text-lg font-medium leading-relaxed" id="chat-q-en"></div>
-        <div class="text-blue-200 text-sm mt-2 leading-relaxed" id="chat-q-ja"></div>
-        <button onclick="chatSpeakQuestion()" class="mt-3 text-xs text-blue-200 hover:text-white flex items-center gap-1">
-          🔊 もう一度聞く
-        </button>
-      </div>
-
-      <!-- Answer states -->
-      <!-- idle -->
-      <div id="chat-idle-area">
-        <div class="flex gap-2 mb-2">
-          <button onclick="chatStartMic()" id="chat-mic-btn"
-            class="flex-1 py-4 rounded-2xl bg-red-500 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-red-600 flex items-center justify-center gap-2">
-            🎤 英語で答える
-          </button>
-        </div>
-        <p class="text-xs text-slate-400 text-center">詰まったら下のテキストボックスに日本語でもOK</p>
-        <div class="flex gap-2 mt-2">
-          <input type="text" id="chat-ja-input" placeholder="日本語で入力（英語に翻訳して送信）..."
-            class="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-400 bg-white"
-            onkeydown="if(event.key==='Enter') chatSendJa()">
-          <button onclick="chatSendJa()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-600 text-sm font-medium active:scale-95 hover:bg-slate-300">送信</button>
-        </div>
-      </div>
-
-      <!-- recording -->
-      <div id="chat-recording-area" class="hidden text-center py-3">
-        <div class="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center mx-auto mb-3 mic-recording text-2xl">🎤</div>
-        <p class="text-sm font-medium text-red-500 mb-1">録音中...</p>
-        <p class="text-xs text-slate-400 mb-3">話し終えると自動で次へ進みます</p>
-        <button onclick="chatStopMic()" class="px-6 py-2 rounded-full bg-slate-200 text-slate-600 text-sm active:scale-95">停止</button>
-      </div>
-
-      <!-- result -->
-      <div id="chat-result-area" class="hidden">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-4 fade-in">
-
-          <!-- Your answer -->
-          <div class="mb-4">
-            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">あなたの回答</div>
-            <div class="text-slate-700 text-sm leading-relaxed bg-slate-50 rounded-xl px-3 py-2" id="chat-heard"></div>
-          </div>
-
-          <!-- Model answer -->
-          <div class="mb-4">
-            <div class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">模範回答</div>
-            <div class="text-slate-800 text-base font-medium leading-relaxed" id="chat-model-ans"></div>
-            <button onclick="chatSpeakModel()" class="mt-1 text-xs text-blue-500 hover:text-blue-700">🔊 模範回答を聞く</button>
-          </div>
-
-          <!-- Tip -->
-          <div id="chat-tip-area" class="hidden bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">
-            <div class="text-xs font-semibold text-amber-600 mb-1">💡 表現のヒント</div>
-            <div class="text-amber-800 text-xs leading-relaxed" id="chat-tip"></div>
-          </div>
-
-          <!-- Next -->
-          <button onclick="chatNext()" class="w-full py-3 rounded-xl bg-blue-600 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-blue-700">
-            次の質問へ →
-          </button>
-        </div>
-      </div>
-
-      <!-- Completion -->
-      <div id="chat-complete-area" class="hidden text-center py-8 fade-in">
-        <div class="text-5xl mb-4">🎉</div>
-        <div class="text-2xl font-bold text-blue-700 mb-2">完了！</div>
-        <p class="text-slate-500 mb-6" id="chat-complete-msg"></p>
-        <button onclick="chatGoHome()" class="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold active:scale-95 transition hover:bg-blue-700">
-          別のトピックを選ぶ
-        </button>
-      </div>
-
-    </div><!-- /chat-convo -->
-  </div>
-</div><!-- /app-chat -->
-
-<script>
 // ============================================================
-// ④ ROLE-PLAY CONVERSATION
+// ④ CHAT
 // ============================================================
-const CHAT_TOPICS = [
-  {
-    emoji:'⚽', label:'サッカーと夢',
-    qs:[
-      { q:"Tell me about yourself. Where did you grow up and what was your childhood like?", ja:"自己紹介をしてください。どこで育ち、子供の頃はどんな感じでしたか？", model:"I grew up in Japan as the second son in my family. My older brother had a big influence on me — I started playing soccer because of him, and from junior high school I devoted everything to becoming a professional player." },
-      { q:"When did you decide you wanted to become a professional soccer player?", ja:"プロのサッカー選手になりたいと決意したのはいつですか？", model:"I made that decision in junior high school. From that point on, soccer was my whole life. I trained hard every day and really believed I could make it happen." },
-      { q:"Did you have any injuries while playing soccer? How did you deal with them?", ja:"サッカー中に怪我をしたことはありますか？どう乗り越えましたか？", model:"Yes, I suffered some serious injuries during my career. But I overcame them every time. Those experiences actually made me more resilient and taught me a lot about perseverance." },
-      { q:"How did you feel when you realized becoming a pro wasn't realistic?", ja:"プロになれないと悟ったとき、どんな気持ちでしたか？", model:"It was a very difficult moment. During my junior year of college, I came to accept that my skills weren't quite at the professional level. It was hard to let go of a dream I had devoted so many years to." },
-      { q:"Do you think your soccer experience helped shape who you are today?", ja:"サッカーの経験が今の自分を形成したと思いますか？", model:"Absolutely. Soccer taught me the value of consistent effort and resilience. Competing in a tough environment until the very end gave me confidence in my ability to push through challenges. Those lessons still guide me today." },
-    ]
-  },
-  {
-    emoji:'💼', label:'仕事・SIer営業',
-    qs:[
-      { q:"Can you tell me about your current job? What do you do every day?", ja:"今の仕事について教えてください。毎日どんなことをしていますか？", model:"I work as a sales person at a large system integrator in Japan. I'm currently in charge of sales for a major automobile manufacturer. I support their system development, maintenance, and digital transformation projects." },
-      { q:"What do you enjoy most about your work in IT sales?", ja:"IT営業の仕事で一番楽しいことは何ですか？", model:"I enjoy the problem-solving aspect. When I help a client work through a real business challenge and propose a solution that makes a difference, it's very rewarding. I also like building long-term relationships with clients." },
-      { q:"What challenges do you face in your role as a sales person?", ja:"営業としての役割でどんな課題を感じていますか？", model:"One challenge I struggle with is defining my specialty. When someone asks what I'm an expert in, I don't yet have a confident answer. I want to develop deeper expertise in supporting manufacturing companies with digital transformation." },
-      { q:"How do you think the IT industry will change in the next few years?", ja:"ITの業界は今後数年でどう変わると思いますか？", model:"I think the traditional person-hour based model is becoming unsustainable. The industry is likely to shift toward outcome-based models. AI is also changing things dramatically — companies that can generate tangible results from data quickly will have a strong advantage." },
-      { q:"What kind of career goals do you have for the next decade?", ja:"今後10年のキャリア目標はどんなものですか？", model:"In my thirties I want to move into an environment where I have greater leverage in both income and decision-making. By my forties, I want to be chosen by name — based on my expertise and my professional network. I want to build a career around the value I can genuinely create." },
-    ]
-  },
-  {
-    emoji:'🌱', label:'価値観・人生哲学',
-    qs:[
-      { q:"How would you describe your personal values? What matters most to you in life?", ja:"あなたの価値観はどんなものですか？人生で一番大切なことは？", model:"I value the ability to see things from multiple perspectives and make decisions with discernment. I also believe strongly in consistent effort — I think meaningful results come from steady, daily improvement rather than sudden breakthroughs." },
-      { q:"Do you believe in living life without regrets? How do you approach past decisions?", ja:"後悔のない人生を生きることを信じていますか？過去の選択にどう向き合いますか？", model:"I try not to regret my past choices excessively. Instead of dwelling on what might have been, I choose to move forward. I believe that even events that seem negative can eventually lead somewhere positive." },
-      { q:"What does personal growth mean to you?", ja:"自己成長とはあなたにとってどんな意味がありますか？", model:"Personal growth means becoming clearer about my own intentions and improving steadily every day. I want to strengthen my critical thinking and be more decisive. I also want to have the courage to eliminate what isn't necessary and focus only on what truly matters." },
-      { q:"How do you stay motivated when things get difficult?", ja:"物事がうまくいかないとき、どうやってモチベーションを保ちますか？", model:"I remind myself that life moves in waves — no difficult situation lasts forever. When things are calmly organized and clarified, a path usually appears. I find that breaking things down and taking steady steps forward helps me stay grounded." },
-      { q:"Is there a life philosophy or saying that guides you?", ja:"あなたを導く人生哲学や言葉はありますか？", model:"One belief I hold strongly is that life gradually moves in the direction we consciously envision. So I try to be intentional about what I want and where I'm heading. I also believe that people who achieve meaningful results do so through consistent, daily effort." },
-    ]
-  },
-  {
-    emoji:'✈️', label:'旅行・趣味',
-    qs:[
-      { q:"What do you like to do in your free time?", ja:"自由な時間には何をするのが好きですか？", model:"I'm very competitive by nature, so when I get into something I become fully absorbed in it. I enjoy watching films, planning trips, and I also like self-reflection — thinking about where I am and where I want to go." },
-      { q:"Tell me about a travel experience that really stayed with you.", ja:"心に残っている旅の経験を教えてください。", model:"I love looking for experiences that feel extraordinary — something that challenges my assumptions or lets me feel the overwhelming power of nature. Those kinds of trips really reset my perspective and recharge me in a way that everyday life can't." },
-      { q:"What do you look for when you travel?", ja:"旅行するときに何を求めていますか？", model:"I look for experiences that feel extraordinary and out of the ordinary. I'm drawn to places where I can feel something bigger than myself — whether it's stunning nature or a culture very different from Japan. I believe memories are fuel for life." },
-      { q:"How do you usually spend your weekends?", ja:"週末はどのように過ごしていますか？", model:"I spend about half my weekend time on myself — that helps me reset and recharge. I value slow and meaningful time. I might go to a sauna, watch a film, or just plan ahead. Having two large dogs also means they're a big part of my weekends." },
-      { q:"You mentioned you have two large dogs. Tell me more about them!", ja:"大型犬を2匹飼っているとのこと。もっと教えてください！", model:"They're a huge part of my life! Finding a place to live in Tokyo with two large dogs was very challenging, but we managed. I live in the western Tokyo area now, which has a nice balance of nature, stylish neighborhoods, and great restaurants — perfect for walks with them." },
-    ]
-  },
-  {
-    emoji:'👨‍👩‍👧', label:'家族・友人',
-    qs:[
-      { q:"Tell me about your family. Are you close with them?", ja:"家族について教えてください。仲が良いですか？", model:"Yes, I'm close with my family. My older brother has a strong character and doesn't get easily influenced by others — I respect that a lot. My father supported my soccer career for many years, and I'm deeply grateful to him. My mother is always positive and upbeat." },
-      { q:"What is your wife like? How did you meet?", ja:"奥さんはどんな方ですか？どこで出会いましたか？", model:"I met her in my second year at work. We dated for two years and then got married. She's very capable and good at many things. What I truly respect about her is that she lives according to her own desires without worrying about titles or social status. That attitude always inspires me." },
-      { q:"How would you describe your closest friends?", ja:"一番仲の良い友達はどんな人ですか？", model:"Many of my closest friends are from my soccer days. Even now as working adults, they still give their best to both soccer and their careers. Their attitude always inspires me. Having friends who are ambitious and hardworking around me is a real motivator." },
-      { q:"What role does family play in your future plans?", ja:"将来の計画において家族はどんな役割を果たしていますか？", model:"Family is central to everything. I want to eventually build a home designed with great attention to detail — somewhere we can really put down roots. I'd also love to travel abroad regularly with my family in the future. Those shared experiences matter a lot to me." },
-    ]
-  },
-  {
-    emoji:'🇬🇧', label:'英語学習の目標',
-    qs:[
-      { q:"Why are you learning English? What motivated you to start?", ja:"なぜ英語を学んでいますか？始めたきっかけは何ですか？", model:"I've always admired people who speak English fluently. I believe that if I can speak English, I'll be able to enjoy traveling abroad much more, expand my career options, and access a much wider range of information. That combination is a strong motivation for me." },
-      { q:"What do you find most challenging about learning English?", ja:"英語学習で一番難しいと感じることは何ですか？", model:"Honestly, speaking spontaneously is the hardest part. I can understand a lot, but expressing my own thoughts naturally in the moment takes a lot of practice. I'm working on building the confidence to just speak without worrying too much about mistakes." },
-      { q:"How do you think English will help your career?", ja:"英語はキャリアにどう役立つと思いますか？", model:"From a career perspective, English will really expand my options. So much valuable information and expertise is only available in English. I believe my ability to gather information and engage with global ideas will improve dramatically once I'm fluent." },
-      { q:"What's your goal — what level of English do you want to reach?", ja:"あなたの目標は何ですか？どのレベルの英語を目指していますか？", model:"I want to reach a level where I can speak naturally and confidently in business and travel situations. Fluency — being able to express myself without hesitation — is the goal. I want English to open doors, not feel like a barrier." },
-    ]
-  },
-];
+let chatTopicIdx=null,chatQIdx=0,chatRecog=null,chatIsRecording=false;
 
-let chatTopicIdx = null;
-let chatQIdx = 0;
-let chatRecog = null;
-let chatIsRecording = false;
-
-function chatInit() {
-  const list = document.getElementById('chat-topic-list');
-  list.innerHTML = '';
-  CHAT_TOPICS.forEach((t, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'w-full flex items-center gap-3 px-4 py-4 rounded-2xl border border-slate-200 bg-white text-left active:scale-95 transition hover:border-blue-300 hover:bg-blue-50 shadow-sm';
-    btn.innerHTML = `<span class="text-2xl">${t.emoji}</span><div><div class="font-semibold text-slate-700 text-sm">${t.label}</div><div class="text-xs text-slate-400 mt-0.5">${t.qs.length}問</div></div><span class="ml-auto text-slate-300">›</span>`;
-    btn.onclick = () => chatStartTopic(i);
+function chatInit(){
+  const list=document.getElementById('chat-topic-list');
+  list.innerHTML='';
+  CHAT_TOPICS.forEach((t,i)=>{
+    const prog=LS.get('chat_prog_'+t.block)||0;
+    const done=prog>=t.qs.length;
+    const btn=document.createElement('button');
+    btn.className='w-full flex items-center gap-3 px-4 py-4 rounded-2xl border border-slate-200 bg-white text-left active:scale-95 transition hover:border-blue-300 hover:bg-blue-50 shadow-sm';
+    btn.innerHTML=`<span class="text-2xl">${t.emoji}</span><div class="flex-1"><div class="font-semibold text-slate-700 text-sm">Block ${t.block}: ${t.label}</div><div class="text-xs text-slate-400 mt-0.5">${t.qs.length}問 ${done?'· ✅ 完了':'· 進捗: '+prog+'/'+t.qs.length}</div></div><span class="text-slate-300">›</span>`;
+    btn.onclick=()=>chatStartTopic(i);
     list.appendChild(btn);
   });
 }
 
-function chatStartTopic(idx) {
-  chatTopicIdx = idx;
-  chatQIdx = 0;
+function chatStartTopic(idx){
+  chatTopicIdx=idx;
+  const t=CHAT_TOPICS[idx];
+  chatQIdx=LS.get('chat_prog_'+t.block)||0;
+  if(chatQIdx>=t.qs.length)chatQIdx=0;
   document.getElementById('chat-home').classList.add('hidden');
   document.getElementById('chat-convo').classList.remove('hidden');
   document.getElementById('chat-complete-area').classList.add('hidden');
-  document.getElementById('chat-topic-title').textContent = CHAT_TOPICS[idx].emoji + ' ' + CHAT_TOPICS[idx].label;
+  document.getElementById('chat-topic-title').textContent=t.emoji+' '+t.label;
   chatShowQuestion();
 }
 
-function chatShowQuestion() {
-  const topic = CHAT_TOPICS[chatTopicIdx];
-  const q = topic.qs[chatQIdx];
-  const total = topic.qs.length;
-
-  document.getElementById('chat-q-counter').textContent = `${chatQIdx + 1} / ${total}`;
-  document.getElementById('chat-progress').style.width = `${(chatQIdx / total) * 100}%`;
-  document.getElementById('chat-q-en').textContent = q.q;
-  document.getElementById('chat-q-ja').textContent = q.ja;
-
-  // Reset state areas
+function chatShowQuestion(){
+  const t=CHAT_TOPICS[chatTopicIdx];
+  const q=t.qs[chatQIdx];
+  const total=t.qs.length;
+  document.getElementById('chat-q-counter').textContent=`${chatQIdx+1} / ${total}`;
+  document.getElementById('chat-progress').style.width=`${(chatQIdx/total)*100}%`;
+  document.getElementById('chat-q-en').textContent=q.q;
+  document.getElementById('chat-q-ja').textContent=q.qja;
   document.getElementById('chat-idle-area').classList.remove('hidden');
   document.getElementById('chat-recording-area').classList.add('hidden');
   document.getElementById('chat-result-area').classList.add('hidden');
   document.getElementById('chat-complete-area').classList.add('hidden');
-  document.getElementById('chat-ja-input').value = '';
-
-  // Animate card
-  const card = document.getElementById('chat-q-card');
-  card.classList.remove('fade-in'); void card.offsetWidth; card.classList.add('fade-in');
-
-  // Auto-speak question
-  setTimeout(() => speakTTS(q.q, 'en-US', _enVoice, null), 300);
+  document.getElementById('chat-ja-input').value='';
+  const card=document.getElementById('chat-q-card');
+  card.classList.remove('fade-in');void card.offsetWidth;card.classList.add('fade-in');
+  setTimeout(()=>speakTTS(q.q,'en-US',_enVoice,null),300);
 }
 
-function chatSpeakQuestion() {
-  const q = CHAT_TOPICS[chatTopicIdx].qs[chatQIdx];
-  speakTTS(q.q, 'en-US', _enVoice, null);
-}
+function chatSpeakQuestion(){const t=CHAT_TOPICS[chatTopicIdx];speakTTS(t.qs[chatQIdx].q,'en-US',_enVoice,null);}
+function chatSpeakModel(){const t=CHAT_TOPICS[chatTopicIdx];speakTTS(t.qs[chatQIdx].model,'en-US',_enVoice,null);}
 
-function chatSpeakModel() {
-  const q = CHAT_TOPICS[chatTopicIdx].qs[chatQIdx];
-  speakTTS(q.model, 'en-US', _enVoice, null);
-}
-
-function chatShowResult(heard) {
-  const q = CHAT_TOPICS[chatTopicIdx].qs[chatQIdx];
+function chatShowResult(heard){
+  const t=CHAT_TOPICS[chatTopicIdx];
+  const q=t.qs[chatQIdx];
   document.getElementById('chat-idle-area').classList.remove('hidden');
   document.getElementById('chat-recording-area').classList.add('hidden');
   document.getElementById('chat-result-area').classList.remove('hidden');
-  document.getElementById('chat-heard').textContent = heard || '（認識できませんでした）';
-  document.getElementById('chat-model-ans').textContent = q.model;
-
-  // Show tip if available
-  const tipArea = document.getElementById('chat-tip-area');
-  const tipEl = document.getElementById('chat-tip');
-  if (q.tip) {
-    tipArea.classList.remove('hidden');
-    tipEl.textContent = q.tip;
-  } else {
-    tipArea.classList.add('hidden');
-  }
+  document.getElementById('chat-heard').textContent=heard||'（認識できませんでした）';
+  document.getElementById('chat-model-ans').textContent=q.model;
+  document.getElementById('chat-model-ja').textContent=q.modelJa||'';
 }
 
-function chatNext() {
-  const topic = CHAT_TOPICS[chatTopicIdx];
+function chatNext(){
+  const t=CHAT_TOPICS[chatTopicIdx];
   chatQIdx++;
-  if (chatQIdx >= topic.qs.length) {
-    // Complete
+  LS.set('chat_prog_'+t.block,chatQIdx);
+  if(chatQIdx>=t.qs.length){
     document.getElementById('chat-idle-area').classList.add('hidden');
     document.getElementById('chat-result-area').classList.add('hidden');
     document.getElementById('chat-complete-area').classList.remove('hidden');
-    document.getElementById('chat-progress').style.width = '100%';
-    document.getElementById('chat-complete-msg').textContent = `「${topic.label}」の${topic.qs.length}問すべて完了しました！`;
-  } else {
-    chatShowQuestion();
-  }
+    document.getElementById('chat-progress').style.width='100%';
+    document.getElementById('chat-complete-msg').textContent=`「${t.label}」の${t.qs.length}問すべて完了！`;
+    chatInit();
+  }else{chatShowQuestion();}
 }
 
-function chatGoHome() {
-  window.speechSynthesis.cancel();
-  if (chatIsRecording && chatRecog) { try { chatRecog.stop(); } catch(e){} }
-  chatIsRecording = false;
+function chatGoHome(){
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+  if(chatIsRecording&&chatRecog){try{chatRecog.stop();}catch(e){}}
+  chatIsRecording=false;
   document.getElementById('chat-home').classList.remove('hidden');
   document.getElementById('chat-convo').classList.add('hidden');
 }
 
-function chatStartMic() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { alert('音声認識はChromeでのみ動作します。'); return; }
-
-  chatRecog = new SR();
-  chatRecog.lang = 'en-US';
-  chatRecog.interimResults = false;
-  chatIsRecording = true;
-
+function chatStartMic(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('音声認識はChromeでのみ動作します。');return;}
+  chatRecog=new SR();chatRecog.lang='en-US';chatRecog.interimResults=false;chatIsRecording=true;
   document.getElementById('chat-idle-area').classList.add('hidden');
   document.getElementById('chat-recording-area').classList.remove('hidden');
-
-  chatRecog.onresult = e => {
-    const heard = e.results[0][0].transcript;
-    chatIsRecording = false;
-    document.getElementById('chat-recording-area').classList.add('hidden');
-    chatShowResult(heard);
-  };
-  chatRecog.onerror = () => {
-    chatIsRecording = false;
-    document.getElementById('chat-recording-area').classList.add('hidden');
-    document.getElementById('chat-idle-area').classList.remove('hidden');
-    chatShowResult('');
-  };
-  chatRecog.onend = () => {
-    if (chatIsRecording) {
-      chatIsRecording = false;
-      document.getElementById('chat-recording-area').classList.add('hidden');
-      document.getElementById('chat-idle-area').classList.remove('hidden');
-    }
-  };
+  chatRecog.onresult=e=>{const h=e.results[0][0].transcript;chatIsRecording=false;document.getElementById('chat-recording-area').classList.add('hidden');chatShowResult(h);};
+  chatRecog.onerror=()=>{chatIsRecording=false;document.getElementById('chat-recording-area').classList.add('hidden');document.getElementById('chat-idle-area').classList.remove('hidden');chatShowResult('');};
+  chatRecog.onend=()=>{if(chatIsRecording){chatIsRecording=false;document.getElementById('chat-recording-area').classList.add('hidden');document.getElementById('chat-idle-area').classList.remove('hidden');}};
   chatRecog.start();
 }
-
-function chatStopMic() {
-  chatIsRecording = false;
-  if (chatRecog) { try { chatRecog.stop(); } catch(e){} }
-  document.getElementById('chat-recording-area').classList.add('hidden');
-  document.getElementById('chat-idle-area').classList.remove('hidden');
-}
-
-function chatSendJa() {
-  const input = document.getElementById('chat-ja-input');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  // Show Japanese input as the "heard" answer with a note
+function chatStopMic(){chatIsRecording=false;if(chatRecog){try{chatRecog.stop();}catch(e){}}}
+function chatSendJa(){
+  const input=document.getElementById('chat-ja-input');
+  const text=input.value.trim();
+  if(!text)return;
+  input.value='';
   chatShowResult(`（日本語入力）${text}`);
 }
 
@@ -1249,7 +1310,11 @@ function chatSendJa() {
 // ============================================================
 switchTab('vocab');
 renderHome();
+shActiveBlock=LS.get(LS_SH_BLOCK)||1;
+buildShBlockButtons();
 shBuildList();
+instBlock=1;
+buildInstBlockButtons();
 instRender();
 chatInit();
 </script>
