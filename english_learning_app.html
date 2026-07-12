@@ -125,6 +125,20 @@ body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
         <p class="text-sm font-medium text-slate-700 truncate" id="sh-status">停止中</p>
         <p class="text-xs text-slate-400 truncate mt-0.5" id="sh-current-label">ブロックを選んで再生</p>
       </div>
+      <div class="flex flex-col gap-1 flex-shrink-0">
+        <select id="sh-rate" onchange="shRate=parseFloat(this.value)" class="text-xs border border-slate-200 rounded-lg px-1.5 py-1 bg-slate-50 text-slate-600">
+          <option value="0.6">🐢 0.6x</option>
+          <option value="0.75">0.75x</option>
+          <option value="0.85" selected>0.85x</option>
+          <option value="1">1.0x</option>
+          <option value="1.15">🐇 1.15x</option>
+        </select>
+        <select id="sh-repeat" onchange="shRepeat=parseInt(this.value);shRepCount=0" class="text-xs border border-slate-200 rounded-lg px-1.5 py-1 bg-slate-50 text-slate-600">
+          <option value="1" selected>1回</option>
+          <option value="2">2回</option>
+          <option value="3">3回</option>
+        </select>
+      </div>
       <div class="text-xs text-slate-400 text-right flex-shrink-0">
         <div>∞ ループ</div>
         <div id="sh-active-count" class="text-slate-300"></div>
@@ -165,7 +179,7 @@ body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
       <div id="inst-recording-area" class="hidden text-center py-2">
         <div class="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center mx-auto mb-3 mic-recording text-2xl">🎤</div>
         <p class="text-sm font-medium text-red-500 mb-1">録音中...</p>
-        <p class="text-xs text-slate-400">話し終えたら自動で採点します</p>
+        <p class="text-xs text-slate-400">話し終えたら「停止して採点」を押してください（長い間があると自動確定します）</p>
         <button onclick="instStopMic()" class="mt-3 px-6 py-2 rounded-full bg-slate-200 text-slate-600 text-sm active:scale-95">停止して採点</button>
       </div>
       <div id="inst-result-area" class="hidden mt-1">
@@ -731,11 +745,11 @@ function loadVoices(){
 }
 if(window.speechSynthesis){window.speechSynthesis.onvoiceschanged=loadVoices;loadVoices();}
 
-function speakTTS(text,lang,voice,onend){
+function speakTTS(text,lang,voice,onend,rate){
   if(!window.speechSynthesis){if(onend)onend();return;}
   window.speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(text);
-  u.lang=lang;u.rate=(lang.startsWith('en')?0.85:1.0);
+  u.lang=lang;u.rate=rate!==undefined?rate:(lang.startsWith('en')?0.85:1.0);
   if(voice)u.voice=voice;
   if(onend)u.onend=onend;
   window.speechSynthesis.speak(u);
@@ -973,38 +987,30 @@ function shGetNext(from,cleared){
   return after.length?after[0].id:active[0].id;
 }
 
+let shRate=0.85,shRepeat=1,shRepCount=0;
 function shPlayPhrase(id){
   if(!shPlaying)return;
   const p=PHRASES.find(x=>x.id===id);
   shCurrentIdx=id;
   shHighlight(id);
-  shSetPhaseUI(id,'ja');
-  document.getElementById('sh-status').textContent='🇯🇵 日本語を読み上げ中...';
-  document.getElementById('sh-current-label').textContent=`#${id} — ${p.ja.slice(0,20)}…`;
-  speakTTS(cleanSlash(p.ja,true),'ja-JP',_jaVoice,()=>{
+  shSetPhaseUI(id,'en');
+  const repLabel=shRepeat>1?`（${shRepCount+1}/${shRepeat}回目）`:'';
+  document.getElementById('sh-status').textContent=`🎤 かぶせて発話しましょう${repLabel}`;
+  document.getElementById('sh-current-label').textContent=`#${id} — ${p.en.slice(0,30)}…`;
+  speakTTS(cleanSlash(p.en,false),'en-US',_enVoice,()=>{
     if(!shPlaying)return;
-    shSetPhaseUI(id,'thinking');
-    document.getElementById('sh-status').textContent='🧠 英語を頭で考えてみましょう...';
-    const enEl=document.getElementById(`sh-en-${id}`);
-    const brainEl=document.getElementById(`sh-brain-${id}`);
-    if(enEl)enEl.classList.add('blur-en');
-    if(brainEl)brainEl.classList.remove('hidden');
-    const delay=p.en.length*70+600;
+    shSetPhaseUI(id,'idle');
+    // 文間は短い間のみ（言い終わり＋息継ぎぶん）
     shTimer=setTimeout(()=>{
       if(!shPlaying)return;
-      if(enEl)enEl.classList.remove('blur-en');
-      if(brainEl)brainEl.classList.add('hidden');
-      shSetPhaseUI(id,'en');
-      document.getElementById('sh-status').textContent='🇺🇸 英語を読み上げ中...';
-      speakTTS(cleanSlash(p.en,false),'en-US',_enVoice,()=>{
-        if(!shPlaying)return;
-        shSetPhaseUI(id,'idle');
-        const next=shGetNext(id,shGetCleared());
-        if(next===null){shStop();return;}
-        setTimeout(()=>shPlayPhrase(next),400);
-      });
-    },delay);
-  });
+      shRepCount++;
+      if(shRepCount<shRepeat){shPlayPhrase(id);return;}  // 同じ文をリピート
+      shRepCount=0;
+      const next=shGetNext(id,shGetCleared());
+      if(next===null){shStop();return;}
+      shPlayPhrase(next);
+    },1200);
+  },shRate);
 }
 
 function shSetPhaseUI(id,phase){
@@ -1013,7 +1019,7 @@ function shSetPhaseUI(id,phase){
   if(!el)return;
   if(phase==='idle'){el.classList.add('hidden');return;}
   el.classList.remove('hidden');
-  const labels={ja:'日本語',thinking:'考え中',en:'英語'};
+  const labels={en:'🎤 シャドーイング中（かぶせて発話）'};
   const span=el.querySelector('span');
   if(span)span.textContent=labels[phase]||'';
 }
@@ -1044,6 +1050,7 @@ function shTogglePlay(){
 
 function shStop(){
   shPlaying=false;
+  shRepCount=0;
   if(window.speechSynthesis)window.speechSynthesis.cancel();
   if(shTimer)clearTimeout(shTimer);
   const btn=document.getElementById('sh-play-btn');
@@ -1134,16 +1141,45 @@ function instReadJa(){
 function instStartMic(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){alert('音声認識はChromeでのみ動作します。');return;}
-  instRecog=new SR();instRecog.lang='en-US';instRecog.interimResults=false;instRecog.maxAlternatives=3;
+  const phrases=PHRASES.filter(p=>p.block===instBlock);
+  const model=instIdx<phrases.length?phrases[instIdx].en:'';
+  instRecog=new SR();
+  instRecog.lang='en-US';
+  instRecog.continuous=true;        // 途中の間で切れないように継続認識
+  instRecog.interimResults=true;    // 中間結果も受け取り長文に対応
+  instRecog.maxAlternatives=5;      // 複数候補から最良を選ぶ
   instRecording=true;
+  let finals=[];                    // 確定した認識結果を蓄積
   document.getElementById('inst-idle-area').classList.add('hidden');
   document.getElementById('inst-recording-area').classList.remove('hidden');
-  instRecog.onresult=e=>{const h=e.results[0][0].transcript;instRecording=false;instShowResult(h);};
-  instRecog.onerror=()=>{instRecording=false;instShowResult('（認識できませんでした）');};
-  instRecog.onend=()=>{if(instRecording)instShowResult('（認識できませんでした）');};
+  instRecog.onresult=e=>{
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const res=e.results[i];
+      if(res.isFinal){
+        // 正解文に最も近い候補を採用（採点対象が既知なので精度が大幅向上）
+        let best=res[0].transcript,bestScore=-1;
+        for(let j=0;j<res.length;j++){
+          const s=calcScore(res[j].transcript,model);
+          if(s>bestScore){bestScore=s;best=res[j].transcript;}
+        }
+        finals.push(best.trim());
+      }
+    }
+  };
+  instRecog.onerror=ev=>{
+    if(ev.error==='no-speech'||ev.error==='aborted')return;
+    instRecording=false;
+    instShowResult(finals.length?finals.join(' '):'（認識できませんでした）');
+  };
+  instRecog.onend=()=>{
+    if(!instRecording)return;
+    instRecording=false;
+    instShowResult(finals.length?finals.join(' '):'（認識できませんでした）');
+  };
   instRecog.start();
 }
-function instStopMic(){if(instRecog){try{instRecog.stop();}catch(e){}}}
+function instStopMic(){instRecording2Stop();}
+function instRecording2Stop(){if(instRecog){try{instRecog.stop();}catch(e){}}}
 
 function instShowResult(heard){
   document.getElementById('inst-recording-area').classList.add('hidden');
@@ -1285,15 +1321,38 @@ function chatGoHome(){
 function chatStartMic(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){alert('音声認識はChromeでのみ動作します。');return;}
-  chatRecog=new SR();chatRecog.lang='en-US';chatRecog.interimResults=false;chatIsRecording=true;
+  chatRecog=new SR();
+  chatRecog.lang='en-US';
+  chatRecog.continuous=true;        // 長い回答でも途切れず認識
+  chatRecog.interimResults=true;
+  chatRecog.maxAlternatives=5;
+  chatIsRecording=true;
+  let finals=[];
   document.getElementById('chat-idle-area').classList.add('hidden');
   document.getElementById('chat-recording-area').classList.remove('hidden');
-  chatRecog.onresult=e=>{const h=e.results[0][0].transcript;chatIsRecording=false;document.getElementById('chat-recording-area').classList.add('hidden');chatShowResult(h);};
-  chatRecog.onerror=()=>{chatIsRecording=false;document.getElementById('chat-recording-area').classList.add('hidden');document.getElementById('chat-idle-area').classList.remove('hidden');chatShowResult('');};
-  chatRecog.onend=()=>{if(chatIsRecording){chatIsRecording=false;document.getElementById('chat-recording-area').classList.add('hidden');document.getElementById('chat-idle-area').classList.remove('hidden');}};
+  chatRecog.onresult=e=>{
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const res=e.results[i];
+      if(res.isFinal)finals.push(res[0].transcript.trim());
+    }
+  };
+  chatRecog.onerror=ev=>{
+    if(ev.error==='no-speech'||ev.error==='aborted')return;
+    chatIsRecording=false;
+    document.getElementById('chat-recording-area').classList.add('hidden');
+    document.getElementById('chat-idle-area').classList.remove('hidden');
+    if(finals.length)chatShowResult(finals.join(' '));
+  };
+  chatRecog.onend=()=>{
+    if(!chatIsRecording)return;
+    chatIsRecording=false;
+    document.getElementById('chat-recording-area').classList.add('hidden');
+    if(finals.length){chatShowResult(finals.join(' '));}
+    else{document.getElementById('chat-idle-area').classList.remove('hidden');}
+  };
   chatRecog.start();
 }
-function chatStopMic(){chatIsRecording=false;if(chatRecog){try{chatRecog.stop();}catch(e){}}}
+function chatStopMic(){if(chatRecog){try{chatRecog.stop();}catch(e){}}}
 function chatSendJa(){
   const input=document.getElementById('chat-ja-input');
   const text=input.value.trim();
