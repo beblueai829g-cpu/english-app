@@ -98,43 +98,17 @@ body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
       <div class="flex items-center justify-between mb-3"><div class="text-sm font-bold text-slate-700">ブロック選択</div><button onclick="shResetCleared()" class="text-xs text-slate-400 hover:text-red-500 underline">完了印リセット</button></div>
       <div class="grid grid-cols-4 gap-1.5" id="sh-block-buttons"></div>
       <div id="sh-legend" class="mb-3"></div>
-      <div class="flex gap-3">
-        <div class="flex-1">
-          <label class="text-xs text-slate-500 mb-1 block">🇯🇵 日本語の声</label>
-          <select id="sh-ja-voice" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-blue-400"></select>
-        </div>
-        <div class="flex-1">
-          <label class="text-xs text-slate-500 mb-1 block">🇺🇸 英語の声</label>
-          <select id="sh-en-voice" class="w-full text-xs border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-blue-400"></select>
-        </div>
-      </div>
+      <p class="text-xs text-slate-400">音声は別アプリで再生してください。ここでは英文と日本語訳の確認、完了チェックができます。</p>
     </div>
     <div id="shadow-list" class="space-y-3"></div>
   </div>
   <div class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 shadow-lg">
-    <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-4">
-      <button id="sh-play-btn" onclick="shTogglePlay()" class="w-14 h-14 rounded-full flex items-center justify-center shadow-md transition-all active:scale-95 bg-blue-600 hover:bg-blue-700 text-white flex-shrink-0 text-2xl">▶</button>
+    <div class="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
       <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium text-slate-700 truncate" id="sh-status">停止中</p>
-        <p class="text-xs text-slate-400 truncate mt-0.5" id="sh-current-label">ブロックを選んで再生</p>
+        <p class="text-sm font-medium text-slate-700 truncate" id="sh-current-label">ブロックを選んでください</p>
+        <p class="text-xs text-slate-400 truncate mt-0.5" id="sh-active-count"></p>
       </div>
-      <div class="flex flex-col gap-1 flex-shrink-0">
-        <select id="sh-rate" onchange="shRate=parseFloat(this.value)" class="text-xs border border-slate-200 rounded-lg px-1.5 py-1 bg-slate-50 text-slate-600">
-          <option value="0.6">🐢 0.6x</option>
-          <option value="0.75">0.75x</option>
-          <option value="0.85" selected>0.85x</option>
-          <option value="1">1.0x</option>
-          <option value="1.15">🐇 1.15x</option>
-        </select>
-        <select id="sh-repeat" onchange="shRepeat=parseInt(this.value);shRepCount=0" class="text-xs border border-slate-200 rounded-lg px-1.5 py-1 bg-slate-50 text-slate-600">
-          <option value="1" selected>1回</option>
-          <option value="2">2回</option>
-          <option value="3">3回</option>
-        </select>
-      </div>
-      <div class="text-xs text-slate-400 text-right flex-shrink-0">
-        <div id="sh-active-count" class="text-slate-300"></div>
-      </div>
+      <button onclick="shMarkAllDone()" class="px-4 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-semibold active:scale-95 transition hover:bg-emerald-600 flex-shrink-0">✓ このブロック完了</button>
     </div>
   </div>
 </div>
@@ -167,11 +141,12 @@ body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
         <div class="text-base font-mono text-slate-700 leading-relaxed" id="inst-hint-text"></div>
       </div>
       <div id="inst-idle-area">
-        <div class="flex gap-2">
+        <div class="flex gap-2 mb-2">
           <button onclick="instShowHint()" class="flex-1 py-3 rounded-xl border border-amber-200 text-amber-600 font-semibold bg-amber-50 active:scale-95 transition hover:bg-amber-100">💡 ヒント</button>
-          <button onclick="instStartMic()" id="inst-mic-btn" class="flex-1 py-3 rounded-xl bg-red-500 text-white font-semibold active:scale-95 transition hover:bg-red-600">🎤 英語で話す</button>
+          <button onclick="instStartMic()" id="inst-mic-btn" class="flex-1 py-3 rounded-xl bg-red-500 text-white font-semibold active:scale-95 transition hover:bg-red-600">🎤 声に出す</button>
         </div>
-        <p class="text-xs text-slate-400 text-center mt-2" id="inst-mic-hint">ボタンを押して英語で答えてください</p>
+        <button onclick="instRevealAnswer()" class="w-full py-3 rounded-xl border border-blue-200 text-blue-600 font-semibold bg-blue-50 active:scale-95 transition hover:bg-blue-100">🤫 心で唱えた・答えを見る</button>
+        <p class="text-xs text-slate-400 text-center mt-2" id="inst-mic-hint">声を出せないときは「心で唱えた」から進めます</p>
       </div>
       <div id="inst-recording-area" class="hidden text-center py-2">
         <div class="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center mx-auto mb-3 mic-recording text-2xl">🎤</div>
@@ -181,11 +156,11 @@ body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
       </div>
       <div id="inst-result-area" class="hidden mt-1">
         <div class="border-t border-slate-100 mb-4"></div>
-        <div class="mb-4">
+        <div class="mb-4" id="inst-score-block">
           <div class="flex justify-between text-xs text-slate-500 mb-1"><span>一致度</span><span id="inst-score-pct" class="font-bold text-blue-600">—</span></div>
           <div class="w-full bg-slate-100 rounded-full h-2.5"><div id="inst-score-bar" class="h-2.5 rounded-full score-fill bg-blue-500" style="width:0%"></div></div>
         </div>
-        <div class="mb-3">
+        <div class="mb-3" id="inst-heard-block">
           <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">あなたの発話</div>
           <div class="text-slate-700 text-sm leading-relaxed bg-slate-50 rounded-xl px-3 py-2" id="inst-heard"></div>
         </div>
@@ -998,7 +973,6 @@ function switchTab(name){
     if(t===name){b.classList.add('border-blue-600','text-blue-600');b.classList.remove('border-transparent','text-slate-400');}
     else{b.classList.remove('border-blue-600','text-blue-600');b.classList.add('border-transparent','text-slate-400');}
   });
-  if(name!=='shadow'&&typeof shStop==='function')shStop();
 }
 
 // ============================================================
@@ -1024,10 +998,22 @@ let vMode=null,vQueue=[],vIdx=0,vWrong=[],vCorrect=[];
 // 完了記録: どのブロックを「やり切ったか」（正誤問わず）
 const vGetDone=()=>(LS.get('v_done_blocks')||[]);
 const vMarkDone=b=>{const d=vGetDone();if(!d.includes(b)){d.push(b);LS.set('v_done_blocks',d);}};
-// 間違えた単語（wid）をグローバルに蓄積（土日にシャッフル復習）
-const vGetWrong=()=>(LS.get('v_wrong_wids')||[]);
-const vAddWrong=wid=>{const w=vGetWrong();if(!w.includes(wid)){w.push(wid);LS.set('v_wrong_wids',w);}};
-const vRemoveWrong=wid=>{LS.set('v_wrong_wids',vGetWrong().filter(x=>x!==wid));};
+// 間違えた単語の3段階管理
+//   sat  : 平日ブロック学習で間違えた単語 → 土曜に復習
+//   sun  : 土曜の復習でも間違えた単語     → 日曜に復習
+//   （日曜でも間違えたら sun に残り続ける）
+const vGetSat=()=>(LS.get('v_wrong_sat')||[]);
+const vGetSun=()=>(LS.get('v_wrong_sun')||[]);
+const vSetSat=a=>LS.set('v_wrong_sat',a);
+const vSetSun=a=>LS.set('v_wrong_sun',a);
+// 平日の学習で間違えた → 土曜リストへ（すでに日曜リストにあるものはそのまま）
+const vAddWrong=wid=>{const s=vGetSat();if(!s.includes(wid)&&!vGetSun().includes(wid)){s.push(wid);vSetSat(s);}};
+// 正解した → 全リストから除去
+const vRemoveWrong=wid=>{vSetSat(vGetSat().filter(x=>x!==wid));vSetSun(vGetSun().filter(x=>x!==wid));};
+// 土曜の復習で間違えた → 土曜リストから外し日曜リストへ昇格
+const vPromoteToSun=wid=>{vSetSat(vGetSat().filter(x=>x!==wid));const u=vGetSun();if(!u.includes(wid)){u.push(wid);vSetSun(u);}};
+// 日曜の復習で間違えた → 日曜リストに残す（何もしない）
+const vGetWrong=()=>[...vGetSat(),...vGetSun()];
 
 let vSelBlock=LS.get('v_sel_block')||1;
 function renderHome(){
@@ -1071,24 +1057,38 @@ function renderHome(){
     </button>`;
   container.appendChild(card);
 
-  // 土日用: 間違えた単語をまとめて復習
-  const wrong=vGetWrong();
+  // 3段階の復習: 平日 → 土曜 → 日曜
+  const sat=vGetSat(),sun=vGetSun();
   const rev=document.createElement('div');
-  rev.className='bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl border border-orange-200 shadow-sm p-4 mt-4';
-  if(wrong.length){
-    rev.innerHTML=`
-      <div class="flex items-center gap-2 mb-1"><span class="text-lg">📝</span><div class="font-bold text-orange-700 text-base">間違えた単語の復習</div></div>
-      <div class="text-orange-600 text-xs mb-3">全ブロックの間違えた単語 <span class="font-bold">${wrong.length}</span> 語をシャッフルして一気に復習（土日用）</div>
-      <button onclick="startReview()" class="w-full py-2 rounded-lg bg-orange-500 text-white text-sm font-semibold active:scale-95 transition hover:bg-orange-600">シャッフル復習を始める（${wrong.length}語）</button>`;
-  }else{
-    rev.innerHTML='<div class="flex items-center gap-2 mb-1"><span class="text-lg">📝</span><div class="font-bold text-slate-500 text-base">間違えた単語の復習</div></div><div class="text-slate-400 text-xs">間違えた単語がここに溜まります（土日にまとめて復習）</div>';
-  }
+  rev.className='mt-4 space-y-3';
+  rev.innerHTML=`
+    <div class="text-sm font-bold text-slate-700 px-1">復習（3段階）</div>
+    <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl border ${sat.length?'border-orange-200':'border-slate-200'} shadow-sm p-4">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-lg">📗</span>
+        <div class="font-bold ${sat.length?'text-orange-700':'text-slate-400'} text-base">土曜：平日に間違えた単語</div>
+      </div>
+      ${sat.length?
+        `<div class="text-orange-600 text-xs mb-3">平日の学習で間違えた <span class="font-bold">${sat.length}</span> 語をシャッフルで復習。ここで間違えると日曜へ回ります。</div>
+         <button onclick="startReview('sat')" class="w-full py-2 rounded-lg bg-orange-500 text-white text-sm font-semibold active:scale-95 transition hover:bg-orange-600">土曜の復習を始める（${sat.length}語）</button>`:
+        `<div class="text-slate-400 text-xs">平日に間違えた単語がここに溜まります</div>`}
+    </div>
+    <div class="bg-gradient-to-br from-rose-50 to-red-50 rounded-2xl border ${sun.length?'border-rose-300':'border-slate-200'} shadow-sm p-4">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-lg">📕</span>
+        <div class="font-bold ${sun.length?'text-rose-700':'text-slate-400'} text-base">日曜：土曜でも間違えた単語</div>
+      </div>
+      ${sun.length?
+        `<div class="text-rose-600 text-xs mb-3">2回続けて間違えた <span class="font-bold">${sun.length}</span> 語。正解するまでここに残ります。</div>
+         <button onclick="startReview('sun')" class="w-full py-2 rounded-lg bg-rose-500 text-white text-sm font-semibold active:scale-95 transition hover:bg-rose-600">日曜の復習を始める（${sun.length}語）</button>`:
+        `<div class="text-slate-400 text-xs">土曜でも間違えた単語がここに溜まります</div>`}
+    </div>`;
   container.appendChild(rev);
 }
 function vResetAll(){
   if(!confirm('単語クイズの完了印と、間違えた単語の記録をすべてリセットしますか？'))return;
   LS.set('v_done_blocks',[]);
-  LS.set('v_wrong_wids',[]);
+  vSetSat([]);vSetSun([]);
   renderHome();
 }
 
@@ -1101,10 +1101,10 @@ function startQuiz(block){
   vIdx=0;vWrong=[];vCorrect=[];
   showScreen('quiz');renderQuestion();
 }
-function startReview(){
-  const wrong=vGetWrong();
-  vMode='review';
-  vQueue=shuffle(VOCAB.filter(q=>wrong.includes(q.wid)));
+function startReview(stage){
+  const list=stage==='sun'?vGetSun():vGetSat();
+  vMode=stage;
+  vQueue=shuffle(VOCAB.filter(q=>list.includes(q.wid)));
   if(!vQueue.length)return;
   vIdx=0;vWrong=[];vCorrect=[];
   showScreen('quiz');renderQuestion();
@@ -1112,7 +1112,7 @@ function startReview(){
 
 function renderQuestion(){
   const q=vQueue[vIdx],total=vQueue.length;
-  const label=vMode==='review'?'復習':`Block ${q.block}`;
+  const label=vMode==='sat'?'土曜の復習':vMode==='sun'?'日曜の復習':`Block ${q.block}`;
   document.getElementById('quiz-counter').textContent=`${label} · ${vIdx+1} / ${total}`;
   document.getElementById('progress-bar').style.width=`${(vIdx/total)*100}%`;
   document.getElementById('quiz-word').textContent=q.meaning;
@@ -1140,7 +1140,12 @@ function speakWord(){speakTTS(vQueue[vIdx].word,'en-US',_enVoice,null);}
 function markAnswer(correct){
   const q=vQueue[vIdx];
   if(correct){vRemoveWrong(q.wid);vCorrect.push(q.wid);}
-  else{vAddWrong(q.wid);vWrong.push(q.wid);}
+  else{
+    if(vMode==='sat')vPromoteToSun(q.wid);      // 土曜で間違え → 日曜へ
+    else if(vMode==='sun'){/* 日曜リストに残す */}
+    else vAddWrong(q.wid);                       // 平日で間違え → 土曜へ
+    vWrong.push(q.wid);
+  }
   vIdx++;
   if(vIdx>=vQueue.length){
     // ブロック学習を最後までやり切ったら完了印（正誤問わず）
@@ -1151,10 +1156,16 @@ function markAnswer(correct){
 
 function showVResult(){
   showScreen('result');
-  const wrongLeft=vGetWrong().length;
+  const sat=vGetSat().length,sun=vGetSun().length;
+  let note='';
+  if(sat||sun){
+    const parts=[];
+    if(sat)parts.push(`<span class="text-orange-500">📗 土曜 ${sat}語</span>`);
+    if(sun)parts.push(`<span class="text-rose-500">📕 日曜 ${sun}語</span>`);
+    note=`<div class="text-sm mt-2">${parts.join(' ／ ')}</div>`;
+  }else note='<div class="text-emerald-500 text-sm mt-2">✨ 復習リストは空です！</div>';
   document.getElementById('result-summary').innerHTML=
-    `正解: <span class="text-emerald-600 font-bold">${vCorrect.length}</span> 語 ／ 不正解: <span class="text-red-500 font-bold">${vWrong.length}</span> 語 ／ 全${vQueue.length}語`+
-    (wrongLeft?`<div class="text-orange-500 text-sm mt-2">📝 復習リストに ${wrongLeft} 語（土日にまとめて対応）</div>`:'<div class="text-emerald-500 text-sm mt-2">✨ 復習リストは空です！</div>');
+    `正解: <span class="text-emerald-600 font-bold">${vCorrect.length}</span> 語 ／ 不正解: <span class="text-red-500 font-bold">${vWrong.length}</span> 語 ／ 全${vQueue.length}語`+note;
 }
 function confirmBack(){if(confirm('中断してホームに戻りますか？'))goHome();}
 function goHome(){vQueue=[];vIdx=0;renderHome();}
@@ -1177,7 +1188,6 @@ const shGetDoneBlocks=()=>(LS.get(LS_SH_DONE)||[]);
 const shMarkBlockDone=b=>{const d=shGetDoneBlocks();if(!d.includes(b)){d.push(b);LS.set(LS_SH_DONE,d);}};
 const shSaveCleared=a=>LS.set(LS_SH_CLEARED,a);
 
-let shPlaying=false,shCurrentIdx=null,shPhase='idle',shTimer=null;
 let shActiveBlock=1;
 
 function buildShBlockButtons(){
@@ -1200,22 +1210,13 @@ function buildShBlockButtons(){
 }
 
 function shSelectBlock(b){
-  shStop();
   shActiveBlock=b;
   LS.set(LS_SH_BLOCK,b);
   buildShBlockButtons();
   shBuildList();
 }
 
-function populateShadowVoices(){
-  const jaEl=document.getElementById('sh-ja-voice');
-  const enEl=document.getElementById('sh-en-voice');
-  if(!jaEl||!enEl)return;
-  jaEl.innerHTML=_jaVoiceList.map(v=>`<option value="${v.name}" ${_jaVoice&&v.name===_jaVoice.name?'selected':''}>${v.name}</option>`).join('');
-  enEl.innerHTML=_enVoiceList.map(v=>`<option value="${v.name}" ${_enVoice&&v.name===_enVoice.name?'selected':''}>${v.name}</option>`).join('');
-  jaEl.onchange=()=>{_jaVoice=_jaVoiceList.find(v=>v.name===jaEl.value)||null;};
-  enEl.onchange=()=>{_enVoice=_enVoiceList.find(v=>v.name===enEl.value)||null;};
-}
+function populateShadowVoices(){/* シャドーイングの音声機能は削除済み */}
 
 function shBuildList(){
   const cleared=shGetCleared();
@@ -1227,23 +1228,16 @@ function shBuildList(){
     const div=document.createElement('div');
     div.id=`sh-item-${p.id}`;
     div.className=`relative rounded-2xl border p-4 transition-all duration-200 cursor-pointer select-none ${isCleared?'opacity-40 bg-white border-slate-100':'bg-white border-slate-200 hover:border-blue-300'}`;
-    div.onclick=()=>{if(!isCleared)shStartFrom(p.id);};
+    div.onclick=()=>shToggleCleared(p.id,{stopPropagation(){}});
     div.innerHTML=`
       <button onclick="shToggleCleared(${p.id},event)" class="absolute top-3 right-3 text-xl">${isCleared?'✅':'⭕'}</button>
       <span class="text-xs font-mono text-slate-300 mb-1 block">#${p.id}</span>
       <p class="text-sm text-slate-500 mb-2 leading-relaxed pr-8 ${isCleared?'line-through':''}">${p.ja}</p>
-      <div class="flex items-center gap-2">
-        <p id="sh-en-${p.id}" class="text-base font-medium text-slate-800 leading-relaxed flex-1 ${isCleared?'line-through text-slate-300':''}">${p.en}</p>
-        <span id="sh-brain-${p.id}" class="hidden text-xl brain-pulse">🧠</span>
-      </div>
-      <div id="sh-phase-${p.id}" class="hidden mt-2 flex items-center gap-1.5">
-        <div class="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse"></div>
-        <span class="text-xs text-slate-400"></span>
-      </div>`;
+      <p id="sh-en-${p.id}" class="text-base font-medium text-slate-800 leading-relaxed pr-8 ${isCleared?'line-through text-slate-300':''}">${p.en}</p>`;
     container.appendChild(div);
   });
-  const active=phrases.filter(p=>!cleared.includes(p.id)).length;
-  document.getElementById('sh-active-count').textContent=`${active}文`;
+  const doneCount=phrases.filter(p=>cleared.includes(p.id)).length;
+  document.getElementById('sh-active-count').textContent=`${doneCount} / ${phrases.length} 完了`;
   document.getElementById('sh-current-label').textContent=`Block ${shActiveBlock}: ${BLOCK_THEMES[shActiveBlock-1]}`;
 }
 
@@ -1262,110 +1256,21 @@ function shResetCleared(){
   buildShBlockButtons();
 }
 
-function shGetNext(from,cleared){
+function shMarkAllDone(){
   const phrases=PHRASES.filter(p=>p.block===shActiveBlock);
-  const active=phrases.filter(p=>!cleared.includes(p.id));
-  if(!active.length)return null;
-  const after=active.filter(p=>p.id>from);
-  return after.length?after[0].id:null;  // 末尾まで来たらループせず終了
-}
-
-let shRate=0.85,shRepeat=1,shRepCount=0;
-function shPlayPhrase(id){
-  if(!shPlaying)return;
-  const p=PHRASES.find(x=>x.id===id);
-  shCurrentIdx=id;
-  shHighlight(id);
-  shSetPhaseUI(id,'en');
-  const repLabel=shRepeat>1?`（${shRepCount+1}/${shRepeat}回目）`:'';
-  document.getElementById('sh-status').textContent=`🎤 かぶせて発話しましょう${repLabel}`;
-  document.getElementById('sh-current-label').textContent=`#${id} — ${p.en.slice(0,30)}…`;
-  speakTTS(cleanSlash(p.en,false),'en-US',_enVoice,()=>{
-    if(!shPlaying)return;
-    shSetPhaseUI(id,'idle');
-    // 文間は短い間のみ（言い終わり＋息継ぎぶん）
-    shTimer=setTimeout(()=>{
-      if(!shPlaying)return;
-      shRepCount++;
-      if(shRepCount<shRepeat){shPlayPhrase(id);return;}  // 同じ文をリピート
-      shRepCount=0;
-      const next=shGetNext(id,shGetCleared());
-      if(next===null){
-        // ブロックを最後まで再生完了 → 完了印を付けて停止
-        shMarkBlockDone(shActiveBlock);
-        buildShBlockButtons();
-        shStop();
-        document.getElementById('sh-status').textContent='✅ ブロック完了！';
-        shCurrentIdx=null;  // 次回再生は最初から
-        return;
-      }
-      shPlayPhrase(next);
-    },1200);
-  },shRate);
-}
-
-function shSetPhaseUI(id,phase){
-  shPhase=phase;
-  const el=document.getElementById(`sh-phase-${id}`);
-  if(!el)return;
-  if(phase==='idle'){el.classList.add('hidden');return;}
-  el.classList.remove('hidden');
-  const labels={en:'🎤 シャドーイング中（かぶせて発話）'};
-  const span=el.querySelector('span');
-  if(span)span.textContent=labels[phase]||'';
-}
-
-function shHighlight(id){
-  const phrases=PHRASES.filter(p=>p.block===shActiveBlock);
-  phrases.forEach(p=>{
-    const el=document.getElementById(`sh-item-${p.id}`);
-    if(!el)return;
-    if(p.id===id)el.classList.add('bg-blue-50','border-blue-400','shadow-md');
-    else el.classList.remove('bg-blue-50','border-blue-400','shadow-md');
-  });
-  const target=document.getElementById(`sh-item-${id}`);
-  if(target)target.scrollIntoView({behavior:'smooth',block:'center'});
-}
-
-function shTogglePlay(){
-  if(shPlaying){shStop();return;}
-  shPlaying=true;
-  document.getElementById('sh-play-btn').textContent='⏸';
-  document.getElementById('sh-play-btn').className=document.getElementById('sh-play-btn').className.replace('bg-blue-600 hover:bg-blue-700','bg-red-500 hover:bg-red-600');
-  const cleared=shGetCleared();
-  const start=shCurrentIdx!==null?shCurrentIdx:-1;
-  let next=shGetNext(start,cleared);
-  if(next===null)next=shGetNext(-1,cleared);  // 末尾なら最初から再開
-  if(next===null){shStop();return;}
-  shPlayPhrase(next);
-}
-
-function shStop(){
-  shPlaying=false;
-  shRepCount=0;
-  if(window.speechSynthesis)window.speechSynthesis.cancel();
-  if(shTimer)clearTimeout(shTimer);
-  const btn=document.getElementById('sh-play-btn');
-  btn.textContent='▶';
-  btn.className=btn.className.replace('bg-red-500 hover:bg-red-600','bg-blue-600 hover:bg-blue-700');
-  document.getElementById('sh-status').textContent='停止中';
-  const phrases=PHRASES.filter(p=>p.block===shActiveBlock);
-  phrases.forEach(p=>{
-    const e=document.getElementById(`sh-en-${p.id}`);if(e)e.classList.remove('blur-en');
-    const b=document.getElementById(`sh-brain-${p.id}`);if(b)b.classList.add('hidden');
-    shSetPhaseUI(p.id,'idle');
-  });
-  shHighlight(-1);
-}
-
-function shStartFrom(id){
-  if(window.speechSynthesis)window.speechSynthesis.cancel();
-  if(shTimer)clearTimeout(shTimer);
-  shPlaying=true;
-  const btn=document.getElementById('sh-play-btn');
-  btn.textContent='⏸';
-  btn.className=btn.className.replace('bg-blue-600 hover:bg-blue-700','bg-red-500 hover:bg-red-600');
-  shPlayPhrase(id);
+  const c=shGetCleared();
+  const allDone=phrases.every(p=>c.includes(p.id));
+  if(allDone){
+    // すでに全完了なら解除
+    shSaveCleared(c.filter(x=>!phrases.some(p=>p.id===x)));
+    LS.set(LS_SH_DONE,shGetDoneBlocks().filter(b=>b!==shActiveBlock));
+  }else{
+    phrases.forEach(p=>{if(!c.includes(p.id))c.push(p.id);});
+    shSaveCleared(c);
+    shMarkBlockDone(shActiveBlock);
+  }
+  shBuildList();
+  buildShBlockButtons();
 }
 
 // ============================================================
@@ -1513,6 +1418,8 @@ function instShowResult(heard){
   document.getElementById('inst-recording-area').classList.add('hidden');
   document.getElementById('inst-idle-area').classList.remove('hidden');
   document.getElementById('inst-result-area').classList.remove('hidden');
+  document.getElementById('inst-score-block').classList.remove('hidden');
+  document.getElementById('inst-heard-block').classList.remove('hidden');
   const phrases=PHRASES.filter(p=>p.block===instBlock);
   const model=phrases[instIdx].en;
   const score=calcScore(heard,model);
@@ -1537,6 +1444,19 @@ function calcScore(heard,model){
   let matches=0;const used=new Array(m.length).fill(false);
   h.forEach(hw=>{const idx=m.findIndex((mw,i)=>!used[i]&&(mw===hw||mw.startsWith(hw)||hw.startsWith(mw)));if(idx>=0){matches++;used[idx]=true;}});
   return matches/m.length;
+}
+
+// 声を出せないとき: 採点せず模範英文だけ表示して次へ進める
+function instRevealAnswer(){
+  const phrases=PHRASES.filter(p=>p.block===instBlock);
+  if(instIdx>=phrases.length)return;
+  document.getElementById('inst-recording-area').classList.add('hidden');
+  document.getElementById('inst-idle-area').classList.remove('hidden');
+  document.getElementById('inst-result-area').classList.remove('hidden');
+  // 採点まわりは隠す
+  document.getElementById('inst-score-block').classList.add('hidden');
+  document.getElementById('inst-heard-block').classList.add('hidden');
+  document.getElementById('inst-model-en').textContent=phrases[instIdx].en;
 }
 
 function instSpeakModel(){
