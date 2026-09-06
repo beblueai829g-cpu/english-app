@@ -98,6 +98,14 @@ body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
       <div class="flex items-center justify-between mb-3"><div class="text-sm font-bold text-slate-700">ブロック選択</div><button onclick="shResetCleared()" class="text-xs text-slate-400 hover:text-red-500 underline">完了印リセット</button></div>
       <div class="grid grid-cols-4 gap-1.5" id="sh-block-buttons"></div>
       <div id="sh-legend" class="mb-3"></div>
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 mb-3">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-xs font-bold text-slate-600">🎧 音源の再生位置メモ</div>
+          <button onclick="shResetNotes()" class="text-[10px] text-slate-400 hover:text-red-500 underline">初期値に戻す</button>
+        </div>
+        <div id="sh-audio-notes" class="space-y-1.5"></div>
+        <p class="text-[10px] text-slate-400 mt-2">タップして編集できます（自動保存）</p>
+      </div>
       <p class="text-xs text-slate-400">音声は別アプリで再生してください。ここでは英文と日本語訳の確認、完了チェックができます。</p>
     </div>
     <div id="shadow-list" class="space-y-3"></div>
@@ -206,14 +214,13 @@ body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
         <button onclick="chatSpeakQuestion()" class="mt-3 text-xs text-blue-200 hover:text-white">🔊 もう一度聞く</button>
       </div>
       <div id="chat-idle-area">
+        <button onclick="chatStartMic()" id="chat-mic-btn" class="w-full py-4 rounded-2xl bg-red-500 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-red-600 mb-2">🎤 英語で答える</button>
         <div class="flex gap-2 mb-2">
-          <button onclick="chatStartMic()" id="chat-mic-btn" class="flex-1 py-4 rounded-2xl bg-red-500 text-white font-bold text-base shadow-sm active:scale-95 transition hover:bg-red-600 flex items-center justify-center gap-2">🎤 英語で答える</button>
+          <input type="text" id="chat-en-input" placeholder="英語で入力（Enterで送信）..." autocapitalize="off" autocorrect="off" spellcheck="false" class="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-400 bg-white" onkeydown="if(event.key==='Enter') chatSendEn()">
+          <button onclick="chatSendEn()" class="px-4 py-2 rounded-xl bg-blue-500 text-white text-sm font-medium active:scale-95 hover:bg-blue-600">送信</button>
         </div>
-        <p class="text-xs text-slate-400 text-center">詰まったら下のテキストボックスに日本語でもOK</p>
-        <div class="flex gap-2 mt-2">
-          <input type="text" id="chat-ja-input" placeholder="日本語で入力（送信後に模範回答を確認）..." class="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-400 bg-white" onkeydown="if(event.key==='Enter') chatSendJa()">
-          <button onclick="chatSendJa()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-600 text-sm font-medium active:scale-95 hover:bg-slate-300">送信</button>
-        </div>
+        <button onclick="chatRevealAnswer()" class="w-full py-3 rounded-xl border border-blue-200 text-blue-600 font-semibold bg-blue-50 active:scale-95 transition hover:bg-blue-100">🤫 心で唱えた・答えを見る</button>
+        <p class="text-xs text-slate-400 text-center mt-2">声・入力・心の中、やりやすい方法でどうぞ</p>
       </div>
       <div id="chat-recording-area" class="hidden text-center py-3">
         <div class="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center mx-auto mb-3 mic-recording text-2xl">🎤</div>
@@ -223,7 +230,7 @@ body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
       </div>
       <div id="chat-result-area" class="hidden">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-4 fade-in">
-          <div class="mb-3">
+          <div class="mb-3" id="chat-heard-block">
             <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">あなたの回答</div>
             <div class="text-slate-700 text-sm leading-relaxed bg-slate-50 rounded-xl px-3 py-2" id="chat-heard"></div>
           </div>
@@ -1194,6 +1201,7 @@ function buildShBlockButtons(){
   const container=document.getElementById('sh-block-buttons');
   container.innerHTML='';
   const lg=document.getElementById('sh-legend');if(lg)lg.innerHTML=weekdayLegendHTML();
+  shBuildNotes();
   const cleared=shGetCleared();
   const doneBlocks=shGetDoneBlocks();
   for(let b=1;b<=20;b++){
@@ -1207,6 +1215,37 @@ function buildShBlockButtons(){
     btn.onclick=()=>shSelectBlock(b);
     container.appendChild(btn);
   }
+}
+
+// 曜日ごとの音源再生位置メモ
+const SH_NOTE_KEY='sh_audio_notes';
+const SH_NOTE_DEFAULT=['①～④の0:00～','①～④の4:45～','⑤～⑥の4:10～','⑦～⑨の5:25～','⑩～⑫の1:50～'];
+const shGetNotes=()=>{const n=LS.get(SH_NOTE_KEY);return (Array.isArray(n)&&n.length===5)?n:[...SH_NOTE_DEFAULT];};
+function shSaveNote(i,val){const n=shGetNotes();n[i]=val;LS.set(SH_NOTE_KEY,n);}
+function shResetNotes(){
+  if(!confirm('音源メモを初期値に戻しますか？'))return;
+  LS.set(SH_NOTE_KEY,[...SH_NOTE_DEFAULT]);
+  shBuildNotes();
+}
+function shBuildNotes(){
+  const wrap=document.getElementById('sh-audio-notes');
+  if(!wrap)return;
+  const notes=shGetNotes();
+  wrap.innerHTML='';
+  DAY_COLORS.forEach((c,i)=>{
+    const row=document.createElement('div');
+    row.className='flex items-center gap-2';
+    const isToday=(new Date().getDay()-1)===i;
+    row.innerHTML=`
+      <span class="text-[11px] font-bold w-11 flex-shrink-0 px-1.5 py-0.5 rounded text-center" style="background:${c.light};color:${c.text}">${c.day} ${isToday?'●':''}</span>
+      <span class="text-[10px] text-slate-400 w-16 flex-shrink-0">B${i*4+1}-${i*4+4}</span>
+      <input type="text" value="${notes[i].replace(/"/g,'&quot;')}" data-idx="${i}"
+        class="flex-1 text-xs bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 focus:outline-none focus:border-blue-400"
+        placeholder="例）①〜④の0:00〜">`;
+    const inp=row.querySelector('input');
+    inp.oninput=()=>shSaveNote(i,inp.value);
+    wrap.appendChild(row);
+  });
 }
 
 function shSelectBlock(b){
@@ -1554,7 +1593,7 @@ function chatShowQuestion(){
   document.getElementById('chat-recording-area').classList.add('hidden');
   document.getElementById('chat-result-area').classList.add('hidden');
   document.getElementById('chat-complete-area').classList.add('hidden');
-  document.getElementById('chat-ja-input').value='';
+  document.getElementById('chat-en-input').value='';
   const card=document.getElementById('chat-q-card');
   card.classList.remove('fade-in');void card.offsetWidth;card.classList.add('fade-in');
   setTimeout(()=>speakTTS(q.q,'en-US',_enVoice,null),300);
@@ -1569,6 +1608,7 @@ function chatShowResult(heard){
   document.getElementById('chat-idle-area').classList.remove('hidden');
   document.getElementById('chat-recording-area').classList.add('hidden');
   document.getElementById('chat-result-area').classList.remove('hidden');
+  document.getElementById('chat-heard-block').classList.remove('hidden');
   document.getElementById('chat-heard').textContent=heard||'（認識できませんでした）';
   document.getElementById('chat-model-ans').textContent=q.model;
   document.getElementById('chat-model-ja').textContent=q.modelJa||'';
@@ -1645,12 +1685,23 @@ function chatStopMic(){
     }
   },300);
 }
-function chatSendJa(){
-  const input=document.getElementById('chat-ja-input');
+function chatSendEn(){
+  const input=document.getElementById('chat-en-input');
   const text=input.value.trim();
   if(!text)return;
   input.value='';
-  chatShowResult(`（日本語入力）${text}`);
+  chatShowResult(text);
+}
+// 声も入力もせず、頭の中で答えて答え合わせだけする
+function chatRevealAnswer(){
+  const t=CHAT_TOPICS[chatTopicIdx];
+  const q=t.qs[chatQIdx];
+  document.getElementById('chat-idle-area').classList.remove('hidden');
+  document.getElementById('chat-recording-area').classList.add('hidden');
+  document.getElementById('chat-result-area').classList.remove('hidden');
+  document.getElementById('chat-heard-block').classList.add('hidden');
+  document.getElementById('chat-model-ans').textContent=q.model;
+  document.getElementById('chat-model-ja').textContent=q.modelJa||'';
 }
 
 // ============================================================
