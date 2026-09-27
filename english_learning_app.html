@@ -125,7 +125,7 @@ body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
 <div id="app-instant" class="app-panel hidden">
   <div class="max-w-lg mx-auto px-4 pt-4 pb-10">
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-4">
-      <div class="text-sm font-bold text-slate-700 mb-2">ブロック選択</div>
+      <div class="flex items-center justify-between mb-2"><div class="text-sm font-bold text-slate-700">ブロック選択</div><button onclick="instResetAll()" class="text-xs text-slate-400 hover:text-red-500 underline">完了印リセット</button></div>
       <div class="grid grid-cols-4 gap-1.5" id="inst-block-buttons"></div>
       <div id="inst-legend"></div>
     </div>
@@ -183,7 +183,6 @@ body{font-family:'Segoe UI','Helvetica Neue',sans-serif;}
     <div class="flex gap-2">
       <button onclick="instSkip()" class="flex-1 py-2 rounded-lg border border-slate-200 text-slate-500 text-sm bg-white active:scale-95 transition hover:bg-slate-50">スキップ</button>
       <button onclick="instResetBlock()" class="flex-1 py-2 rounded-lg border border-slate-200 text-slate-500 text-sm bg-white active:scale-95 transition hover:bg-slate-50">ブロック最初から</button>
-      <button onclick="instResetAll()" class="flex-1 py-2 rounded-lg border border-slate-200 text-slate-400 text-sm bg-white active:scale-95 transition hover:bg-red-50 hover:text-red-500">全リセット</button>
     </div>
   </div>
 </div>
@@ -777,135 +776,196 @@ const VOCAB = [
 ];
 
 const CHAT_TOPICS = [
-  {block:1,emoji:"🌱",label:"生い立ち・サッカーと結婚",qs:[
-    {q:"Tell me a little about your childhood.",qja:"子どもの頃について少し教えてください",model:"I was born the second son in my family. I started playing soccer because of my older brother.",modelJa:"私は家族の次男として生まれました。兄の影響でサッカーを始めました。"},
-    {q:"When did you decide to become a professional player?",qja:"いつプロを目指すと決めたのですか？",model:"When I was in junior high, I decided to become a professional soccer player. From that point on, I devoted everything to soccer.",modelJa:"中学生のとき、プロのサッカー選手になりたいと明確に決意しました。そのときから、私はすべてをサッカーに捧げました。"},
-    {q:"Did you face any setbacks?",qja:"挫折はありましたか？",model:"I suffered some serious injuries, but I overcame them each time.",modelJa:"大きな怪我も経験しましたが、そのたびに乗り越えてきました。"},
-    {q:"Why did you give up on going pro?",qja:"なぜプロを諦めたのですか？",model:"During my junior year of college, I came to accept that becoming a professional soccer player wasn't realistic for me. So I gave up that dream and started my career in business.",modelJa:"大学3年生のとき、自分の実力ではプロになれないと受け入れるようになりました。そこでその夢を諦め、会社員として働く道を選びました。"},
-    {q:"How did you meet your wife?",qja:"奥さんとはどう出会ったのですか？",model:"In my second year at work, I met my wife. We dated for three years and then got married. That's how I got to where I am today.",modelJa:"社会人2年目に現在の妻と出会いました。3年間交際し、その後結婚しました。こうして今の自分に至っています。"},
+  {block:1,emoji:"⚽",label:"生い立ち・サッカー・結婚",qs:[
+    {q:"Do you have any siblings?",qja:"兄弟はいますか？",model:"Yes. I was born the second son in my family.",modelJa:"はい。私は家族の次男として生まれました。"},
+    {q:"How did you get into soccer?",qja:"サッカーを始めたきっかけは？",model:"I started playing soccer because of my older brother.",modelJa:"兄の影響でサッカーを始めました。"},
+    {q:"When did you decide to become a professional player?",qja:"いつプロを目指すと決めたのですか？",model:"When I was in junior high. From that point on, I devoted everything to soccer.",modelJa:"中学生のときです。そのときから、すべてをサッカーに捧げました。"},
+    {q:"Did you ever get injured?",qja:"怪我をしたことはありますか？",model:"Yes, I suffered some serious injuries, but I overcame them each time.",modelJa:"はい、大きな怪我も経験しましたが、そのたびに乗り越えてきました。"},
+    {q:"Why didn't you become a pro?",qja:"なぜプロにならなかったのですか？",model:"During my junior year of college, I came to accept that becoming a professional soccer player wasn't realistic for me.",modelJa:"大学3年生のとき、自分の実力ではプロになれないと受け入れるようになりました。"},
+    {q:"What did you do after that?",qja:"その後はどうしたのですか？",model:"I gave up that dream and started my career in business.",modelJa:"その夢を諦め、会社員として働く道を選びました。"},
+    {q:"When did you meet your wife?",qja:"奥さんとはいつ出会いましたか？",model:"I met her in my second year at work.",modelJa:"社会人2年目に出会いました。"},
+    {q:"How long did you date before getting married?",qja:"結婚までどれくらい付き合いましたか？",model:"We dated for three years and then got married.",modelJa:"3年間交際し、その後結婚しました。"},
   ]},
-  {block:2,emoji:"💼",label:"学生時代・仕事内容・会社",qs:[
-    {q:"What did you study in school?",qja:"学校では何を学びましたか？",model:"In high school and college, I mainly took the required courses. I didn't focus on any specific field.",modelJa:"高校と大学では主に必修科目を学びました。特定の分野に強く集中したり、何かを専門にしたりはしていませんでした。"},
-    {q:"What do you do for work?",qja:"お仕事は何をしていますか？",model:"I work for a large system integrator in Japan. I'm currently in charge of sales for a major automobile manufacturer. I support their system development, maintenance, and digital transformation projects.",modelJa:"私は日本の大手システムインテグレーターで働いています。現在は大手自動車メーカーを担当する営業をしています。システム開発、システム保守、DX案件を支援しています。"},
-    {q:"What is your company like?",qja:"会社はどんな会社ですか？",model:"My company has strong capabilities in AI and cybersecurity. However, our main business model is what you might call an IT general contractor model. We take on large projects as a prime vendor for long-term clients and collaborate with subcontractors.",modelJa:"私の会社はAIとサイバーセキュリティに強みがあります。ただし、主なビジネスモデルは、いわゆる「ITゼネコン型」です。長年の取引先からプライムベンダーとして大型案件を受注し、協力会社と一緒に進めています。"},
-    {q:"How does your business model work?",qja:"ビジネスモデルはどうなっていますか？",model:"Our revenue is primarily based on billable hours. As cloud technology spreads and IT systems become more standardized, while AI continues to advance rapidly, the value of basic system implementation is gradually declining.",modelJa:"売上は主に稼働時間ベースで成り立っています。クラウド技術の普及とITシステムの標準化が進み、AIが急速に進化する中で、基本的なシステム実装の価値は徐々に低下しています。"},
+  {block:2,emoji:"🎓",label:"学生時代",qs:[
+    {q:"What did you study in school?",qja:"学校では何を学びましたか？",model:"In high school and college, I mainly took the required courses.",modelJa:"高校と大学では主に必修科目を学びました。"},
+    {q:"Did you have a specialty?",qja:"専門分野はありましたか？",model:"Not really. I didn't focus on any specific field.",modelJa:"特にありません。特定の分野に集中してはいませんでした。"},
   ]},
-  {block:3,emoji:"📈",label:"業界の変化・入社の経緯",qs:[
-    {q:"Is the traditional model sustainable?",qja:"従来のモデルは持続可能ですか？",model:"As a result, the traditional billable-hours model is becoming increasingly unsustainable, and we need to fundamentally rethink how we operate. Regardless of whether we change, the world will continue to evolve.",modelJa:"その結果、従来の稼働時間ベースのモデルはますます持続困難になり、私たちは事業のあり方そのものを根本から再考する必要があります。私たちが変わるかどうかに関わらず、世界は進化し続けます。"},
-    {q:"How will the industry change?",qja:"業界はどう変わっていきますか？",model:"The industry is likely to shift from a time-and-materials model to an outcome-based one. Instead of repeatedly revising and negotiating estimates, companies will be able to generate tangible results from data much more quickly.",modelJa:"業界はT&Mモデルからアウトカム型へ移行する可能性が高いです。見積もりの修正や交渉を何度も繰り返す代わりに、企業はデータからより迅速に具体的な成果を生み出せるようになります。"},
-    {q:"What will happen to standardized systems?",qja:"標準化されたシステムはどうなりますか？",model:"Standardized systems may become less relevant, giving way to highly customized solutions tailored to each organization. Moreover, areas that were previously too costly to justify system implementation may finally become viable as development costs decrease.",modelJa:"標準化されたシステムは重要性を失い、各組織に最適化された高度にカスタマイズされたソリューションへと移行する可能性があります。さらに、以前はコストが高すぎてシステム導入を正当化できなかった領域も、開発コストの低下により、ついに実現可能になるかもしれません。"},
-    {q:"So what should your company focus on?",qja:"では会社は何に注力すべきですか？",model:"In light of these changes, we must move beyond implementation and focus on strategic architecture and enterprise-level problem solving.",modelJa:"これらの変化を踏まえると、私たちは実装を超え、戦略的アーキテクチャや全社レベルの課題解決に注力しなければなりません。"},
-    {q:"Why did you join your current company?",qja:"今の会社に入った理由は？",model:"There wasn't anything dramatic about my decision to join my current company. For many years, I focused entirely on becoming a professional soccer player. As a result, I didn't have a clear vision or career goal when it came to business.",modelJa:"今の会社に入社した決断に、特別ドラマチックなことは何もありませんでした。長い間、私はプロサッカー選手になることだけに集中していました。そのため、ビジネスに関しては明確なビジョンやキャリア目標を持っていませんでした。"},
+  {block:3,emoji:"💼",label:"今の仕事と会社",qs:[
+    {q:"Where do you work?",qja:"どこで働いていますか？",model:"I work for a large system integrator in Japan.",modelJa:"日本の大手システムインテグレーターで働いています。"},
+    {q:"What's your role?",qja:"役割は何ですか？",model:"I'm in charge of sales for a major automobile manufacturer.",modelJa:"大手自動車メーカーを担当する営業をしています。"},
+    {q:"What kind of projects do you support?",qja:"どんな案件を支援していますか？",model:"I support their system development, maintenance, and digital transformation projects.",modelJa:"システム開発、システム保守、DX案件を支援しています。"},
+    {q:"What is your company good at?",qja:"会社の強みは何ですか？",model:"My company has strong capabilities in AI and cybersecurity.",modelJa:"私の会社はAIとサイバーセキュリティに強みがあります。"},
+    {q:"What's your company's business model?",qja:"会社のビジネスモデルは？",model:"Our main business model is what you might call an IT general contractor model.",modelJa:"主なビジネスモデルは、いわゆる「ITゼネコン型」です。"},
+    {q:"What does that mean?",qja:"それはどういう意味ですか？",model:"We take on large projects as a prime vendor for long-term clients and collaborate with subcontractors.",modelJa:"長年の取引先からプライムベンダーとして大型案件を受注し、協力会社と一緒に進めています。"},
+    {q:"How does your company make money?",qja:"会社はどうやって収益を得ていますか？",model:"Our revenue is primarily based on billable hours.",modelJa:"売上は主に稼働時間ベースで成り立っています。"},
   ]},
-  {block:4,emoji:"🚀",label:"IT業界を選んだ理由・担当業務",qs:[
-    {q:"Why did you choose the IT industry?",qja:"なぜIT業界を選んだのですか？",model:"At that time, the IT industry seemed like a logical choice for me. Technology is essential to society, and I believed it would allow me to work on something with real impact.",modelJa:"当時は、IT業界に進むのが合理的な選択だと感じました。テクノロジーは社会に不可欠で、社会に本当の意味で影響を与える仕事ができると思ったからです。"},
-    {q:"Was there anything else that influenced your decision?",qja:"他に決断に影響したものはありますか？",model:"I was also attracted to the potential of the industry. In addition, I had the opportunity to speak with the father of a friend from my dormitory, who was working at my current company at the time. That conversation also influenced my decision.",modelJa:"業界の将来性にも魅力を感じていました。さらに、寮の友人の父親と話す機会がありました。その方は当時、現在の会社で働いており、その会話も私の決断に影響を与えました。"},
-    {q:"What did you do in your first years at the company?",qja:"入社当初は何をしていましたか？",model:"In my first and second years at the company, I was responsible for selling IT infrastructure hardware to large manufacturing companies. I mainly handled sales related to servers and IT infrastructure.",modelJa:"入社1〜2年目は、大手製造業向けのITインフラハードウェアの営業を担当しました。主にサーバーやITインフラ関連の案件を扱っていました。"},
-    {q:"What about after that?",qja:"その後は？",model:"In my third and fourth years, I was responsible for small and mid-sized manufacturing clients. I proposed digital transformation initiatives aimed at optimizing operations and addressing key business challenges.",modelJa:"3〜4年目は、中堅・中小の製造業を担当しました。業務改善や経営課題の解決に向けて、DXソリューションを提案していました。"},
-    {q:"What experience shaped who you are?",qja:"自分を形成した経験は何ですか？",model:"Playing soccer was the experience that shaped who I am today. Through soccer, I realized that I am the type of person who grows through steady effort.",modelJa:"サッカーをしたことが、今の自分を形成した経験です。サッカーを通じて、私は地道な努力で成長するタイプだと気づきました。"},
+  {block:4,emoji:"📈",label:"業界の変化",qs:[
+    {q:"How is the IT industry changing?",qja:"IT業界はどう変わってきていますか？",model:"As cloud technology spreads and AI advances rapidly, the value of basic system implementation is gradually declining.",modelJa:"クラウドの普及やAIの急速な進化により、基本的なシステム実装の価値は徐々に低下しています。"},
+    {q:"What does that mean for your business?",qja:"それはあなたの事業にとって何を意味しますか？",model:"The traditional billable-hours model is becoming unsustainable, so we need to fundamentally rethink how we operate.",modelJa:"従来の稼働時間ベースのモデルは持続困難になりつつあり、事業のあり方を根本から見直す必要があります。"},
+    {q:"Can't you just keep doing things the same way?",qja:"今のままのやり方ではダメなのですか？",model:"No. Regardless of whether we change, the world will continue to evolve.",modelJa:"はい。私たちが変わるかどうかに関わらず、世界は進化し続けます。"},
+    {q:"What kind of model will the industry shift to?",qja:"業界はどんなモデルに移行しますか？",model:"The industry is likely to shift from a time-and-materials model to an outcome-based one.",modelJa:"業界はT&Mモデルからアウトカム型へ移行する可能性が高いです。"},
+    {q:"How will that change things for clients?",qja:"顧客にとっては何が変わりますか？",model:"Instead of repeatedly negotiating estimates, companies will be able to generate tangible results from data much more quickly.",modelJa:"見積もりの交渉を繰り返す代わりに、企業はデータからずっと早く具体的な成果を出せるようになります。"},
+    {q:"What will happen to standardized systems?",qja:"標準化されたシステムはどうなりますか？",model:"They may become less relevant, giving way to highly customized solutions tailored to each organization.",modelJa:"重要性が下がり、各組織に合わせた高度にカスタマイズされたソリューションに置き換わっていくかもしれません。"},
+    {q:"Are there any new opportunities?",qja:"新しいチャンスはありますか？",model:"Yes. Areas that were previously too costly for system implementation may finally become viable as development costs decrease.",modelJa:"はい。以前はコストが高すぎてシステム化できなかった領域も、開発コストの低下で実現可能になるかもしれません。"},
+    {q:"So what should your company focus on?",qja:"では会社は何に注力すべきですか？",model:"We must move beyond implementation and focus on strategic architecture and enterprise-level problem solving.",modelJa:"実装を超えて、戦略的アーキテクチャや全社レベルの課題解決に注力しなければなりません。"},
   ]},
-  {block:5,emoji:"⚽",label:"サッカーで得たもの・価値観",qs:[
-    {q:"What did soccer give you?",qja:"サッカーから得たものは何ですか？",model:"Competing in a tough environment and giving my best until the very end gave me confidence in my resilience. I also met many amazing people through soccer.",modelJa:"厳しい環境で競い、最後まで力を尽くした経験が、自分のレジリエンスへの自信につながりました。サッカーを通じて、素晴らしい人たちとも出会いました。"},
-    {q:"Why is your exercise habit important?",qja:"運動習慣はなぜ大切ですか？",model:"And building a habit of exercise has become one of my greatest assets. In today's world, where people are living longer, staying healthy is more important than ever.",modelJa:"そして、運動習慣を身につけられたことも、私の大きな財産になりました。人生100年時代と言われる今、健康でいることはこれまで以上に重要です。"},
-    {q:"What do you value in how you think?",qja:"考え方で大切にしていることは？",model:"I value the ability to see things from multiple perspectives and to make decisions with discernment. I believe one of my strengths is my sense of aesthetics — an instinct for noticing when something is off and a drive to find the right way to do things.",modelJa:"私は、物事を多面的に捉え、分別を持って判断する力を大切にしています。私の強みの一つは、自分の美意識だと思っています。何かが違うと感じ取る直感と、物事を正しく行う方法を見つけ出そうとする姿勢です。"},
-    {q:"Do you have a favorite proverb?",qja:"好きなことわざはありますか？",model:"I also hold close the Japanese proverb \"Jinsei wa Saiou ga Uma,\" which means that life is unpredictable. Even events that seem negative at first can eventually lead to something positive.",modelJa:"私は「人生は塞翁が馬」という日本のことわざを大切にしています。人生は予測できないという意味です。一見よくない出来事でも、結果的に良い方向につながることがあります。"},
-    {q:"Do you ever regret your choices?",qja:"選択を後悔することはありますか？",model:"Because of this belief, I try not to regret my past choices excessively. No one can truly know what the alternative path would have looked like.",modelJa:"この考えがあるので、過去の選択を必要以上に後悔しないようにしています。別の道を選んでいたらどうなっていたかは、誰にも本当のところは分かりません。"},
+  {block:5,emoji:"🚀",label:"入社の経緯とこれまでのキャリア",qs:[
+    {q:"Why did you join your current company?",qja:"今の会社に入った理由は？",model:"Honestly, there wasn't anything dramatic about my decision.",modelJa:"正直、特別ドラマチックな理由はありませんでした。"},
+    {q:"Did you have a clear career goal back then?",qja:"当時、明確なキャリア目標はありましたか？",model:"No. For many years, I focused entirely on soccer, so I didn't have a clear vision for my career in business.",modelJa:"いいえ。長い間サッカーだけに集中していたので、ビジネスでのキャリアについて明確なビジョンはありませんでした。"},
+    {q:"Why did you choose the IT industry?",qja:"なぜIT業界を選んだのですか？",model:"It seemed like a logical choice. Technology is essential to society, and I believed I could work on something with real impact.",modelJa:"合理的な選択に思えたからです。テクノロジーは社会に不可欠で、本当に影響のある仕事ができると思いました。"},
+    {q:"Was there anything else that attracted you?",qja:"他に魅力を感じた点はありますか？",model:"I was also attracted to the potential of the industry.",modelJa:"業界の将来性にも魅力を感じていました。"},
+    {q:"Did anyone influence your decision?",qja:"誰かに影響されましたか？",model:"Yes. I talked with the father of a friend from my dormitory who was working at my current company, and that conversation influenced my decision.",modelJa:"はい。今の会社で働いていた寮の友人の父親と話したことが、決断に影響しました。"},
+    {q:"What did you do in your first two years?",qja:"入社1〜2年目は何をしていましたか？",model:"I was responsible for selling IT infrastructure hardware, mainly servers, to large manufacturing companies.",modelJa:"大手製造業向けに、サーバーを中心としたITインフラハードウェアの営業を担当しました。"},
+    {q:"And after that?",qja:"その後は？",model:"In my third and fourth years, I was responsible for small and mid-sized manufacturing clients.",modelJa:"3〜4年目は、中堅・中小の製造業を担当しました。"},
+    {q:"What did you propose to those clients?",qja:"その顧客には何を提案していましたか？",model:"I proposed digital transformation initiatives aimed at optimizing operations and addressing key business challenges.",modelJa:"業務改善や経営課題の解決に向けて、DXの取り組みを提案していました。"},
   ]},
-  {block:6,emoji:"🧭",label:"行き詰まりへの向き合い方",qs:[
-    {q:"How do you deal with feeling stuck?",qja:"行き詰まったときはどうしますか？",model:"Instead of dwelling on what might have been, I choose to move forward. When I feel stuck, I return to a few guiding ideas.",modelJa:"「もしも」にとらわれるより、前に進むことを選びます。行き詰まったときは、いくつかの考え方に立ち返ります。"},
-    {q:"Why don't you compare yourself to others?",qja:"なぜ他人と比べないのですか？",model:"First, people grow up in different environments and cultures, so they naturally see the world differently. Therefore, I do not need to be bound by other people's standards.",modelJa:"第一に、人は育ってきた環境や文化が違うため、世界の見え方も自然と異なります。だから、他人の基準に縛られる必要はないと思っています。"},
-    {q:"What other ideas guide you?",qja:"他に支えになる考え方は？",model:"Second, life moves in waves — no situation remains the same forever. And third, much of our anxiety comes from not knowing what we should do next. When things are calmly organized and clarified, a path usually appears.",modelJa:"第二に、人生には波があり、どんな状況も永遠には続きません。第三に、不安の多くは「次に何をすべきか分からないこと」から生まれます。淡々と整理して明確にすれば、道は開けることが多いです。"},
-    {q:"What do you believe about achieving results?",qja:"成果を出すことについての考えは？",model:"I believe that people who achieve meaningful results do so through consistent effort. There are no true exceptions. That is why I value continuous learning and steady improvement.",modelJa:"私は、成果を出している人は継続的な努力によってそうしていると信じています。本当の例外はありません。だからこそ、学び続ける姿勢と着実な改善を大切にしています。"},
+  {block:6,emoji:"🌟",label:"人生の転機",qs:[
+    {q:"What experience shaped who you are today?",qja:"今の自分を形作った経験は何ですか？",model:"Playing soccer was the experience that shaped who I am today.",modelJa:"サッカーをしたことが、今の自分を形成した経験です。"},
+    {q:"What did you learn about yourself through soccer?",qja:"サッカーを通じて自分について何を学びましたか？",model:"I realized that I am the type of person who grows through steady effort.",modelJa:"私は地道な努力で成長するタイプだと気づきました。"},
+    {q:"Where does your confidence come from?",qja:"自信はどこから来ていますか？",model:"Competing in a tough environment and giving my best until the very end gave me confidence in my resilience.",modelJa:"厳しい環境で競い、最後まで力を尽くした経験が、自分のレジリエンスへの自信につながりました。"},
+    {q:"What else did soccer give you?",qja:"サッカーから他に得たものは？",model:"I met many amazing people, and building a habit of exercise has become one of my greatest assets.",modelJa:"素晴らしい人たちと出会えましたし、運動習慣を身につけられたことも大きな財産になりました。"},
+    {q:"Why is exercise important to you?",qja:"なぜ運動が大切なのですか？",model:"In today's world, where people are living longer, staying healthy is more important than ever.",modelJa:"人生100年時代と言われる今、健康でいることはこれまで以上に重要だからです。"},
   ]},
-  {block:7,emoji:"🌏",label:"海外での気づき・伸ばしたい力",qs:[
-    {q:"How do you think about your future?",qja:"将来をどう考えていますか？",model:"At the same time, I believe that life gradually moves in the direction we consciously envision. Because of this, I try to be clear about who I want to become before anything else.",modelJa:"同時に、人生は自分が意識して思い描いた方向に少しずつ近づいていくとも考えています。そのため、まず「自分はどうなりたいか」を明確にすることを意識しています。"},
-    {q:"What did you notice from your experiences abroad?",qja:"海外での経験から気づいたことは？",model:"Through my experiences abroad, I realized something important. People often live exactly the way they want to live. They say what they think, and they fully enjoy their time off.",modelJa:"海外での経験を通じて、私は大切なことに気づきました。人はそれぞれ、自分のやりたいように生きているということです。言いたいことは言い、休日も全力で楽しんでいます。"},
-    {q:"What did that make you realize about yourself?",qja:"そこから自分について気づいたことは？",model:"While my sense of balance is one of my strengths, I also realized that adapting too much to others' expectations can prevent me from living life on my own terms. Going forward, I want to be clearer about my own intentions and assert myself when necessary.",modelJa:"自分のバランス感覚は強みですが、他人の期待に合わせすぎると、自分らしく生きられなくなるとも感じました。これからは、自分の意思をより明確にし、必要な場面ではしっかり自己主張していきたいです。"},
-    {q:"What skills do you want to strengthen?",qja:"伸ばしたい力は何ですか？",model:"There are also some areas I'd like to improve. First, I want to further strengthen my ability to think independently rather than accepting things blindly. I aim to develop stronger strategic and critical thinking skills so that I can make more essential, high-level judgments.",modelJa:"改善したい分野もいくつかあります。まず、盲目的に受け入れるのではなく、自分の頭で考え抜く力をさらに高めたいです。戦略的思考や批判的思考を磨き、より本質的で高度な判断ができるようになりたいと考えています。"},
+  {block:7,emoji:"🧭",label:"大切にしている価値観",qs:[
+    {q:"What do you value when making decisions?",qja:"判断するときに何を大切にしていますか？",model:"I value seeing things from multiple perspectives and making decisions with discernment.",modelJa:"物事を多面的に捉え、分別を持って判断することを大切にしています。"},
+    {q:"What do you think is one of your strengths?",qja:"自分の強みの一つは何だと思いますか？",model:"My sense of aesthetics — an instinct for noticing when something is off and a drive to find the right way to do things.",modelJa:"美意識です。何かが違うと感じ取る直感と、正しいやり方を見つけ出そうとする姿勢です。"},
+    {q:"Do you have a favorite proverb?",qja:"好きなことわざはありますか？",model:"Yes. I hold close the Japanese proverb \"Jinsei wa Saiou ga Uma,\" which means that life is unpredictable.",modelJa:"はい。「人生は塞翁が馬」ということわざを大切にしています。人生は予測できないという意味です。"},
+    {q:"What does that proverb mean to you?",qja:"そのことわざはあなたにとってどんな意味がありますか？",model:"Even events that seem negative at first can eventually lead to something positive.",modelJa:"一見よくない出来事でも、結果的に良い方向につながることがあるということです。"},
+    {q:"Do you ever regret your past choices?",qja:"過去の選択を後悔することはありますか？",model:"I try not to regret them excessively. No one can truly know what the alternative path would have looked like.",modelJa:"必要以上に後悔しないようにしています。別の道を選んでいたらどうなっていたかは、誰にも分からないからです。"},
+    {q:"So how do you deal with the past?",qja:"では過去とどう向き合っていますか？",model:"Instead of dwelling on what might have been, I choose to move forward.",modelJa:"「もしも」にとらわれるより、前に進むことを選びます。"},
   ]},
-  {block:8,emoji:"🎯",label:"成長課題・将来のビジョン",qs:[
-    {q:"How do you balance kindness and firmness?",qja:"優しさと厳しさのバランスをどう取りますか？",model:"Second, while kindness and consideration are strengths of mine, I recognize the importance of being firm when needed — like a defensive midfielder in soccer: calm and balanced, yet demanding and decisive in critical moments.",modelJa:"次に、優しさや配慮は強みですが、必要なときにはサッカーのボランチのように冷静かつバランスが取れていながら、重要な場面では要求が厳しく決断力があることも重要だと思っています。"},
-    {q:"Are there any habits you want to change?",qja:"変えたい習慣はありますか？",model:"Finally, I tend to approach tasks comprehensively, sometimes trying to cover everything. Aware of Parkinson's Law, I want to cultivate the courage to eliminate what is unnecessary and focus only on what truly matters. By doing so, I believe I can significantly improve my productivity and impact.",modelJa:"最後に、私は物事を網羅的に進めようとしすぎる傾向があります。パーキンソンの法則を意識して、不必要なものを排除する勇気を持ち、本当に重要なことだけに集中したいです。そうすることで、生産性と影響力を大きく高められると思っています。"},
-    {q:"What is your personal vision?",qja:"個人的なビジョンは何ですか？",model:"Looking ahead, I have a personal vision for my future. I want to surround myself only with things I truly care about.",modelJa:"将来に向けて、私には個人的なビジョンがあります。本当に大切に思えるものだけに囲まれて生きたいです。"},
-    {q:"What does that look like concretely?",qja:"具体的にはどんなことですか？",model:"On a larger scale, I would like to build a home designed with great attention to detail. On a smaller scale, I want to choose everyday items that I genuinely love.",modelJa:"大きな目標としては、細部までこだわって設計した家を建てたいです。小さな目標としては、日用品も心から好きだと思えるものを選びたいです。"},
-    {q:"Have you achieved that yet?",qja:"それはもう実現できていますか？",model:"Right now, I don't feel that I have full financial freedom yet. I often tell myself, \"It still works, so it's fine,\" even if it's not something I truly care about.",modelJa:"今はまだ、完全な経済的自由があるとは感じていません。本当はこだわりたいのに、「まだ使えるからいいか」と自分に言い聞かせてしまうこともあります。"},
+  {block:8,emoji:"💡",label:"行き詰まったとき・努力について",qs:[
+    {q:"What do you do when you feel stuck?",qja:"行き詰まったときはどうしますか？",model:"I return to a few guiding ideas.",modelJa:"いくつかの考え方に立ち返ります。"},
+    {q:"What's the first one?",qja:"一つ目は何ですか？",model:"People see the world differently, so I don't need to be bound by other people's standards.",modelJa:"人それぞれ世界の見え方は違うので、他人の基準に縛られる必要はないということです。"},
+    {q:"And the second?",qja:"二つ目は？",model:"Life moves in waves — no situation remains the same forever.",modelJa:"人生には波があり、どんな状況も永遠には続かないということです。"},
+    {q:"And the third?",qja:"三つ目は？",model:"Much of our anxiety comes from not knowing what to do next. When things are calmly organized, a path usually appears.",modelJa:"不安の多くは次に何をすべきか分からないことから生まれます。淡々と整理すれば、たいてい道は開けます。"},
+    {q:"What does it take to achieve results?",qja:"成果を出すには何が必要だと思いますか？",model:"I believe people who achieve meaningful results do so through consistent effort. There are no true exceptions.",modelJa:"成果を出している人は継続的な努力によってそうしていると信じています。本当の例外はありません。"},
+    {q:"So what do you value?",qja:"だから何を大切にしていますか？",model:"That's why I value continuous learning and steady improvement.",modelJa:"だからこそ、学び続ける姿勢と着実な改善を大切にしています。"},
+    {q:"Do you believe in setting goals?",qja:"目標を持つことは大事だと思いますか？",model:"Yes. Life gradually moves in the direction we consciously envision, so I try to be clear about who I want to become.",modelJa:"はい。人生は意識して思い描いた方向に少しずつ進んでいくので、どうなりたいかを明確にするようにしています。"},
   ]},
-  {block:9,emoji:"💭",label:"今の悩み・キャリアへの問い",qs:[
-    {q:"What do you want to do with your family?",qja:"家族としたいことはありますか？",model:"In the future, I would also like to travel abroad regularly with my family.",modelJa:"将来的には、家族と定期的に海外旅行にも行きたいです。"},
-    {q:"What are you struggling with right now?",qja:"今、何に悩んでいますか？",model:"One of the things I am currently struggling with is my identity as a salesperson at a system integrator. If my company's brand were taken away, I sometimes wonder what I could truly offer on my own. When someone asks me, \"What can you do?\" or \"What is your specialty?\" I realize I do not yet have a clear and confident answer.",modelJa:"今向き合っている悩みの一つは、SIerの営業としてのアイデンティティです。会社のブランドがなくなったら、自分は何を提供できるのだろう、と考えることがあります。「何ができるの？」「専門は？」と聞かれたとき、まだ明確で自信ある答えを持てていないと気づきます。"},
-    {q:"Is there anything else that concerns you?",qja:"他に気になっていることは？",model:"Another concern I have is anxiety about my own abilities. Although our departments and circumstances are different, some of my peers have been promoted, and that has, in part, intensified this insecurity.",modelJa:"もう一つの悩みは、自分の能力に対する不安です。部署や事情は違うとはいえ、同期の中には昇進している人もいて、それが部分的にこの不安感を強めています。"},
-    {q:"What do you feel you're not strong at?",qja:"苦手だと感じることは？",model:"At times, I feel that I am not strong at quickly structuring ideas, thinking flexibly, or knowing when to step back and let things flow. These feelings sometimes undermine my confidence, and there are moments when I hesitate and fail to fully demonstrate my true potential.",modelJa:"物事を素早く構造化する力や、柔軟に考える力、あるいはうまく力を抜いて流すことが十分ではないと感じることがあります。そうした感覚が自信のなさにつながり、どこかでためらってしまい、本来の力を出しきれない瞬間もあります。"},
-    {q:"So what are you focused on now?",qja:"では今は何に集中していますか？",model:"That is exactly why I keep thinking seriously about how I should build my career from this point forward. Looking ahead, I want to develop strong expertise in supporting small and mid-sized manufacturing companies.",modelJa:"だからこそ、これからどうキャリアを築くべきかを真剣に考え続けています。将来は、中堅・中小の製造業を支援できる専門性を身につけたいです。"},
+  {block:9,emoji:"🌏",label:"海外での気づきと成長課題",qs:[
+    {q:"What did you learn from your experiences abroad?",qja:"海外での経験から何を学びましたか？",model:"I realized that people often live exactly the way they want to live.",modelJa:"人はそれぞれ、自分のやりたいように生きているということに気づきました。"},
+    {q:"What do you mean by that?",qja:"どういうことですか？",model:"They say what they think, and they fully enjoy their time off.",modelJa:"言いたいことは言い、休日も全力で楽しんでいるということです。"},
+    {q:"How did that affect you?",qja:"それはあなたにどう影響しましたか？",model:"I realized that adapting too much to others' expectations can prevent me from living life on my own terms.",modelJa:"他人の期待に合わせすぎると、自分らしく生きられなくなると気づきました。"},
+    {q:"What do you want to change going forward?",qja:"これから何を変えたいですか？",model:"I want to be clearer about my own intentions and assert myself when necessary.",modelJa:"自分の意思をより明確にし、必要な場面ではしっかり自己主張したいです。"},
+    {q:"Are there any skills you'd like to improve?",qja:"伸ばしたい力はありますか？",model:"I want to strengthen my ability to think independently rather than accepting things blindly.",modelJa:"盲目的に受け入れるのではなく、自分の頭で考え抜く力を高めたいです。"},
+    {q:"Why is that important to you?",qja:"なぜそれが大切なのですか？",model:"I want to make more essential, high-level judgments through strategic and critical thinking.",modelJa:"戦略的・批判的思考によって、より本質的で高度な判断ができるようになりたいからです。"},
+    {q:"Anything else you want to work on?",qja:"他に取り組みたいことは？",model:"I want to be firm when needed — like a defensive midfielder in soccer: calm and balanced, yet decisive in critical moments.",modelJa:"必要なときには毅然としたいです。サッカーのボランチのように、冷静でバランスが取れていながら、重要な場面では決断力があるように。"},
+    {q:"Do you have any bad habits at work?",qja:"仕事での悪い癖はありますか？",model:"I tend to approach tasks comprehensively, sometimes trying to cover everything.",modelJa:"物事を網羅的に進めようとしすぎる傾向があります。"},
+    {q:"How do you want to deal with that?",qja:"それにどう対処したいですか？",model:"Aware of Parkinson's Law, I want the courage to eliminate what is unnecessary and focus only on what truly matters.",modelJa:"パーキンソンの法則を意識して、不要なものを捨てる勇気を持ち、本当に重要なことだけに集中したいです。"},
+    {q:"What do you expect from that?",qja:"それで何が期待できますか？",model:"I believe I can significantly improve my productivity and impact.",modelJa:"生産性と影響力を大きく高められると思っています。"},
   ]},
-  {block:10,emoji:"🔧",label:"目指す専門性・営業としての課題",qs:[
-    {q:"Why small and mid-sized manufacturers?",qja:"なぜ中堅・中小の製造業なのですか？",model:"These companies make up a large part of Japan's economy, and I believe their importance will continue to grow. To truly support them, I need deeper knowledge of IT architecture and business processes. I want to be able to speak on equal terms with engineers and clients — not only from a sales perspective, but from a professional and strategic one.",modelJa:"これらの企業は日本経済の大きな部分を占めており、重要性は今後さらに高まると思っています。本当に支援するには、ITアーキテクチャと業務プロセスへの理解を深める必要があります。営業目線だけでなく、専門的・戦略的な観点からも、エンジニアや顧客と対等に話せるようになりたいです。"},
-    {q:"What are your challenges as a salesperson?",qja:"営業としての課題は何ですか？",model:"As a salesperson, one of my challenges is that I tend to come across as somewhat serious or rigid. Sincerity is one of my strengths, and some people genuinely appreciate that. However, it can take time for me to build closer relationships.",modelJa:"営業としての課題の一つは、少し真面目すぎたり硬い印象を与えてしまう傾向があることです。誠実さは強みで、そこを評価してくれる人もいます。ただ、距離を縮めるのに時間がかかることもあります。"},
-    {q:"How do you want to change that?",qja:"それをどう変えたいですか？",model:"I want to share more of myself, be more open, and connect with people in a more natural way. Even within my company, I feel that increasing communication and taking a more open attitude would help me grow.",modelJa:"もっと自分を開き、自然体で人とつながれるようになりたいです。社内でも、コミュニケーションを増やし、よりオープンな姿勢を持つことが成長につながると感じています。"},
-    {q:"Where are you on this journey now?",qja:"今はどの段階にいますか？",model:"Right now, I am still in the process of defining my path.",modelJa:"今はまだ、自分の道を定義している途中です。"},
+  {block:10,emoji:"🏡",label:"将来やりたいこと",qs:[
+    {q:"Do you have a vision for your future?",qja:"将来のビジョンはありますか？",model:"Yes. I want to surround myself only with things I truly care about.",modelJa:"はい。本当に大切に思えるものだけに囲まれて生きたいです。"},
+    {q:"What does that look like?",qja:"具体的にはどういうことですか？",model:"I'd like to build a home designed with great attention to detail, and choose everyday items that I genuinely love.",modelJa:"細部までこだわった家を建てたいですし、日用品も心から好きなものを選びたいです。"},
+    {q:"Why haven't you done that yet?",qja:"なぜまだ実現していないのですか？",model:"I don't have full financial freedom yet, so I often tell myself, \"It still works, so it's fine.\"",modelJa:"まだ完全な経済的自由がないので、「まだ使えるからいいか」と自分に言い聞かせてしまうことが多いです。"},
+    {q:"Is there anything else you want to do?",qja:"他にやりたいことはありますか？",model:"I'd like to travel abroad regularly with my family.",modelJa:"家族と定期的に海外旅行に行きたいです。"},
   ]},
-  {block:11,emoji:"🗺️",label:"20代30代のキャリア戦略",qs:[
-    {q:"Where are you on this journey now?",qja:"今はどの段階にいますか？",model:"But I believe growth requires both expertise and approachability.",modelJa:"ただ、成長には専門性と親しみやすさの両方が必要だと思っています。"},
-    {q:"What kind of person do you want to become?",qja:"どんな人になりたいですか？",model:"I want to become someone who is strong in knowledge and trusted as a person. From a long-term perspective, I also have a rough strategy for each stage of my career.",modelJa:"知識に強く、人として信頼される存在になりたいです。長期的には、キャリア各段階の大まかな戦略も描いています。"},
-    {q:"What's your plan for your twenties?",qja:"20代の計画は？",model:"In my twenties, I see this as the stage of building a foundation. I want to be able to organize the problems of manufacturing companies in the language of the workplace, not just in abstract business terms. At the same time, I want to build a solid understanding of IT architecture so that I can speak with systems engineers as an equal.",modelJa:"20代は土台を築く時期だと考えています。製造業の課題を、抽象的なビジネス用語ではなく現場の言葉で整理できるようになりたいです。同時に、ITアーキテクチャの理解を固め、SEと対等に話せる土台を作りたいです。"},
-    {q:"And your thirties?",qja:"30代は？",model:"In my thirties, I want to move into an environment where I can create greater leverage — in terms of both income and decision-making authority. Rather than staying only in a traditional business model based on billing by time and headcount, I want to help my company shift toward value-based businesses, where contracts are built around outcomes and impact. I want to work closely with excellent engineers, become deeply involved in the client's IT function, identify the most critical challenge they are facing, turn that into a real solution, and win contracts that reflect the value created — such as annual agreements or recurring revenue models.",modelJa:"30代は、収入面でも意思決定権の面でも、よりレバレッジの効く環境に移りたいです。時間や人数で課金する従来型モデルにとどまるのではなく、成果や影響に基づく価値ベースのビジネスへと会社がシフトするのを助けていきたいです。優秀なエンジニアと密に連携し、顧客のIT部門に深く入り込み、彼らが直面している最も重要な課題を特定して実際の解決策に変え、生み出された価値に見合う契約を獲得したいです。年間契約や継続課金モデルのような。"},
+  {block:11,emoji:"💭",label:"今の悩み",qs:[
+    {q:"What are you struggling with right now?",qja:"今、何に悩んでいますか？",model:"I'm struggling with my identity as a salesperson at a system integrator.",modelJa:"SIerの営業としてのアイデンティティに悩んでいます。"},
+    {q:"Why is that?",qja:"それはなぜですか？",model:"If my company's brand were taken away, I sometimes wonder what I could truly offer on my own.",modelJa:"会社のブランドがなくなったら、自分は何を提供できるのだろうと考えることがあります。"},
+    {q:"What is your specialty?",qja:"あなたの専門は何ですか？",model:"That's the problem. I don't yet have a clear and confident answer to that question.",modelJa:"そこが課題なんです。その質問にまだ明確で自信のある答えを持てていません。"},
+    {q:"Is there anything else that worries you?",qja:"他に気になっていることはありますか？",model:"Yes, I feel some anxiety about my own abilities.",modelJa:"はい、自分の能力に対して不安を感じています。"},
+    {q:"What makes you feel that way?",qja:"なぜそう感じるのですか？",model:"Some of my peers have been promoted, and that has, in part, intensified this insecurity.",modelJa:"同期の中には昇進している人もいて、それがこの不安を部分的に強めています。"},
+    {q:"What do you feel you're not good at?",qja:"苦手だと感じることは？",model:"I'm not strong at quickly structuring ideas, thinking flexibly, or knowing when to step back and let things flow.",modelJa:"物事を素早く構造化すること、柔軟に考えること、うまく力を抜いて流すことが苦手です。"},
+    {q:"How does that affect you?",qja:"それはどう影響していますか？",model:"It sometimes undermines my confidence, and I hesitate and fail to show my true potential.",modelJa:"自信を失わせることがあり、ためらって本来の力を出しきれないことがあります。"},
+    {q:"So what are you doing about it?",qja:"それに対して何をしていますか？",model:"That's exactly why I keep thinking seriously about how to build my career.",modelJa:"だからこそ、どうキャリアを築くべきかを真剣に考え続けています。"},
   ]},
-  {block:12,emoji:"⭐",label:"40代の理想像・趣味",qs:[
-    {q:"What about your forties?",qja:"40代はどうですか？",model:"In my forties, I want to reach a stage where I am chosen by name because of both my expertise and my network. That, to me, is the stage where I will have the most freedom.",modelJa:"40代は、専門性と人脈の両方で「名前で選ばれる」段階に到達したいです。それが、自分にとって最も自由度が高い段階だと思っています。"},
-    {q:"What position do you want in your forties?",qja:"40代でどんな立場になりたいですか？",model:"I want to be in a position where trust brings opportunities to me, and where I can balance work with family and personal interests. By then, I hope to increase the number of projects where I am specifically sought out because of my track record and specialization. Depending on the situation, I also want to keep open several possible paths — moving to the business side, working on the client side, becoming independent, or expanding side businesses.",modelJa:"信頼が機会を連れてくる立場になり、仕事と家族、個人の時間をバランスよく保ちたいです。その頃には、実績と専門性によって指名される案件を増やしたいです。状況次第で、事業側への転身、顧客側への移動、独立、副業拡大など、複数の道を開いておきたいです。"},
-    {q:"Have you found your answer yet?",qja:"答えはもう見つかりましたか？",model:"Right now, I am still searching for my answer. But step by step, I want to build a career that is based not only on the name of my company, but on the value I can create myself.",modelJa:"今はまだ答えを探している途中です。しかし一歩ずつ、会社の名前だけではなく、自分が生み出せる価値に基づいたキャリアを築きたいです。"},
-    {q:"What do you like to do?",qja:"好きなことは何ですか？",model:"Soccer is one of my favorite things. I'm very competitive, so once I start something, I become fully absorbed in it.",modelJa:"サッカーは私の好きなことの一つです。負けず嫌いなので、何かを始めるととことん没頭します。"},
+  {block:12,emoji:"🎯",label:"目指す専門性と営業としての課題",qs:[
+    {q:"What expertise do you want to develop?",qja:"どんな専門性を身につけたいですか？",model:"I want to develop strong expertise in supporting small and mid-sized manufacturing companies.",modelJa:"中堅・中小の製造業を支援できる専門性を身につけたいです。"},
+    {q:"Why those companies?",qja:"なぜその企業なのですか？",model:"They make up a large part of Japan's economy, and I believe their importance will continue to grow.",modelJa:"日本経済の大きな部分を占めていて、その重要性は今後さらに高まると思っているからです。"},
+    {q:"What do you need to support them?",qja:"支援するには何が必要ですか？",model:"I need deeper knowledge of IT architecture and business processes.",modelJa:"ITアーキテクチャと業務プロセスへの深い理解が必要です。"},
+    {q:"What's your goal when talking with engineers and clients?",qja:"エンジニアや顧客との会話での目標は？",model:"I want to speak on equal terms with them — not only from a sales perspective, but from a professional and strategic one.",modelJa:"営業目線だけでなく、専門的・戦略的な観点から対等に話せるようになりたいです。"},
+    {q:"What's your challenge as a salesperson?",qja:"営業としての課題は何ですか？",model:"I tend to come across as somewhat serious or rigid.",modelJa:"少し真面目すぎたり、硬い印象を与えてしまう傾向があります。"},
+    {q:"Is that a bad thing?",qja:"それは悪いことですか？",model:"Not entirely. Sincerity is one of my strengths, but it can take time for me to build closer relationships.",modelJa:"一概にはそうではありません。誠実さは強みですが、距離を縮めるのに時間がかかることがあります。"},
+    {q:"How do you want to change?",qja:"どう変わりたいですか？",model:"I want to share more of myself, be more open, and connect with people in a more natural way.",modelJa:"もっと自分を開き、自然体で人とつながれるようになりたいです。"},
+    {q:"What about within your company?",qja:"社内ではどうですか？",model:"I think increasing communication and taking a more open attitude would help me grow.",modelJa:"コミュニケーションを増やし、よりオープンな姿勢を持つことが成長につながると思います。"},
+    {q:"Have you figured out your path?",qja:"自分の進む道は見えていますか？",model:"Not yet. I'm still in the process of defining my path.",modelJa:"まだです。今はまだ自分の道を定義している途中です。"},
+    {q:"What do you think growth requires?",qja:"成長には何が必要だと思いますか？",model:"I believe growth requires both expertise and approachability.",modelJa:"専門性と親しみやすさの両方が必要だと思っています。"},
+    {q:"What kind of person do you want to become?",qja:"どんな人になりたいですか？",model:"I want to become someone who is strong in knowledge and trusted as a person.",modelJa:"知識に強く、人として信頼される存在になりたいです。"},
   ]},
-  {block:13,emoji:"🎬",label:"趣味・自己内省・映画",qs:[
-    {q:"What else do you enjoy?",qja:"他に楽しんでいることは？",model:"I also enjoy planning trips and organizing my weekends. I find joy in the process of planning itself. Another thing I like is self-reflection.",modelJa:"旅行の計画を立てたり、週末の予定を組み立てたりするのも好きです。計画するプロセスそのものに喜びを見出します。自己内省も好きです。"},
-    {q:"What do you often think about?",qja:"よく考えることは何ですか？",model:"I often think about what kind of life I want to live and what values I want to prioritize. I also like movies.",modelJa:"どんな人生を送りたいか、何を大切にしたいかをよく考えます。映画も好きです。"},
-    {q:"Why do you like movies?",qja:"なぜ映画が好きなのですか？",model:"When I watch a great film, I get completely immersed in its world and lose track of time. And when a movie truly moves me, that feeling becomes motivation and a deep sense of satisfaction.",modelJa:"良い映画を見ると、その世界に没頭して時間を忘れます。心を動かされる映画に出会うと、その感情がモチベーションになり、深い満足感につながります。"},
-    {q:"How do you spend your weekends?",qja:"週末はどう過ごしますか？",model:"On weekends, I spend about half of my time on myself. I read books and go to the gym.",modelJa:"週末は、だいたい半分の時間を自分のために使っています。本を読んだり、ジムに行ったりします。"},
+  {block:13,emoji:"🗺️",label:"年代別のキャリア戦略",qs:[
+    {q:"Do you have a long-term career plan?",qja:"長期的なキャリアプランはありますか？",model:"Yes, I have a rough strategy for each stage of my career.",modelJa:"はい、キャリアの各段階ごとに大まかな戦略を描いています。"},
+    {q:"What about your twenties?",qja:"20代はどうですか？",model:"I see my twenties as the stage of building a foundation.",modelJa:"20代は土台を築く時期だと考えています。"},
+    {q:"What do you want to achieve in your twenties?",qja:"20代で何を身につけたいですか？",model:"I want to be able to explain manufacturers' problems in the language of the workplace, not just in abstract business terms.",modelJa:"製造業の課題を、抽象的なビジネス用語ではなく現場の言葉で整理できるようになりたいです。"},
+    {q:"Anything else?",qja:"他には？",model:"I also want a solid understanding of IT architecture so that I can speak with systems engineers as an equal.",modelJa:"ITアーキテクチャをしっかり理解して、SEと対等に話せるようにもなりたいです。"},
+    {q:"What about your thirties?",qja:"30代はどうですか？",model:"I want to move into an environment where I have greater leverage — in both income and decision-making authority.",modelJa:"収入面でも意思決定権の面でも、よりレバレッジの効く環境に移りたいです。"},
+    {q:"What kind of business do you want to work on?",qja:"どんなビジネスに取り組みたいですか？",model:"I want to help my company shift toward value-based businesses, where contracts are built around outcomes and impact.",modelJa:"成果や影響に基づいて契約する、価値ベースのビジネスへ会社がシフトするのを助けたいです。"},
+    {q:"How would you do that?",qja:"どうやってそれを実現しますか？",model:"By working closely with excellent engineers, solving the client's most critical challenge, and winning contracts that reflect the value created.",modelJa:"優秀なエンジニアと密に連携して顧客の最重要課題を解決し、生み出した価値に見合う契約を獲得することでです。"},
+    {q:"And your forties?",qja:"40代は？",model:"I want to reach a stage where I'm chosen by name because of both my expertise and my network.",modelJa:"専門性と人脈の両方で「名前で選ばれる」段階に到達したいです。"},
+    {q:"Why is that stage important to you?",qja:"なぜその段階が大切なのですか？",model:"To me, that's the stage where I'll have the most freedom.",modelJa:"自分にとって、それが最も自由度の高い段階だからです。"},
+    {q:"What kind of position do you want to be in?",qja:"どんな立場になりたいですか？",model:"I want to be in a position where trust brings opportunities to me, and where I can balance work and family.",modelJa:"信頼が機会を運んできてくれて、仕事と家族のバランスが取れる立場になりたいです。"},
+    {q:"Are you thinking of other options too?",qja:"他の選択肢も考えていますか？",model:"Yes. I want to keep several paths open — like moving to the business side, becoming independent, or expanding side businesses.",modelJa:"はい。事業側への転身、独立、副業拡大など、いくつかの道を開いておきたいです。"},
+    {q:"Have you found your answer yet?",qja:"答えは見つかりましたか？",model:"Not yet. But step by step, I want to build a career based on the value I can create myself, not just my company's name.",modelJa:"まだです。でも一歩ずつ、会社の名前だけでなく、自分が生み出せる価値に基づいたキャリアを築きたいです。"},
   ]},
-  {block:14,emoji:"✈️",label:"休日の過ごし方・旅行観",qs:[
-    {q:"How do you spend your weekends?",qja:"週末はどう過ごしますか？",model:"It helps me reset and recharge.",modelJa:"それによって気持ちをリセットし、エネルギーを回復させています。"},
-    {q:"What else do you do on weekends?",qja:"週末は他に何をしますか？",model:"I also clean the house and take my dogs for a walk. Sometimes, I enjoy shopping or eating out with my wife. I value unhurried and meaningful time.",modelJa:"家の掃除をしたり、犬の散歩に行ったりもします。ときには妻と買い物をしたり、外食を楽しんだりします。急がず、意味のある時間を大切にしています。"},
-    {q:"What do you look for when you travel?",qja:"旅行では何を求めますか？",model:"When I travel, I seek out experiences that feel extraordinary. I enjoy trying local food and tasting things I don't usually get to eat. I'm also drawn to experiences that broaden my perspective or allow me to feel the overwhelming power of nature.",modelJa:"旅行では、非日常を感じられる体験を求めます。現地の食べ物を試したり、普段なかなか食べられないものを味わうのが好きです。自分の視野を広げてくれる体験や、自然の圧倒的な力を感じる体験にも惹かれます。"},
-    {q:"Why are those experiences important to you?",qja:"なぜその体験が大切なのですか？",model:"I believe memories are fuel for life. So I want to seek out experiences that I normally wouldn't have.",modelJa:"私は、思い出は人生の燃料だと思っています。だからこそ、普段はなかなかできない体験を求めたいです。"},
+  {block:14,emoji:"🎬",label:"趣味・休日",qs:[
+    {q:"What do you like to do?",qja:"好きなことは何ですか？",model:"Soccer is one of my favorite things.",modelJa:"サッカーは私の好きなことの一つです。"},
+    {q:"What are you like when you start something new?",qja:"何かを始めるとどうなりますか？",model:"I'm very competitive, so once I start something, I become fully absorbed in it.",modelJa:"負けず嫌いなので、何かを始めるととことん没頭します。"},
+    {q:"Do you like planning things?",qja:"計画を立てるのは好きですか？",model:"Yes. I enjoy planning trips and organizing my weekends. I find joy in the process of planning itself.",modelJa:"はい。旅行の計画や週末の予定を立てるのが好きです。計画するプロセスそのものに喜びを感じます。"},
+    {q:"Is there anything else you enjoy?",qja:"他に好きなことはありますか？",model:"I like self-reflection. I often think about what kind of life I want to live.",modelJa:"自己内省が好きです。どんな人生を送りたいかをよく考えます。"},
+    {q:"Do you like movies?",qja:"映画は好きですか？",model:"Yes. When I watch a great film, I get completely immersed in its world and lose track of time.",modelJa:"はい。良い映画を見ると、その世界に没頭して時間を忘れます。"},
+    {q:"What do you get out of movies?",qja:"映画から何を得ていますか？",model:"When a movie truly moves me, that feeling becomes motivation and a deep sense of satisfaction.",modelJa:"心を動かされる映画に出会うと、その感情がモチベーションになり、深い満足感につながります。"},
+    {q:"How do you spend your weekends?",qja:"週末はどう過ごしていますか？",model:"I spend about half of my time on myself. I read books and go to the gym.",modelJa:"半分くらいの時間は自分のために使っています。本を読んだり、ジムに行ったりします。"},
+    {q:"Why is that time important?",qja:"なぜその時間が大切なのですか？",model:"It helps me reset and recharge.",modelJa:"気持ちをリセットし、エネルギーを回復させてくれるからです。"},
+    {q:"What else do you do on weekends?",qja:"週末は他に何をしますか？",model:"I clean the house and walk my dogs. Sometimes, I go shopping or eat out with my wife.",modelJa:"家の掃除をしたり、犬の散歩をしたりします。ときには妻と買い物や外食に出かけます。"},
+    {q:"What kind of time do you value?",qja:"どんな時間を大切にしていますか？",model:"I value unhurried and meaningful time.",modelJa:"急がず、意味のある時間を大切にしています。"},
   ]},
-  {block:15,emoji:"🍽️",label:"食の好み・住まい探し",qs:[
-    {q:"What food do you like?",qja:"好きな食べ物は？",model:"As for food, I'm not a picky eater at all. I love all-you-can-eat barbecue and buffet-style meals. And most of all, I love the meals my wife cooks.",modelJa:"食べ物の好き嫌いは全くありません。焼肉の食べ放題やビュッフェ形式の食事が好きです。そして何より、妻の料理が一番好きです。"},
-    {q:"Where do you live now?",qja:"今はどこに住んでいますか？",model:"Currently, I live in a rental apartment. I have two large dogs, so finding a place was very challenging.",modelJa:"現在は賃貸マンションに住んでいます。大型犬を2匹飼っているので、住まい探しはとても大変でした。"},
-    {q:"Why was finding a place so hard?",qja:"住まい探しはなぜ大変だったのですか？",model:"With large dogs, most apartments only allow first-floor units. And many places don't allow large dogs or multiple pets. So my options were quite limited.",modelJa:"大型犬だと、多くの物件は1階の部屋しか許可されません。そもそも大型犬や多頭飼いを認めていない物件も多いです。そのため、選択肢はかなり限られていました。"},
-    {q:"Where have you lived before?",qja:"これまでどこに住んできましたか？",model:"I grew up in a rural area surrounded by nature.",modelJa:"私は自然に囲まれた地方で育ちました。"},
+  {block:15,emoji:"✈️",label:"旅行と食べ物",qs:[
+    {q:"What do you look for when you travel?",qja:"旅行では何を求めますか？",model:"I seek out experiences that feel extraordinary.",modelJa:"非日常を感じられる体験を求めます。"},
+    {q:"What do you enjoy doing on trips?",qja:"旅行先で何をするのが好きですか？",model:"I enjoy trying local food and tasting things I don't usually get to eat.",modelJa:"現地の食べ物を試したり、普段なかなか食べられないものを味わうのが好きです。"},
+    {q:"What other experiences are you drawn to?",qja:"他にどんな体験に惹かれますか？",model:"Experiences that broaden my perspective or let me feel the overwhelming power of nature.",modelJa:"視野を広げてくれる体験や、自然の圧倒的な力を感じられる体験です。"},
+    {q:"Why are those experiences important to you?",qja:"なぜその体験が大切なのですか？",model:"I believe memories are fuel for life.",modelJa:"思い出は人生の燃料だと思っているからです。"},
+    {q:"Are you a picky eater?",qja:"食べ物の好き嫌いはありますか？",model:"Not at all.",modelJa:"全くありません。"},
+    {q:"What kind of food do you like?",qja:"どんな食べ物が好きですか？",model:"I love all-you-can-eat barbecue and buffet-style meals.",modelJa:"焼肉の食べ放題やビュッフェ形式の食事が好きです。"},
+    {q:"What's your favorite food?",qja:"一番好きな食べ物は？",model:"Most of all, I love the meals my wife cooks.",modelJa:"何より、妻の料理が一番好きです。"},
   ]},
-  {block:16,emoji:"🏠",label:"住んできた場所・兄のこと",qs:[
-    {q:"Where have you lived before?",qja:"これまでどこに住んできましたか？",model:"During university, I lived in an athletics dormitory. After that, I lived in a shared house in central Tokyo for a while.",modelJa:"大学時代は体育会の寮に住んでいました。その後、しばらく都心のシェアハウスに住んでいました。"},
-    {q:"How do you like your current area?",qja:"今のエリアはどうですか？",model:"Now I live in the western Tokyo area. I really like it here. There's a good balance of nature, nice neighborhoods, and great restaurants.",modelJa:"今は東京の西側エリアに住んでいます。ここがとても気に入っています。自然と、良い雰囲気の街並みと、美味しいレストランのバランスが良いからです。"},
-    {q:"Do you still want to explore Tokyo?",qja:"まだ東京を巡りたいですか？",model:"There are still so many places I want to explore in Tokyo.",modelJa:"東京にはまだまだ行きたい場所がたくさんあります。"},
-    {q:"Do you plan to stay in Tokyo?",qja:"東京に住み続ける予定ですか？",model:"So for now, I don't feel ready to leave.",modelJa:"なので今のところ、離れる気にはなれません。"},
-    {q:"Has your brother influenced you?",qja:"お兄さんの影響はありますか？",model:"My older brother has had a big influence on me. When I was young, I often copied his values and way of thinking.",modelJa:"兄は私に大きな影響を与えてきました。子どもの頃は、兄の価値観や考え方をよく真似していました。"},
+  {block:16,emoji:"🏠",label:"住まい",qs:[
+    {q:"Where do you live now?",qja:"今どこに住んでいますか？",model:"I live in a rental apartment in the western Tokyo area.",modelJa:"東京の西側エリアの賃貸マンションに住んでいます。"},
+    {q:"Was it easy to find a place?",qja:"住まい探しは簡単でしたか？",model:"No. I have two large dogs, so it was very challenging.",modelJa:"いいえ。大型犬を2匹飼っているので、とても大変でした。"},
+    {q:"Why was it so hard?",qja:"なぜそんなに大変だったのですか？",model:"Most apartments only allow large dogs on the first floor, and many don't allow multiple pets at all.",modelJa:"大型犬は1階しか認めない物件がほとんどで、多頭飼いを認めていない物件も多いからです。"},
+    {q:"So you didn't have many choices?",qja:"選択肢は少なかったのですね？",model:"Right. My options were quite limited.",modelJa:"はい。選択肢はかなり限られていました。"},
+    {q:"Where did you grow up?",qja:"どこで育ちましたか？",model:"I grew up in a rural area surrounded by nature.",modelJa:"自然に囲まれた地方で育ちました。"},
+    {q:"Where did you live during university?",qja:"大学時代はどこに住んでいましたか？",model:"I lived in an athletics dormitory.",modelJa:"体育会の寮に住んでいました。"},
+    {q:"And after that?",qja:"その後は？",model:"I lived in a shared house in central Tokyo for a while.",modelJa:"しばらく都心のシェアハウスに住んでいました。"},
+    {q:"Do you like where you live now?",qja:"今住んでいる場所は気に入っていますか？",model:"Yes, I really like it. There's a good balance of nature, nice neighborhoods, and great restaurants.",modelJa:"はい、とても気に入っています。自然と、良い雰囲気の街並みと、美味しいレストランのバランスが良いんです。"},
+    {q:"Are you thinking of moving?",qja:"引っ越しは考えていますか？",model:"Not for now. There are still so many places I want to explore in Tokyo.",modelJa:"今のところは考えていません。東京にはまだ行きたい場所がたくさんあるので。"},
   ]},
-  {block:17,emoji:"👨‍👩‍👦",label:"家族（兄・父・母・妻）",qs:[
-    {q:"What kind of person is he?",qja:"どんな人ですか？",model:"He has a strong core and doesn't get easily influenced by others. And he is a very kind person.",modelJa:"兄は芯が強く、他人に流されません。そして、とても優しい人です。"},
-    {q:"Tell me about your father.",qja:"お父さんについて教えてください",model:"My father supported my soccer career for many years. I'm deeply grateful to him. Recently, I've been feeling that he is getting older, and that makes me a little worried.",modelJa:"父は長年、私のサッカー人生を支えてくれました。心から感謝しています。最近、父が歳をとってきたなと感じるようになり、少し心配にもなります。"},
-    {q:"And your mother?",qja:"お母さんは？",model:"My mother is always positive. I have never seen her be lazy.",modelJa:"母はいつも前向きです。怠けている姿を見たことがありません。"},
-    {q:"Anything else about your mother?",qja:"お母さんについて他には？",model:"She is full of energy.",modelJa:"とてもエネルギッシュです。"},
-    {q:"Tell me about your wife.",qja:"奥さんについて教えてください",model:"My wife is very capable and good at many things.",modelJa:"妻はとても有能で、いろいろなことが得意です。"},
+  {block:17,emoji:"👨‍👩‍👦",label:"家族",qs:[
+    {q:"Who has influenced you the most?",qja:"一番影響を受けた人は誰ですか？",model:"My older brother has had a big influence on me.",modelJa:"兄は私に大きな影響を与えてきました。"},
+    {q:"In what way?",qja:"どんなふうにですか？",model:"When I was young, I often copied his values and way of thinking.",modelJa:"子どもの頃は、兄の価値観や考え方をよく真似していました。"},
+    {q:"What kind of person is your brother?",qja:"お兄さんはどんな人ですか？",model:"He has a strong core and doesn't get easily influenced by others. He's also very kind.",modelJa:"芯が強く、他人に流されません。そしてとても優しい人です。"},
+    {q:"Tell me about your father.",qja:"お父さんについて教えてください。",model:"He supported my soccer career for many years. I'm deeply grateful to him.",modelJa:"長年、私のサッカー人生を支えてくれました。心から感謝しています。"},
+    {q:"How is he doing these days?",qja:"最近のお父さんはどうですか？",model:"I've been feeling that he's getting older, and that makes me a little worried.",modelJa:"歳をとってきたなと感じていて、少し心配です。"},
+    {q:"What is your mother like?",qja:"お母さんはどんな人ですか？",model:"She's always positive and full of energy. I've never seen her be lazy.",modelJa:"いつも前向きでエネルギッシュです。怠けている姿を見たことがありません。"},
+    {q:"What is your wife like?",qja:"奥さんはどんな人ですか？",model:"She's very capable and good at many things.",modelJa:"とても有能で、いろいろなことが得意です。"},
+    {q:"What else do you like about her?",qja:"他に奥さんの好きなところは？",model:"She has deep knowledge about food and a great sense of humor.",modelJa:"食の知識が深く、ユーモアのセンスもあります。"},
+    {q:"What do you respect about her?",qja:"奥さんのどこを尊敬していますか？",model:"I respect the way she lives true to herself without caring about titles or social status.",modelJa:"肩書や社会的地位を気にせず、自分らしく生きているところを尊敬しています。"},
   ]},
-  {block:18,emoji:"💑",label:"妻と友人・好きな街・日本の文化",qs:[
-    {q:"Tell me about your wife.",qja:"奥さんについて教えてください",model:"She has deep knowledge about food and a great sense of humor. I deeply respect the way she lives true to herself without being concerned about titles or social status.",modelJa:"食の知識が深く、ユーモアのセンスもあります。彼女が肩書や社会的地位を気にせず、自分らしく生きているところを心から尊敬しています。"},
-    {q:"What about your friends?",qja:"ご友人はどうですか？",model:"Many of my friends from soccer are also achieving great things in their careers, and that always inspires me.",modelJa:"サッカーで一緒だった友人の多くが、仕事でも素晴らしい結果を残しており、それにいつも刺激を受けています。"},
-    {q:"What is one of your favorite places?",qja:"好きな場所はどこですか？",model:"One of my favorite places is Kichijoji. It has everything you need for daily life, and there are many stylish shops and cafes.",modelJa:"私の好きな場所の一つは吉祥寺です。生活に必要なものが揃っていて、おしゃれなお店やカフェもたくさんあります。"},
-    {q:"What do you like about it?",qja:"どんなところが好きですか？",model:"There is nature, but also a lively atmosphere. I love the balance. It's definitely a place I would recommend to others.",modelJa:"自然もありつつ、活気のある雰囲気もあります。そのバランスが好きです。ぜひ人にも勧めたい場所です。"},
-    {q:"What do you love about Japan?",qja:"日本の好きなところは？",model:"Japan has an incredibly rich culture, and that's what I love most about it.",modelJa:"日本には非常に豊かな文化があり、それが私が最も好きなところです。"},
+  {block:18,emoji:"☕",label:"友人・好きな場所",qs:[
+    {q:"What are your friends like?",qja:"友人はどんな人たちですか？",model:"Many of my friends from soccer are also achieving great things in their careers, and that always inspires me.",modelJa:"サッカー仲間の多くが仕事でも素晴らしい結果を出していて、いつも刺激を受けています。"},
+    {q:"What's one of your favorite places?",qja:"好きな場所はどこですか？",model:"One of my favorite places is Kichijoji.",modelJa:"好きな場所の一つは吉祥寺です。"},
+    {q:"What do you like about it?",qja:"どんなところが好きですか？",model:"It has everything you need for daily life, and there are many stylish shops and cafes.",modelJa:"生活に必要なものが揃っていて、おしゃれなお店やカフェもたくさんあります。"},
+    {q:"Anything else?",qja:"他には？",model:"There's nature, but also a lively atmosphere. I love that balance.",modelJa:"自然もありつつ、活気のある雰囲気もあります。そのバランスが好きです。"},
+    {q:"Would you recommend it?",qja:"おすすめしますか？",model:"Definitely. It's a place I'd recommend to others.",modelJa:"もちろんです。ぜひ人にも勧めたい場所です。"},
   ]},
-  {block:19,emoji:"🗾",label:"相撲・アニメ・温泉とサウナ",qs:[
-    {q:"What do you love about Japan?",qja:"日本の好きなところは？",model:"I especially like sumo, anime, and hot springs.",modelJa:"特に相撲、アニメ、温泉が好きです。"},
-    {q:"Why sumo and anime?",qja:"なぜ相撲とアニメが好きなのですか？",model:"In sumo, I love the tension and intensity of a match that can end in just a few seconds. Anime is not only entertaining, but it also gives us insights about life.",modelJa:"相撲では、数秒で決まることもある試合の緊張感と迫力が好きです。アニメは面白いだけでなく、人生への示唆も与えてくれます。"},
-    {q:"Do you like hot springs?",qja:"温泉は好きですか？",model:"I also enjoy hot springs and saunas. In a sauna, I feel free from constant thinking.",modelJa:"温泉もサウナも好きです。サウナでは、頭の中の思考から解放されます。"},
-    {q:"What's great about saunas?",qja:"サウナの良さは何ですか？",model:"It becomes a world of pure sensation — just heat and cold. That helps me clear my mind and truly relax. Sometimes, new ideas come to me during those quiet moments.",modelJa:"熱さと冷たさだけの、純粋な感覚の世界になります。それが頭をクリアにし、本当にリラックスさせてくれます。静かな時間の中で、新しいアイデアが浮かぶこともあります。"},
-    {q:"Does Japan have any problems?",qja:"日本に課題はありますか？",model:"On the other hand, I think Japan faces serious challenges.",modelJa:"一方で、日本には深刻な課題もあると思います。"},
+  {block:19,emoji:"🗾",label:"日本について",qs:[
+    {q:"What do you love most about Japan?",qja:"日本の一番好きなところは？",model:"Japan has an incredibly rich culture, and that's what I love most about it.",modelJa:"日本には非常に豊かな文化があり、それが一番好きなところです。"},
+    {q:"What parts of Japanese culture do you like?",qja:"日本文化のどんなところが好きですか？",model:"I especially like sumo, anime, and hot springs.",modelJa:"特に相撲、アニメ、温泉が好きです。"},
+    {q:"What do you like about sumo?",qja:"相撲のどこが好きですか？",model:"I love the tension and intensity of a match that can end in just a few seconds.",modelJa:"数秒で決まることもある試合の緊張感と迫力が好きです。"},
+    {q:"What about anime?",qja:"アニメはどうですか？",model:"Anime is not only entertaining, but it also gives us insights about life.",modelJa:"アニメは面白いだけでなく、人生への示唆も与えてくれます。"},
+    {q:"Do you like saunas?",qja:"サウナは好きですか？",model:"Yes, I enjoy hot springs and saunas.",modelJa:"はい、温泉もサウナも好きです。"},
+    {q:"What's so good about saunas?",qja:"サウナの何がいいのですか？",model:"I feel free from constant thinking. It becomes a world of pure sensation — just heat and cold.",modelJa:"頭の中の思考から解放されます。熱さと冷たさだけの、純粋な感覚の世界になるんです。"},
+    {q:"How does that help you?",qja:"それがどう役立つのですか？",model:"It helps me clear my mind and truly relax. Sometimes, new ideas come to me then.",modelJa:"頭がクリアになって本当にリラックスできます。そのときに新しいアイデアが浮かぶこともあります。"},
+    {q:"Do you think Japan has any problems?",qja:"日本に課題はあると思いますか？",model:"Yes, I think Japan faces serious challenges.",modelJa:"はい、日本には深刻な課題があると思います。"},
+    {q:"Such as?",qja:"例えば？",model:"One is the declining birthrate and aging population. Another is low productivity.",modelJa:"一つは少子高齢化です。もう一つは低い生産性です。"},
+    {q:"Why do you think productivity is low?",qja:"なぜ生産性が低いと思いますか？",model:"I believe cultural factors, such as strong social pressure to conform, may play a role.",modelJa:"同調圧力の強さなど、文化的な要因も影響しているのではないかと思います。"},
   ]},
-  {block:20,emoji:"🇬🇧",label:"日本の課題・英語を学ぶ理由",qs:[
-    {q:"What challenges does Japan face?",qja:"日本はどんな課題に直面していますか？",model:"One is the declining birthrate and aging population. Another is low productivity. I believe cultural factors, such as strong social pressure to conform, may also play a role.",modelJa:"一つは少子高齢化です。もう一つは低い生産性です。同調圧力の強さなど、文化的な要因も影響しているのではないかと思っています。"},
-    {q:"Why did you start studying English?",qja:"なぜ英語を学び始めたのですか？",model:"The reason I started studying English is actually simple. I admire people who speak English fluently. I just think it's cool.",modelJa:"英語を学び始めた理由は、実はシンプルです。英語を流暢に話せる人に憧れています。単純に、かっこいいと思います。"},
-    {q:"How else will English help you?",qja:"英語は他にどう役立ちますか？",model:"Also, I believe I can enjoy traveling abroad much more if I can speak English.",modelJa:"英語が話せれば、海外旅行をもっと楽しめると思っています。"},
-    {q:"What about your career and information access?",qja:"キャリアや情報面ではどうですか？",model:"From a career perspective, English will expand my options. And since so much information is available in English, I believe it will significantly broaden my access to information.",modelJa:"キャリアの面でも、英語は選択肢を広げてくれます。そして、多くの情報が英語で得られるので、情報へのアクセスの幅が大きく広がると信じています。"},
+  {block:20,emoji:"🇬🇧",label:"英語を学ぶ理由",qs:[
+    {q:"Why did you start studying English?",qja:"なぜ英語を学び始めたのですか？",model:"The reason is actually simple. I admire people who speak English fluently.",modelJa:"理由は実はシンプルです。英語を流暢に話せる人に憧れているんです。"},
+    {q:"Why do you admire them?",qja:"なぜ憧れるのですか？",model:"I just think it's cool.",modelJa:"単純に、かっこいいと思うからです。"},
+    {q:"Any other reasons?",qja:"他に理由はありますか？",model:"I believe I can enjoy traveling abroad much more if I can speak English.",modelJa:"英語が話せれば、海外旅行をもっと楽しめると思っています。"},
+    {q:"How will English help your career?",qja:"英語はキャリアにどう役立ちますか？",model:"English will expand my options.",modelJa:"英語は選択肢を広げてくれます。"},
+    {q:"Anything else?",qja:"他には？",model:"Since so much information is available in English, it will significantly broaden my access to information.",modelJa:"多くの情報が英語で得られるので、情報へのアクセスの幅が大きく広がります。"},
   ]},
 ];
 
@@ -1536,35 +1596,35 @@ let chatTopicIdx=null,chatQIdx=0,chatRecog=null,chatIsRecording=false,_chatFinal
 
 function chatResetAll(){
   if(!confirm('会話練習の進捗をすべてリセットしますか？'))return;
-  for(let b=1;b<=20;b++)localStorage.removeItem('chat_prog_'+b);
+  for(let b=1;b<=CHAT_TOPICS.length;b++)localStorage.removeItem('chat2_prog_'+b);
   chatInit();
 }
-let chatSelBlock=LS.get('chat_sel_block')||1;
+let chatSelBlock=LS.get('chat2_sel')||1;if(chatSelBlock>CHAT_TOPICS.length)chatSelBlock=1;
 function chatInit(){
   const list=document.getElementById('chat-topic-list');
   list.innerHTML='';
   // 他タブと同じブロック選択グリッド
   const gridWrap=document.createElement('div');
   gridWrap.className='bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-4';
-  gridWrap.innerHTML='<div class="flex items-center justify-between mb-2"><div class="text-sm font-bold text-slate-700">ブロック選択</div><button onclick="chatResetAll()" class="text-xs text-slate-400 hover:text-red-500 underline">完了印リセット</button></div><div class="grid grid-cols-4 gap-1.5" id="chat-block-buttons"></div><p class="text-[10px] text-slate-400 mt-2">土日にまとめて取り組む用</p>';
+  gridWrap.innerHTML='<div class="flex items-center justify-between mb-2"><div class="text-sm font-bold text-slate-700">トピック選択</div><button onclick="chatResetAll()" class="text-xs text-slate-400 hover:text-red-500 underline">完了印リセット</button></div><div class="grid grid-cols-4 gap-1.5" id="chat-block-buttons"></div><p class="text-[10px] text-slate-400 mt-2">テーマ別の一問一答（土日にまとめて取り組む用）</p>';
   list.appendChild(gridWrap);
   const grid=gridWrap.querySelector('#chat-block-buttons');
   CHAT_TOPICS.forEach((t,i)=>{
-    const prog=LS.get('chat_prog_'+t.block)||0;
+    const prog=LS.get('chat2_prog_'+t.block)||0;
     const done=prog>=t.qs.length;
     const btn=document.createElement('button');
     btn.className=`py-1.5 rounded-lg text-xs font-semibold transition active:scale-95 ${t.block===chatSelBlock?'bg-blue-600 text-white':done?'bg-emerald-100 text-emerald-600':'bg-slate-100 text-slate-600 hover:bg-blue-100'}`;
-    btn.textContent=done&&t.block!==chatSelBlock?`B${t.block}✓`:`B${t.block}`;
-    btn.onclick=()=>{chatSelBlock=t.block;LS.set('chat_sel_block',t.block);chatInit();};
+    btn.textContent=`${t.emoji} ${t.block}${done&&t.block!==chatSelBlock?'✓':''}`;btn.title=t.label;
+    btn.onclick=()=>{chatSelBlock=t.block;LS.set('chat2_sel',t.block);chatInit();};
     grid.appendChild(btn);
   });
   // 選択中ブロックの詳細カード
   const t=CHAT_TOPICS[chatSelBlock-1];
-  const prog=LS.get('chat_prog_'+t.block)||0;
+  const prog=LS.get('chat2_prog_'+t.block)||0;
   const done=prog>=t.qs.length;
   const card=document.createElement('button');
   card.className='w-full flex items-center gap-3 px-4 py-4 rounded-2xl border border-blue-100 bg-white text-left active:scale-95 transition hover:border-blue-300 hover:bg-blue-50 shadow-sm';
-  card.innerHTML=`<span class="text-2xl">${t.emoji}</span><div class="flex-1"><div class="font-semibold text-slate-700 text-sm">Block ${t.block}: ${t.label}</div><div class="text-xs text-slate-400 mt-0.5">${t.qs.length}問 ${done?'· ✅ 完了':'· 進捗: '+prog+'/'+t.qs.length}</div></div><span class="text-blue-400 font-semibold text-sm">開始 ›</span>`;
+  card.innerHTML=`<span class="text-2xl">${t.emoji}</span><div class="flex-1"><div class="font-semibold text-slate-700 text-sm">${t.block}. ${t.label}</div><div class="text-xs text-slate-400 mt-0.5">${t.qs.length}問 ${done?'· ✅ 完了':'· 進捗: '+prog+'/'+t.qs.length}</div></div><span class="text-blue-400 font-semibold text-sm">開始 ›</span>`;
   card.onclick=()=>chatStartTopic(chatSelBlock-1);
   list.appendChild(card);
 }
@@ -1572,7 +1632,7 @@ function chatInit(){
 function chatStartTopic(idx){
   chatTopicIdx=idx;
   const t=CHAT_TOPICS[idx];
-  chatQIdx=LS.get('chat_prog_'+t.block)||0;
+  chatQIdx=LS.get('chat2_prog_'+t.block)||0;
   if(chatQIdx>=t.qs.length)chatQIdx=0;
   document.getElementById('chat-home').classList.add('hidden');
   document.getElementById('chat-convo').classList.remove('hidden');
@@ -1617,7 +1677,7 @@ function chatShowResult(heard){
 function chatNext(){
   const t=CHAT_TOPICS[chatTopicIdx];
   chatQIdx++;
-  LS.set('chat_prog_'+t.block,chatQIdx);
+  LS.set('chat2_prog_'+t.block,chatQIdx);
   if(chatQIdx>=t.qs.length){
     document.getElementById('chat-idle-area').classList.add('hidden');
     document.getElementById('chat-result-area').classList.add('hidden');
